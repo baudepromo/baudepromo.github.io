@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baú de Promoções Produtos</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="icon" href="img/perfil.png" />
+
+    <style>
+        :root {
+            --primary-bg: #0f2027;
+            --secondary-bg: #2c5364;
+            --accent-color: #ffffff;
+            --text-dark: #2c5364;
+            --shopee: #ee4d2d;
+            --amazon: #ff9900;
+            --aliexpress: #ff4747;
+            --mercado-livre: #fff159;
+            --card-bg: #163844; /* Cor de fundo do cartão */
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg), #203a43, var(--secondary-bg));
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* --- CABEÇALHO --- */
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { width: 100px; height: 100px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); margin-bottom: 15px; object-fit: cover; }
+        .socials { display: flex; justify-content: center; gap: 20px; margin: 15px 0; }
+        .socials a { color: white; font-size: 24px; transition: 0.3s; }
+        .socials a:hover { transform: translateY(-3px); opacity: 0.8; }
+
+        /* --- CATEGORIAS --- */
+        .category-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 40px 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 12px;
+            border-left: 5px solid #00f2fe;
+            box-sizing: border-box; /* Garante que o padding não estoure a largura */
+        }
+        .category-info { display: flex; align-items: center; gap: 12px; }
+        .category-info i { font-size: 1.3rem; color: #00f2fe; }
+        .category-title { margin: 0; font-size: 1.1rem; text-transform: uppercase; font-weight: 700; color: #fff; }
+
+        /* --- GRID --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        /* --- CARD DO PRODUTO (CSS Unificado) --- */
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: #e9f6f8; /* Texto claro */
+            transition: 0.3s;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0; /* Para animação */
+            animation: fadeIn 0.6s ease forwards;
+        }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+
+        .product-img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .product-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+
+        /* ETIQUETAS DE LOJA */
+        .store-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            align-self: flex-start;
+            margin-bottom: 8px;
+            color: white;
+        }
+        .badge-amazon { background: var(--amazon); }
+        .badge-shopee { background: var(--shopee); }
+        .badge-aliexpress { background: var(--aliexpress); }
+        .badge-ml { background: var(--mercado-livre); color: #333; }
+
+        .product-title { 
+            font-size: 1rem; 
+            font-weight: 600; 
+            margin: 0 0 10px; 
+            line-height: 1.4;
+            color: #fff; /* Garante título branco */
+        }
+ 
+        .product-price { color: #2ecc71; font-weight: 700; font-size: 1.2rem; margin-top: auto; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+        .btn-buy {
+            margin-top: 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .product-card:hover .btn-buy { background: var(--secondary-bg); border-color: transparent; }
+
+        /* ANIMAÇÃO */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* COMPARTILHAR & TOAST */
+        .share-btn { position: fixed; top: 20px; right: 20px; background: white; color: #2c5364; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 1000; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .share-box { position: fixed; top: 75px; right: 20px; background: white; color: #2c5364; padding: 15px; border-radius: 12px; width: 200px; display: none; flex-direction: column; gap: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 999; }
+        .share-box button, .share-box a { border: none; background: #f0f0f0; padding: 10px; border-radius: 8px; cursor: pointer; text-decoration: none; color: #2c5364; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 18px; border-radius: 30px; font-size: 14px; opacity: 0; transition: 0.3s; z-index: 1001; pointer-events: none; }
+        .toast.show { opacity: 1; }
+
+        footer { margin: 40px 0; opacity: 0.5; font-size: 0.8rem; }
+
+        @media (max-width: 600px) {
+    .product-grid { 
+        /* Mantém 2 colunas no celular */
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px; 
+        padding: 0 5px;
+    }
+    .product-img { 
+        height: 140px; /* Reduzi um pouco para caber melhor lado a lado */
+    }
+    .product-title {
+        font-size: 0.85rem; /* Título menor para não quebrar o layout */
+        height: 40px; /* Altura fixa para alinhar os cards */
+        overflow: hidden;
+    }
+    .product-price {
+        font-size: 1rem;
+    }
+}
+    </style>
+</head>
+<body>
+
+<div class="share-btn" onclick="toggleShare()"><i class="fas fa-share-alt"></i></div>
+<div class="share-box" id="shareBox">
+    <p style="margin:0 0 10px; font-weight:bold; text-align:center;">Compartilhar</p>
+    <button onclick="copyLink()"><i class="fas fa-link"></i> Copiar link</button>
+    <a id="shareWhatsapp" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+    <button onclick="shareMore()"><i class="fas fa-ellipsis-h"></i> Mais</button>
+</div>
+
+<header class="header">
+    <img src="img/perfil.png" alt="Baú de Promoções" class="logo">
+    <h1>Baú de Promoções</h1>
+    <p>Produtos e Promoções</p>
+    <div class="socials">
+        <a href="https://instagram.com/nexuss1283" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@Nexus-jgss" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.tiktok.com/@baudepromocoes1283d" target="_blank"><i class="fab fa-tiktok"></i></a>
+        <a href="https://x.com/nexuss1283" target="_blank"><i class="fab fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/profile.php?id=61585472683221&sk=about" target="_blank"><i class="fab fa-facebook"></i></a>
+    </div>
+</header>
+
+<div class="category-container" style="border-left-color: #ff4747;">
+    <div class="category-info">
+        <i class="fa-solid fa-headphones"></i> 
+        <h2 class="category-title">Eletrônicos</h2>
+    </div>
+</div>
+
+<div class="product-grid">
+
+<div class="product-grid">
+    <a href="https://s.click.aliexpress.com/e/_c3NQ8TEP" class="product-card">
+        <img src="https://ae01.alicdn.com/kf/S8fa179b285ae4df8abfd9552723258bcl.jpg_640x640.jpg" class="product-img" alt="Fone"/>
+        <div class="product-info">
+            <span class="store-badge badge-aliexpress">AliExpress</span>
+            <h3 class="product-title">QKZ AK3</h3>
+            <span class="product-price">R$ 25,00</span>
+            <div class="btn-buy">Ver na Loja</div>
+        </div>
+    </a>
+</div>
+
+</div>
+
+<div class="category-container" style="border-left-color: #27ae60;">
+    <div class="category-info">
+        <i class="fa-solid fa-paint-roller"></i>
+        <h2 class="category-title">Casa</h2>
+    </div>
+</div>
+
+<div class="product-grid">
+
+<div class="product-grid">
+    <a href="https://amzn.to/49LVUFM" class="product-card">
+        <img src="https://m.media-amazon.com/images/I/51x8MCzIAnL._AC_SX466_.jpg" class="product-img" alt="Electrolux - Kit Potes de Plástico Hermético, 10 unidades"/>
+        <div class="product-info">
+            <span class="store-badge badge-amazon">Amazon</span>
+            <h3 class="product-title">Electrolux - Kit Potes de Plástico Hermético, 10 unidades</h3>
+            <span class="product-price">R$64,90</span>
+            <div class="btn-buy">Ver na Loja</div>
+        </div>
+    </a>
+</div>
+
+</div>
+
+<div class="category-container" style="border-left-color: #27ae60;">
+    <div class="category-info">
+        <i class="fa-solid fa-person"></i>
+        <h2 class="category-title">Fitness</h2>
+    </div>
+</div>
+
+<div class="product-grid">
+
+<div class="product-grid">
+    <a href="https://s.shopee.com.br/6VHEBL3che?share_channel_code=1" class="product-card">
+        <img src="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m9wqmwhq375u6c" class="product-img" alt="Handgrip"/>
+        <div class="product-info">
+            <span class="store-badge badge-shopee">Shopee</span>
+            <h3 class="product-title">Handgrip</h3>
+            <span class="product-price">R$13,90 - R$48,90</span>
+            <div class="btn-buy">Ver na Loja</div>
+        </div>
+    </a>
+</div>
+</div>
+
+<div class="category-container" style="border-left-color: #27ae60;">
+    <div class="category-info">
+        <i class="fa-solid fa-paperclip"></i> 
+        <h2 class="category-title">Acessórios</h2>
+    </div>
+</div>
+
+<div class="product-grid">
+<a href="https://s.click.aliexpress.com/e/_c4OiHgHv" class="product-card">
+        <img src="https://ae-pic-a1.aliexpress-media.com/kf/S683aff795ed64708aed0515b634907f7e.jpg?has_lang=1&ver=1_960x960q75.jpg_.avif" class="product-img" alt="9 Heated Vest Zones Electric Heated Jackets Men Women Sportswear Heated Coat Graphene Heat Coat USB Heating Jacket For Camping"/>
+        <div class="product-info">
+            <span class="store-badge badge-aliexpress">Aliexpress</span>
+            <h3 class="product-title">9 Heated Vest Zones Electric Heated Jackets Men Women Sportswear Heated Coat Graphene Heat Coat USB Heating Jacket For Camping</h3>
+            <span class="product-price">R$64,90</span>
+            <div class="btn-buy">Ver na Loja</div>
+        </div>
+    </a>
+
+    <a href="https://mercadolivre.com/sec/2hTUFyj" class="product-card">
+        <img src="https://http2.mlstatic.com/D_NQ_NP_644883-MLB93706356350_102025-O-kit-3-pares-meia-antiderrapante-esportiva-futebol-treino.webp" class="product-img" alt="9 Heated Vest Zones Electric Heated Jackets Men Women Sportswear Heated Coat Graphene Heat Coat USB Heating Jacket For Camping"/>
+        <div class="product-info">
+            <span class="store-badge badge-ml">Mercado Livre</span>
+            <h3 class="product-title">Kit 3 Pares Meia Antiderrapante Esportiva Futebol Treino</h3>
+            <span class="product-price">R$64,90</span>
+            <div class="btn-buy">Ver na Loja</div>
+        </div>
+    </a>
+</div>
+<footer>© 2026 Baú de Promoções • Todos os direitos reservados</footer>
+<div class="toast" id="toast">🔗 Link copiado!</div>
+
+<script>
+    function toggleShare() {
+        const box = document.getElementById("shareBox");
+        box.style.display = (box.style.display === "flex") ? "none" : "flex";
+    }
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href);
+        const toast = document.getElementById("toast");
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2000);
+        toggleShare();
+    }
+    function shareMore() {
+        if (navigator.share) {
+            navigator.share({ title: document.title, url: window.location.href });
+        } else { copyLink(); }
+    }
+    document.getElementById("shareWhatsapp").href = `https://wa.me/?text=${encodeURIComponent(document.title)}%20${encodeURIComponent(window.location.href)}`;
+</script>
+
+</body>
+</html>
