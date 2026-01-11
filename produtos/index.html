@@ -299,7 +299,7 @@ let allProducts = []; // Variável global para guardar os produtos do JSON
 async function loadAndDisplay() {
     try {
         // 1. Busca o arquivo JSON (certifique-se que o nome está correto)
-        const response = await fetch('produtos.json'); 
+        const response = await fetch('products.json'); 
         allProducts = await response.json();
 
         // 2. Mostra a categoria inicial (eletronicos)
