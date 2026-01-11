@@ -1,133 +1,321 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PromoHub - Achadinhos e Ofertas</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-:root {
-    --primary-bg: #0f2027;
-    --secondary-bg: #2c5364;
-    --accent-color: #ffffff;
-    --card-bg: #163844;
-    --shopee: #ee4d2d;
-    --amazon: #ff9900;
-    --aliexpress: #ff4747;
-    --mercado-livre: #fff159;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baú de Promoção | Premium Deals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #0a0f18;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-accent: #3b82f6; /* Blue */
+            --shopee: #ff4d2d;
+            --amazon: #ff9900;
+            --aliexpress: #ff4747;
+            --mercado-livre: #ffe600;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Inter', sans-serif; 
+        }
 
-body {
-    display: flex;
-    min-height: 100vh;
-    background: linear-gradient(135deg, var(--primary-bg), #203a43, var(--secondary-bg));
-    color: white;
-}
+        body {
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+        }
 
-.sidebar {
-    width: 220px;
-    background: var(--card-bg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
-}
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
 
-.logo-sidebar img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px; }
-.logo-sidebar h2 { margin-bottom: 20px; }
+        .logo-sidebar {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-.menu { display: flex; flex-direction: column; width: 100%; }
-.tab-btn { background: transparent; border: none; color: white; padding: 12px 20px; text-align: left; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%; }
-.tab-btn i { margin-right: 10px; }
-.tab-btn:hover, .tab-btn.active { background: rgba(255,255,255,0.1); }
+        .logo-sidebar img {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-accent);
+            padding: 5px;
+            margin-bottom: 15px;
+        }
 
-.socials { margin-top: auto; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-.socials a { color: white; font-size: 20px; transition: 0.3s; }
-.socials a:hover { transform: translateY(-3px); opacity: 0.8; }
+        .logo-sidebar h2 {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-.main-content { flex: 1; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-h1 { margin-bottom: 30px; }
+        .menu { display: flex; flex-direction: column; gap: 8px; }
 
-.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; width: 100%; }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 14px 18px;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-.product-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: #e9f6f8; transition: 0.3s; }
-.product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .tab-btn i { font-size: 1.1rem; }
 
-.product-img { width: 100%; height: 200px; object-fit: cover; }
-.product-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
 
-.store-badge { font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; align-self: flex-start; margin-bottom: 8px; color: white; }
-.badge-amazon { background: var(--amazon); }
-.badge-shopee { background: var(--shopee); }
-.badge-aliexpress { background: var(--aliexpress); }
-.badge-ml { background: var(--mercado-livre); color: #333; }
+        .tab-btn.active {
+            background: var(--primary-accent);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
 
-.product-title { font-size: 1rem; font-weight: 600; margin: 0 0 10px; }
-.product-price { color: #2ecc71; font-weight: 700; margin-top: auto; }
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 50px;
+        }
 
-.btn-buy { margin-top: 12px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; text-align: center; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: 0.2s; }
-.product-card:hover .btn-buy { background: var(--secondary-bg); border-color: transparent; }
+        header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-@media (max-width: 768px) { .sidebar { display: none; } .main-content { padding: 20px; } }
-</style>
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        /* --- GRID DE PRODUTOS --- */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .img-container {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.08);
+        }
+
+        .product-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .store-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 5px 12px;
+            border-radius: 100px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .badge-amazon { background: var(--amazon); color: #000; }
+        .badge-shopee { background: var(--shopee); color: #fff; }
+        .badge-aliexpress { background: var(--aliexpress); color: #fff; }
+        .badge-ml { background: var(--mercado-livre); color: #000; }
+
+        .product-title {
+            font-size: 1.05rem;
+            line-height: 1.4;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .price-container {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #4ade80;
+        }
+
+        .btn-buy {
+            background: white;
+            color: black;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn-buy:hover {
+            background: var(--primary-accent);
+            color: white;
+        }
+
+        /* --- RESPONSIVIDADE --- */
+        @media (max-width: 900px) {
+            .sidebar { width: 80px; padding: 20px 10px; }
+            .logo-sidebar h2, .tab-btn span { display: none; }
+            .main-content { margin-left: 80px; padding: 20px; }
+            .tab-btn { justify-content: center; padding: 15px; }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                bottom: 0; width: 100%; height: 70px;
+                flex-direction: row; border-right: none;
+                border-top: 1px solid var(--glass-border);
+                padding: 0; justify-content: space-around;
+                position: fixed; top: auto;
+            }
+            .logo-sidebar { display: none; }
+            .menu { flex-direction: row; width: 100%; justify-content: space-around; }
+            .main-content { margin-left: 0; margin-bottom: 80px; padding: 20px; }
+            header h1 { font-size: 1.5rem; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="sidebar">
+<aside class="sidebar">
     <div class="logo-sidebar">
-        <img src="https://via.placeholder.com/80" alt="PromoHub" class="logo">
-        <h2>PromoHub</h2>
+        <img src="img/perfil.png" alt="Logo">
+        <h2>BAÚ DE OFERTAS</h2>
     </div>
     <nav class="menu">
-        <button class="tab-btn active" data-tab="eletronicos"><i class="fa-solid fa-headphones"></i> Eletrônicos</button>
-        <button class="tab-btn" data-tab="casa"><i class="fa-solid fa-couch"></i> Casa</button>
-        <button class="tab-btn" data-tab="fitness"><i class="fa-solid fa-dumbbell"></i> Fitness</button>
-        <button class="tab-btn" data-tab="acessorios"><i class="fa-solid fa-swatchbook"></i> Acessórios</button>
+        <button class="tab-btn active" data-tab="eletronicos">
+            <i class="fa-solid fa-bolt"></i> <span>Eletrônicos & Tecnologia</span>
+        </button>
+        <button class="tab-btn" data-tab="casa">
+            <i class="fa-solid fa-house"></i> <span>Casa & Decoração</span>
+        </button>
+        <button class="tab-btn" data-tab="cozinha">
+            <i class="fa-solid fa-cookie"></i> <span>Cozinha & Eletrodomestico</span>
+        </button>
+        <button class="tab-btn" data-tab="moda">
+            <i class="fa-solid fa-shirt"></i> <span>Moda & Acessorios</span>
+        </button>
+        <button class="tab-btn" data-tab="beleza">
+            <i class="fa-solid fa-person"></i> <span>Beleza</span>
+        </button>
+        <button class="tab-btn" data-tab="saude">
+            <i class="fa-solid fa-heart"></i> <span>Saúde</span>
+        </button>
     </nav>
-    <div class="socials">
-        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
-        <a href="#" target="_blank"><i class="fab fa-x-twitter"></i></a>
-    </div>
-</div>
+</aside>
 
-<div class="main-content">
-    <h1>Ofertas em Destaque</h1>
-    <div id="product-grid" class="product-grid"></div>
-</div>
+<main class="main-content">
+    <header>
+        <h1>Produtos🔥</h1>
+    </header>
+    
+    <div id="product-grid" class="product-grid">
+        </div>
+</main>
 
 <script>
-const productGrid = document.getElementById("product-grid");
-let products = [];
 
-// Carrega JSON dinamicamente
-async function loadProducts() {
-    try {
-        const response = await fetch("data/products.json");
-        products = await response.json();
-        displayProducts();
-    } catch(err) {
-        console.error("Erro ao carregar produtos:", err);
-        productGrid.innerHTML = "<p>Não foi possível carregar os produtos.</p>";
-    }
-}
+const productGrid = document.getElementById("product-grid");
 
 function displayProducts(category = "eletronicos") {
     productGrid.innerHTML = "";
-    const filtered = products.filter(p => p.category === category);
+    // Aqui usei mockProducts para demonstração, mas no seu código real 
+    // você usaria a variável 'products' carregada do JSON
+    const filtered = mockProducts.filter(p => p.category === category);
+    
     filtered.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
-            <img src="${p.img}" alt="${p.title}" class="product-img">
+            <div class="img-container">
+                <img src="${p.img}" alt="${p.title}" class="product-img">
+            </div>
             <div class="product-info">
                 <span class="store-badge badge-${p.store}">${p.store}</span>
                 <h3 class="product-title">${p.title}</h3>
-                <p class="product-price">${p.price}</p>
-                <a href="#" class="btn-buy">Comprar</a>
+                <div class="price-container">
+                    <p class="product-price">${p.price}</p>
+                    <a href="#" class="btn-buy">Ver Promo</a>
+                </div>
             </div>
         `;
         productGrid.appendChild(card);
@@ -135,7 +323,7 @@ function displayProducts(category = "eletronicos") {
 }
 
 // Inicializa
-loadProducts();
+displayProducts();
 
 // Alterna categorias
 document.querySelectorAll(".tab-btn").forEach(btn => {
