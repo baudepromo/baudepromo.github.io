@@ -6,7 +6,7 @@ async function loadProducts() {
     try {
         const response = await fetch("data/products.json");
         products = await response.json();
-        displayProducts(); // Mostra inicialmente a categoria padrão
+        displayProducts(); // Categoria padrão
     } catch (error) {
         console.error("Erro ao carregar produtos:", error);
         productGrid.innerHTML = "<p>Não foi possível carregar os produtos.</p>";
