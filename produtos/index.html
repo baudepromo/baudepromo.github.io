@@ -3,53 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baú de Promoções - Ofertas Exclusivas</title>
-
-    <meta name="description" content="As melhores oportunidades e ofertas exclusivas em um só lugar.">
-    <link rel="icon" href="img/favicon.jpg">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Nexuss Produtos - Menu Lateral</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/perfil.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<button class="share-btn" onclick="shareMore()" aria-label="Compartilhar página">
-    <i class="fas fa-share-alt"></i>
-</button>
-
-<header class="header">
-    <img src="img/perfil.png" class="logo" alt="Logo Baú de Promoções" loading="lazy">
-    <h1>Baú de Promoções</h1>
-    <p>As melhores oportunidades em um só lugar</p>
-
-    <nav class="socials">
-        <a href="https://www.instagram.com/baudepromocaos/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.youtube.com/@BaudePromocoes" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        <a href="https://www.tiktok.com/@baudepromocoes1283" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-        <a href="https://x.com/baudepromocao" target="_blank" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
-        <a href="https://www.facebook.com/profile.php?id=61585472683221" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+<div class="sidebar">
+    <div class="logo-sidebar">
+        <img src="img/perfil.png" alt="Nexuss" class="logo">
+        <h2>Nexuss</h2>
+    </div>
+    <nav class="menu">
+        <button class="tab-btn active" data-tab="eletronicos"><i class="fa-solid fa-headphones"></i> Eletrônicos</button>
+        <button class="tab-btn" data-tab="casa"><i class="fa-solid fa-paint-roller"></i> Casa</button>
+        <button class="tab-btn" data-tab="fitness"><i class="fa-solid fa-person"></i> Fitness</button>
+        <button class="tab-btn" data-tab="acessorios"><i class="fa-solid fa-paperclip"></i> Acessórios</button>
     </nav>
-</header>
-
-<div class="search-wrapper">
-    <i class="fas fa-search"></i>
-    <input type="text" id="searchInput" placeholder="Buscar promoções incríveis..." onkeyup="filterProducts()" autocomplete="off">
+    <div class="socials">
+        <a href="https://instagram.com/nexuss1283" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://youtube.com/@Nexus-jgss" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://tiktok.com/@nexusforzaunderground" target="_blank"><i class="fab fa-tiktok"></i></a>
+        <a href="https://x.com/nexuss1283" target="_blank"><i class="fab fa-x-twitter"></i></a>
+    </div>
 </div>
 
-<main>
-    <div id="productsContainer" class="product-grid"></div>
-
-    <div id="noResults" role="alert">
-        <i class="fas fa-ghost"></i>
-        <p>Ops! Não encontramos nada com esse nome.</p>
+<div class="main-content">
+    <div id="product-grid" class="product-grid">
+        <!-- Produtos carregados dinamicamente via JS -->
     </div>
-</main>
-
-<footer>
-    <p>© 2026 Baú de Promoções • Selecionamos as melhores ofertas para você</p>
-</footer>
-
-<div class="toast" id="toast" role="status">Copiado com sucesso!</div>
+</div>
 
 <script src="js/script.js"></script>
 </body>

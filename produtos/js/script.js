@@ -1,80 +1,40 @@
-let allProducts = [];
+let activeTab = 'eletronicos';
+const productGrid = document.getElementById('product-grid');
 
-fetch("data/products.json")
-    .then(res => res.json())
-    .then(data => {
-        renderProducts(data.categories);
-    });
+async function loadProducts() {
+    const res = await fetch('products.json');
+    const data = await res.json();
+    renderProducts(data);
+}
 
-function renderProducts(categories) {
-    const container = document.getElementById("productsContainer");
-    container.innerHTML = "";
-
-    categories.forEach(category => {
-        const block = document.createElement("div");
-        block.className = "category-block";
-
-        block.innerHTML = `
-            <div class="category-container" style="border-left-color:${category.color}">
-                <div class="category-info">
-                    <i class="fa-solid ${category.icon}"></i>
-                    <h2 class="category-title">${category.name}</h2>
-                </div>
+function renderProducts(products) {
+    productGrid.innerHTML = '';
+    const filtered = products.filter(p => p.category === activeTab);
+    filtered.forEach(product => {
+        const card = document.createElement('a');
+        card.href = product.url;
+        card.target = "_blank";
+        card.className = 'product-card';
+        card.innerHTML = `
+            <img src="${product.img}" alt="${product.title}" class="product-img"/>
+            <div class="product-info">
+                <span class="store-badge badge-${product.store.toLowerCase()}">${product.store}</span>
+                <h3 class="product-title">${product.title}</h3>
+                <span class="product-price">${product.price}</span>
+                <div class="btn-buy">Ver na Loja</div>
             </div>
-            <div class="product-grid"></div>
         `;
-
-        const grid = block.querySelector(".product-grid");
-
-        category.products.forEach(product => {
-            grid.innerHTML += `
-                <a href="${product.link}" class="product-card">
-                    <img src="${product.image}" class="product-img">
-                    <div class="product-info">
-                        <span class="store-badge ${product.badge}">${product.store}</span>
-                        <h3 class="product-title">${product.title}</h3>
-                        <span class="product-price">${product.price}</span>
-                        <div class="btn-buy">Ver Promoção</div>
-                    </div>
-                </a>
-            `;
-        });
-
-        container.appendChild(block);
+        productGrid.appendChild(card);
     });
 }
 
-function filterProducts() {
-    const input = document.getElementById("searchInput").value.toLowerCase();
-    const cards = document.querySelectorAll(".product-card");
-    let visible = 0;
-
-    cards.forEach(card => {
-        const title = card.querySelector(".product-title").innerText.toLowerCase();
-        const store = card.querySelector(".store-badge").innerText.toLowerCase();
-
-        if (title.includes(input) || store.includes(input)) {
-            card.style.display = "";
-            visible++;
-        } else {
-            card.style.display = "none";
-        }
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeTab = btn.dataset.tab;
+        loadProducts();
     });
+});
 
-    document.getElementById("noResults").style.display =
-        visible === 0 ? "block" : "none";
-}
-
-function shareMore() {
-    if (navigator.share) {
-        navigator.share({
-            title: "Baú de Promoções",
-            url: window.location.href
-        });
-    } else {
-        navigator.clipboard.writeText(window.location.href);
-        const toast = document.getElementById("toast");
-        toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 2000);
-    }
-}
+loadProducts();
