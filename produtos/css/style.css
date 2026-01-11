@@ -63,33 +63,6 @@
             box-shadow: 0 0 15px var(--accent-blue); /* Efeito Glow */
         }
 
-        /* --- BARRA DE PESQUISA --- */
-        .search-wrapper {
-            width: 100%;
-            max-width: 500px;
-            margin: 20px 0 40px;
-            position: relative;
-        }
-        .search-wrapper i {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-blue);
-        }
-        .search-input {
-            width: 100%;
-            padding: 15px 20px 15px 50px;
-            border-radius: 30px;
-            border: 2px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.3);
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            box-sizing: border-box;
-            transition: 0.3s;
-            backdrop-filter: blur(5px);
-        }
         .search-input:focus {
             border-color: var(--accent-blue);
             background: rgba(0,0,0,0.5);
@@ -204,3 +177,59 @@
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    
+        /* --- BARRA DE PESQUISA DEFINITIVA --- */
+.search-wrapper {
+    width: 90%;
+    max-width: 500px;
+    margin: 30px auto 40px; /* Centraliza e dá espaço */
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-wrapper i {
+    position: absolute;
+    left: 20px;
+    color: var(--accent-blue);
+    font-size: 1.2rem;
+    z-index: 10;
+    pointer-events: none; /* O clique passa para o input */
+}
+
+.search-input {
+    width: 100%;
+    height: 55px;
+    padding: 0 20px 0 55px; /* Espaço para a lupa */
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(16, 42, 53, 0.7) !important; /* Cor secundária com transparência */
+    color: white !important;
+    font-size: 1rem;
+    outline: none;
+    box-sizing: border-box;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+    background: rgba(16, 42, 53, 0.9) !important;
+}
+
+/* Ajuste Mobile */
+@media (max-width: 600px) {
+    .search-wrapper {
+        width: 95%;
+        margin: 20px auto;
+    }
+    .search-input {
+        height: 50px;
+        font-size: 0.9rem;
+    }
+    .product-grid { 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+    }
+}
