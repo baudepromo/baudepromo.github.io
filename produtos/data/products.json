@@ -1,0 +1,37 @@
+[
+    {
+        "title": "Fone Bluetooth",
+        "price": "R$ 129,90",
+        "img": "img/fone.jpg",
+        "store": "shopee",
+        "category": "eletronicos"
+    },
+    {
+        "title": "Smartwatch",
+        "price": "R$ 249,90",
+        "img": "img/smartwatch.jpg",
+        "store": "amazon",
+        "category": "eletronicos"
+    },
+    {
+        "title": "Tapete Yoga",
+        "price": "R$ 59,90",
+        "img": "img/tapete.jpg",
+        "store": "aliexpress",
+        "category": "fitness"
+    },
+    {
+        "title": "Cadeira Gamer",
+        "price": "R$ 499,90",
+        "img": "img/cadeira.jpg",
+        "store": "ml",
+        "category": "casa"
+    },
+    {
+        "title": "Pulseira Fitness",
+        "price": "R$ 39,90",
+        "img": "img/pulseira.jpg",
+        "store": "amazon",
+        "category": "acessorios"
+    }
+]

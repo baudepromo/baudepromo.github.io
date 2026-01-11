@@ -1,40 +1,46 @@
-let activeTab = 'eletronicos';
-const productGrid = document.getElementById('product-grid');
+const productGrid = document.getElementById("product-grid");
+let products = [];
 
+// Função para carregar produtos do JSON
 async function loadProducts() {
-    const res = await fetch('products.json');
-    const data = await res.json();
-    renderProducts(data);
+    try {
+        const response = await fetch("data/products.json");
+        products = await response.json();
+        displayProducts(); // Mostra inicialmente a categoria padrão
+    } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+        productGrid.innerHTML = "<p>Não foi possível carregar os produtos.</p>";
+    }
 }
 
-function renderProducts(products) {
-    productGrid.innerHTML = '';
-    const filtered = products.filter(p => p.category === activeTab);
-    filtered.forEach(product => {
-        const card = document.createElement('a');
-        card.href = product.url;
-        card.target = "_blank";
-        card.className = 'product-card';
+function displayProducts(category = "eletronicos") {
+    productGrid.innerHTML = "";
+    const filtered = products.filter(p => p.category === category);
+    filtered.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
         card.innerHTML = `
-            <img src="${product.img}" alt="${product.title}" class="product-img"/>
+            <img src="${p.img}" alt="${p.title}" class="product-img">
             <div class="product-info">
-                <span class="store-badge badge-${product.store.toLowerCase()}">${product.store}</span>
-                <h3 class="product-title">${product.title}</h3>
-                <span class="product-price">${product.price}</span>
-                <div class="btn-buy">Ver na Loja</div>
+                <span class="store-badge badge-${p.store}">${p.store}</span>
+                <h3 class="product-title">${p.title}</h3>
+                <p class="product-price">${p.price}</p>
+                <a href="#" class="btn-buy">Comprar</a>
             </div>
         `;
         productGrid.appendChild(card);
     });
 }
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeTab = btn.dataset.tab;
-        loadProducts();
+// Inicializa produtos
+loadProducts();
+
+// Tabs
+const tabButtons = document.querySelectorAll(".tab-btn");
+tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        tabButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        displayProducts(btn.dataset.tab);
     });
 });
-
-loadProducts();
