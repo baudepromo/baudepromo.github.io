@@ -4,7 +4,7 @@
     "img": "https://http2.mlstatic.com/D_Q_NP_644883-MLB93706356350_102025-B-kit-3-pares-meia-antiderrapante-esportiva-futebol-treino.webp 800w",
     "store": "ml",
     "title": "Kit 3 Pares Meia Antiderrapante Esportiva Futebol Treino",
-    "price": "R$29,98",
+    "price": "29,98",
     "link": "https://mercadolivre.com/sec/2hTUFyj"
   },
   {
@@ -12,7 +12,7 @@
     "img": "https://ae-pic-a1.aliexpress-media.com/kf/Scf544cf98d71481ea39ae18a7451ce5fl.jpg_960x960q75.jpg_.avif",
     "store": "aliexpress",
     "title": "QKZ AK3 FiLe Wired Earphone with Microphone HiFi Music Monitor Bass Headphones Noise Cancelling Headset For Sport Gaming Earbuds",
-    "price": "R$25,73",
+    "price": "25,73",
     "link": "https://s.click.aliexpress.com/e/_c3NQ8TEP"
   },
   {
@@ -20,15 +20,31 @@
     "img": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-m9wqmwhq375u6c",
     "store": "shopee",
     "title": "Aderência de mão Hand grip 5-60KG Exercite a força do antebraço e dos dedos",
-    "price": "R$13,90 - R$48,90",
+    "price": "13,90 - R$48,90",
     "link": "https://s.shopee.com.br/6VHEBL3che?share_channel_code=1"
   },
-    {
+  {
     "category": "casa",
     "img": "https://m.media-amazon.com/images/I/51wgNlpJxjL._AC_SX522_.jpg",
     "store": "amazon",
     "title": "Aderência de mão Hand grip 5-60KG Exercite a força do antebraço e dos dedos",
-    "price": "R$64,90",
+    "price": "64,90",
     "link": "https://amzn.to/3Lp1YuI"
+  },
+  {
+    "category": "beleza",
+    "img": "https://m.media-amazon.com/images/I/61v1Sm8OlBL._AC_SX522_.jpg",
+    "store": "amazon",
+    "title": "Protetor Solar Facial Principia FPS 60, 16,5% Mix de Filtros UV + 5% Niacinamida FPS 60 PS-01 com 40ml",
+    "price": "39,59",
+    "link": "https://amzn.to/3Lp1YuI"
+  },
+  {
+    "category": "casa",
+    "img": "https://m.media-amazon.com/images/I/61zv1L2QnLL._AC_SX522_.jpg",
+    "store": "aliexpress",
+    "title": "180ML Mini Air Humidifier USB Electric Aroma Diffuser Essential Oil Purifier Aromatherapy Mist Maker Lights For Car Home Bedroom",
+    "price": "48,41",
+    "link": "https://s.click.aliexpress.com/e/_c2wmxEe7"
   }
 ]
