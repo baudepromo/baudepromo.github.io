@@ -293,15 +293,34 @@
 </main>
 
 <script>
-
 const productGrid = document.getElementById("product-grid");
+let allProducts = []; // Variável global para guardar os produtos do JSON
 
-function displayProducts(category = "eletronicos") {
+async function loadAndDisplay() {
+    try {
+        // 1. Busca o arquivo JSON (certifique-se que o nome está correto)
+        const response = await fetch('produtos.json'); 
+        allProducts = await response.json();
+
+        // 2. Mostra a categoria inicial (eletronicos)
+        displayProducts("eletronicos");
+    } catch (erro) {
+        console.error("Erro ao carregar o JSON:", erro);
+        productGrid.innerHTML = "<p>Erro ao carregar os produtos. Verifique o console.</p>";
+    }
+}
+
+function displayProducts(category) {
     productGrid.innerHTML = "";
-    // Aqui usei mockProducts para demonstração, mas no seu código real 
-    // você usaria a variável 'products' carregada do JSON
-    const filtered = mockProducts.filter(p => p.category === category);
     
+    // 3. Filtra os produtos baseados na categoria clicada
+    const filtered = allProducts.filter(p => p.category === category);
+    
+    if (filtered.length === 0) {
+        productGrid.innerHTML = "<p style='padding: 20px;'>Nenhum produto encontrado nesta categoria.</p>";
+        return;
+    }
+
     filtered.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
@@ -313,8 +332,8 @@ function displayProducts(category = "eletronicos") {
                 <span class="store-badge badge-${p.store}">${p.store}</span>
                 <h3 class="product-title">${p.title}</h3>
                 <div class="price-container">
-                    <p class="product-price">${p.price}</p>
-                    <a href="#" class="btn-buy">Ver Promo</a>
+                    <p class="product-price">R$ ${p.price}</p>
+                    <a href="${p.link}" target="_blank" class="btn-buy">Ver Promo</a>
                 </div>
             </div>
         `;
@@ -322,10 +341,7 @@ function displayProducts(category = "eletronicos") {
     });
 }
 
-// Inicializa
-displayProducts();
-
-// Alterna categorias
+// 4. Configura os botões das abas
 document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
         document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
@@ -333,7 +349,9 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
         displayProducts(btn.dataset.tab);
     });
 });
-</script>
 
+// Inicia o processo
+loadAndDisplay();
+</script>
 </body>
 </html>

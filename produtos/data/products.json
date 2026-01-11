@@ -1,7 +1,18 @@
 [
-    { "title": "Fone Bluetooth", "price": "R$ 129,90", "img": "https://via.placeholder.com/250x200?text=Fone", "store": "shopee", "category": "eletronicos" },
-    { "title": "Smartwatch", "price": "R$ 249,90", "img": "https://via.placeholder.com/250x200?text=Smartwatch", "store": "amazon", "category": "eletronicos" },
-    { "title": "Tapete Yoga", "price": "R$ 59,90", "img": "https://via.placeholder.com/250x200?text=Tapete+Yoga", "store": "aliexpress", "category": "fitness" },
-    { "title": "Cadeira Gamer", "price": "R$ 499,90", "img": "https://via.placeholder.com/250x200?text=Cadeira+Gamer", "store": "ml", "category": "casa" },
-    { "title": "Pulseira Fitness", "price": "R$ 39,90", "img": "https://via.placeholder.com/250x200?text=Pulseira+Fitness", "store": "amazon", "category": "acessorios" }
+  {
+    "category": "eletronicos",
+    "img": "img/fone.jpg",
+    "store": "amazon",
+    "title": "Fone de Ouvido Bluetooth Premium",
+    "price": "150,00",
+    "link": "https://sualoja.com/produto1"
+  },
+  {
+    "category": "casa",
+    "img": "img/luminaria.jpg",
+    "store": "shopee",
+    "title": "Luminária Inteligente RGB",
+    "price": "89,90",
+    "link": "https://sualoja.com/produto2"
+  }
 ]
