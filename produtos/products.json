@@ -38,5 +38,85 @@
     "title": "Protetor Solar Facial Principia FPS 60, 16,5% Mix de Filtros UV + 5% Niacinamida FPS 60 PS-01 com 40ml",
     "price": "39,59",
     "link": "https://amzn.to/3Lp1YuI"
+  },
+  {
+    "category": "saude",
+    "img": "https://down-br.img.susercontent.com/file/sg-11134301-7rffv-m9tn363v7onj0b@resize_w450_nl.webp",
+    "store": "shopee",
+    "title": "Raspador de Língua de Aço Inoxidável para Adultos - Limpa para Reduzir o Mau Hálito, Refrescar o Hálito e Melhorar",
+    "price": "7,05",
+    "link": "https://s.shopee.com.br/3B15fqng0N"
+  },
+  {
+    "category": "saude",
+    "img": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-luftswdxqlwg8d@resize_w450_nl.webp",
+    "store": "shopee",
+    "title": "Barra Fixa Flexão Porta Apoio Regulável 64 a 100 Cm",
+    "price": "40,99",
+    "link": "https://s.shopee.com.br/1BG1IWZCjS"
+  },
+  {
+    "category": "cozinha",
+    "img": "https://m.media-amazon.com/images/I/61AjgTFEaRL._AC_SX522_.jpg",
+    "store": "amazon",
+    "title": "Jogo de Panelas Tramontina Turim em Alumínio com Revestimento Interno e Externo em Antiaderente Starflon Max Preto 10 Peças",
+    "price": "339,04",
+    "link": "https://amzn.to/4aVkSUq"
+  },
+  {
+    "category": "cozinha",
+    "img": "https://m.media-amazon.com/images/I/412X8TEdgvL._AC_SX425_.jpg",
+    "store": "amazon",
+    "title": "Colher de Sorvete em Aço Inox com Ejetor – Concha Profissional para Sorvetes, Frutas e Sobremesas, Durável, Anticorrosiva e Fácil de Limpar - Premium",
+    "price": "14,90",
+    "link": "https://amzn.to/3LxJfNn"
+  },
+  {
+    "category": "eletronicos",
+    "img": "https://m.media-amazon.com/images/I/41BPkY-njjL._AC_SX679_.jpg",
+    "store": "amazon",
+    "title": "Lenovo GM2 Pro TWS Gamer Fone De Ouvido Sem Fio Bluetooth 5.3 De Baixa Latência Com Microfone Para Jogos",
+    "price": "94,90",
+    "link": "https://amzn.to/4553BnS"
+  },
+  {
+    "category": "eletronicos",
+    "img": "https://m.media-amazon.com/images/I/419Qj9Ja7VL._AC_SX679_.jpg",
+    "store": "amazon",
+    "title": "Apple Watch Series 11 GPS, Caixa em alumínio rosa‑dourado de 42 mm com Bracelete desportiva rosa leve - M/G",
+    "price": "4.299,00",
+    "link": "https://amzn.to/49PX4jx"
+  },
+  {
+    "category": "eletronicos",
+    "img": "https://http2.mlstatic.com/D_NQ_NP_949046-MLA99507276886_112025-O.webp",
+    "store": "ml",
+    "title": "Smartwatch Xiaomi Redmi Watch 5 Active Tela Lcd 2.00 Preto",
+    "price": "229.90",
+    "link": "https://mercadolivre.com/sec/2VArxsb"
+  },
+  {
+    "category": "eletronicos",
+    "img": "https://down-br.img.susercontent.com/file/br-11134207-7r98o-mce7vd0xui1s03",
+    "store": "shopee",
+    "title": "Xiaomi Smart Band 9 Pro (Preto) com GPS - Global Original Lacrado Relógio Smartwatch tela AMOLED de 1,74 2,5D",
+    "price": "589,00",
+    "link": "https://s.shopee.com.br/806LlscbWv"
+  },
+  {
+    "category": "eletronicos",
+    "img": "https://down-br.img.susercontent.com/file/sg-11134201-7rfho-m3qor8a13vhj99@resize_w450_nl.webp",
+    "store": "shopee",
+    "title": "Projetor 4K HD 150 Polegadas Celular, Tv B0x, Xbox, PS, Pc, Wifi HY300 Pro Magcubic Envio Imediato",
+    "price": "172,78",
+    "link": "https://s.shopee.com.br/30hfpNeGkC"
+  },
+  {
+    "category": "eletronicos",
+    "img": "https://http2.mlstatic.com/D_Q_NP_869312-MLA99991319179_112025-B.webp",
+    "store": "ml",
+    "title": "Power Bank 20000mah Carregador Portátil Carga Rápida 22.5w Turbo Usb-c (tipo C) Compatível Com iPhone 13 14 15 16 Samsung Motorola Xiaomi Compacto Para Viagem E Uso Diário Branco Casenn",
+    "price": "96,02",
+    "link": "https://mercadolivre.com/sec/2MtDsyJ"
   }
 ]
