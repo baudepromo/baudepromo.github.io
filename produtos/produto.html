@@ -172,6 +172,40 @@
     background: white;
 }
 
+/* Coração de Favoritos */
+.wishlist-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+.heart-btn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: 0.3s;
+}
+
+.heart-btn.active {
+    background: #ff4747;
+    color: white;
+    border-color: #ff4747;
+}
+
+.heart-btn:hover {
+    transform: scale(1.1);
+}
+
         @media (max-width: 768px) {
             .detail-card { grid-template-columns: 1fr; }
             .img-side { height: 250px; }
@@ -200,25 +234,25 @@ async function loadProductDetails() {
     }
 
     try {
-        // Busca o JSON
         const response = await fetch('products.json');
-        if (!response.ok) throw new Error("Erro ao carregar banco de dados");
-        
         let products = await response.json();
-        
-        // Garante que o ID seja comparado como string
         const product = products.find(p => p.id.toString() === productId.toString());
 
         if (!product) {
-            contentArea.innerHTML = `<div class="info-side" style="grid-column: span 2; text-align: center;"><h2>Produto não encontrado :(</h2></div>`;
+            contentArea.innerHTML = `<div class="info-side" style="grid-column: span 2; text-align: center;"><h2>Produto não encontrado</h2></div>`;
             return;
         }
 
-        // Renderiza o conteúdo
         contentArea.innerHTML = `
-            <button class="share-btn" onclick="shareProduct('${product.title.replace(/'/g, "\\'")}', '${product.store}')" title="Compartilhar">
+            <button class="share-btn" onclick="shareLink('${product.title}', '${window.location.href}')" title="Compartilhar">
                 <i class="fa-solid fa-share-nodes"></i>
             </button>
+
+            <div class="wishlist-container">
+                <button id="heart-${product.id}" class="heart-btn" onclick="toggleWishlist('${product.id}')">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+            </div>
 
             <div class="img-side">
                 <img src="${product.img}" alt="${product.title}">
@@ -230,9 +264,8 @@ async function loadProductDetails() {
                 <div class="price-tag">R$ ${product.price}</div>
 
                 <div class="features">
-                    <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
-                    <p>✅ Compra 100% segura pela ${product.store}.</p>
-                    <p>📦 Frete e prazos calculados na loja.</p>
+                    <p>🔥 <strong>Oferta verificada hoje.</strong></p>
+                    <p>✅ Link oficial da ${product.store}.</p>
                 </div>
 
                 <a href="${product.link}" target="_blank" class="cta-button">
@@ -240,68 +273,118 @@ async function loadProductDetails() {
                 </a>
             </div>
         `;
+
+        // Verifica se o usuário já tem esse item nos favoritos ao carregar
+        checkIfFavorite(product.id);
+
     } catch (error) {
-        console.error("Erro detalhado:", error);
-        contentArea.innerHTML = `<div class="info-side" style="grid-column: span 2; text-align: center;"><h2>Erro ao carregar o produto. Verifique sua conexão.</h2></div>`;
+        console.error("Erro:", error);
     }
 }
+
+// Função de Compartilhamento Corrigida
+window.shareLink = async (title, url) => {
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: title,
+                text: `Olha esse achadinho: ${title}`,
+                url: url
+            });
+        } catch (err) {
+            console.log("Compartilhamento cancelado");
+        }
+    } else {
+        // Fallback: Copiar link
+        navigator.clipboard.writeText(url);
+        alert("Link copiado para a área de transferência!");
+    }
+};
+
+loadProductDetails();
 
 // Chame a função após definir tudo
 loadProductDetails();
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-    authDomain: "baudepromocao-oficial.firebaseapp.com",
-    projectId: "baudepromocao-oficial",
-    storageBucket: "baudepromocao-oficial.firebasestorage.app",
-    messagingSenderId: "743146859125",
-    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-  let userLogado = null;
+    let currentUser = null;
 
-  onAuthStateChanged(auth, (user) => {
-    userLogado = user;
-    // Se o usuário estiver logado, podemos verificar se este produto já é favorito
-  });
+    onAuthStateChanged(auth, (user) => {
+        currentUser = user;
+        const params = new URLSearchParams(window.location.search);
+        const pid = params.get('id');
+        if (user && pid) checkIfFavorite(pid);
+    });
 
-  // Torna a função acessível ao clique do botão
-  window.toggleWishlist = async (productId) => {
-    if (!userLogado) {
-      alert("Faça login para salvar favoritos!");
-      return;
-    }
-
-    const userRef = doc(db, "wishlists", userLogado.uid);
-    const btn = document.querySelector(`[data-id="${productId}"]`);
-
-    try {
-      const docSnap = await getDoc(userRef);
-      if (btn.classList.contains('active')) {
-        await updateDoc(userRef, { items: arrayRemove(productId) });
-        btn.classList.remove('active');
-      } else {
-        if (!docSnap.exists()) {
-          await setDoc(userRef, { items: [productId] });
-        } else {
-          await updateDoc(userRef, { items: arrayUnion(productId) });
+    // Verificar se é favorito
+    window.checkIfFavorite = async (productId) => {
+        if (!currentUser) return;
+        const userRef = doc(db, "wishlists", currentUser.uid);
+        const docSnap = await getDoc(userRef);
+        
+        if (docSnap.exists() && docSnap.data().items.includes(productId)) {
+            document.getElementById(`heart-${productId}`)?.classList.add('active');
         }
-        btn.classList.add('active');
-      }
-    } catch (e) {
-      console.error("Erro:", e);
-    }
-  };
+    };
+
+    // Alternar Favorito e Registrar E-mail
+    window.toggleWishlist = async (productId) => {
+        if (!currentUser) {
+            alert("Acesse sua conta para favoritar e receber alertas de promoção!");
+            return;
+        }
+
+        const userRef = doc(db, "wishlists", currentUser.uid);
+        const heartBtn = document.getElementById(`heart-${productId}`);
+        const isAdding = !heartBtn.classList.contains('active');
+
+        try {
+            const docSnap = await getDoc(userRef);
+            
+            if (isAdding) {
+                if (!docSnap.exists()) {
+                    // Aqui salvamos o e-mail do usuário pela primeira vez para sua lista de tráfego
+                    await setDoc(userRef, { 
+                        email: currentUser.email, 
+                        uid: currentUser.uid,
+                        items: [productId],
+                        updatedAt: new Date()
+                    });
+                } else {
+                    await updateDoc(userRef, { 
+                        items: arrayUnion(productId),
+                        updatedAt: new Date()
+                    });
+                }
+                heartBtn.classList.add('active');
+            } else {
+                await updateDoc(userRef, { 
+                    items: arrayRemove(productId) 
+                });
+                heartBtn.classList.remove('active');
+            }
+        } catch (e) {
+            console.error("Erro ao salvar:", e);
+        }
+    };
 </script>
 
 </body>
