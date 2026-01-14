@@ -295,6 +295,51 @@
         }
         header h1 { font-size: 2.2rem; }
     }
+
+    /* Estilo do Modal de Login */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 3000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .auth-form {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 400px;
+      border: 1px solid var(--accent);
+    }
+    .auth-form input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #1a2a30;
+      color: white;
+    }
+    .auth-form h3 { margin-bottom: 20px; text-align: center; }
+    .auth-toggle {
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 15px;
+      cursor: pointer;
+      color: var(--accent);
+    }
+    .divider {
+      margin: 20px 0;
+      text-align: center;
+      border-bottom: 1px solid #444;
+      line-height: 0.1em;
+    }
+    .divider span { background: var(--card); padding: 0 10px; color: #777; }
+
   </style>
 </head>
 
@@ -302,7 +347,7 @@
 
 <header>
   <div class="user-auth-area">
-    <button id="loginBtn" class="btn-login" onclick="signInWithGoogle()">Entrar com Google</button>
+    <button id="loginBtn" class="btn-login" onclick="openAuthModal()">Entrar</button>
     <div id="userInfo" class="user-info">
       <img id="userPhoto" src="" alt="User">
       <span id="userName"></span>
@@ -312,6 +357,28 @@
   <h1>Baú de Promoções</h1>
   <p>Achadinhos e Produtos que valem a pena</p>
 </header>
+
+<div id="authModal" class="auth-modal">
+  <div class="auth-form">
+    <span onclick="closeAuthModal()" style="float:right; cursor:pointer;">×</span>
+    <h3 id="authTitle">Fazer Login</h3>
+    
+    <input type="email" id="authEmail" placeholder="Seu e-mail">
+    <input type="password" id="authPassword" placeholder="Sua senha">
+    
+    <button class="btn" style="width:100%" id="mainAuthBtn" onclick="handleEmailAuth()">Entrar</button>
+    
+    <div class="divider"><span>ou</span></div>
+    
+    <button class="btn-login" style="width:100%; margin-bottom:10px;" onclick="signInWithGoogle()">
+      Entrar com Google
+    </button>
+    
+    <p class="auth-toggle" id="authToggle" onclick="toggleAuthMode()">
+      Não tem conta? Cadastre-se agora.
+    </p>
+  </div>
+</div>
 
 <main>
   <article>
@@ -379,16 +446,25 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    onAuthStateChanged, 
+    signOut,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-  authDomain: "baudepromocao-oficial.firebaseapp.com",
-  projectId: "baudepromocao-oficial",
-  storageBucket: "baudepromocao-oficial.firebasestorage.app",
-  messagingSenderId: "743146859125",
-  appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    // ... suas configurações atuais ...
+    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+    authDomain: "baudepromocao-oficial.firebaseapp.com",
+    projectId: "baudepromocao-oficial",
+    storageBucket: "baudepromocao-oficial.firebasestorage.app",
+    messagingSenderId: "743146859125",
+    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -396,24 +472,49 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-// --- FUNÇÃO DE LOGIN ---
-window.signInWithGoogle = async () => {
+let isSignUpMode = false;
+
+// Controle do Modal
+window.openAuthModal = () => document.getElementById('authModal').style.display = 'flex';
+window.closeAuthModal = () => document.getElementById('authModal').style.display = 'none';
+
+window.toggleAuthMode = () => {
+    isSignUpMode = !isSignUpMode;
+    document.getElementById('authTitle').innerText = isSignUpMode ? 'Criar Conta' : 'Fazer Login';
+    document.getElementById('mainAuthBtn').innerText = isSignUpMode ? 'Cadastrar' : 'Entrar';
+    document.getElementById('authToggle').innerText = isSignUpMode ? 'Já tem conta? Faça login.' : 'Não tem conta? Cadastre-se agora.';
+};
+
+// Login com E-mail
+window.handleEmailAuth = async () => {
+    const email = document.getElementById('authEmail').value;
+    const password = document.getElementById('authPassword').value;
+
     try {
-        await signInWithPopup(auth, provider);
+        if (isSignUpMode) {
+            await createUserWithEmailAndPassword(auth, email, password);
+            alert("Conta criada com sucesso!");
+        } else {
+            await signInWithEmailAndPassword(auth, email, password);
+        }
+        closeAuthModal();
     } catch (error) {
-        console.error("Erro ao logar:", error);
-        alert("Erro ao entrar com Google: " + error.message);
+        alert("Erro: " + error.message);
     }
 };
 
-// --- FUNÇÃO DE LOGOUT ---
-window.logout = () => {
-    signOut(auth).then(() => {
-        location.reload(); // Recarrega para limpar os dados da tela
-    });
+// Google Login
+window.signInWithGoogle = async () => {
+    try {
+        await signInWithPopup(auth, provider);
+        closeAuthModal();
+    } catch (error) {
+        console.error(error);
+    }
 };
 
-// --- MONITOR DE USUÁRIO (O coração do sistema) ---
+window.logout = () => signOut(auth).then(() => location.reload());
+
 onAuthStateChanged(auth, async (user) => {
     const loginBtn = document.getElementById('loginBtn');
     const userInfo = document.getElementById('userInfo');
@@ -421,24 +522,11 @@ onAuthStateChanged(auth, async (user) => {
     const userPhoto = document.getElementById('userPhoto');
 
     if (user) {
-        // Usuário logado
         loginBtn.style.display = 'none';
         userInfo.style.display = 'flex';
-        userName.innerText = user.displayName.split(' ')[0]; // Pega só o primeiro nome
-        userPhoto.src = user.photoURL;
-
-        // Pintar favoritos se existirem
-        const userRef = doc(db, "wishlists", user.uid);
-        const docSnap = await getDoc(userRef);
-        if (docSnap.exists()) {
-            const favs = docSnap.data().items;
-            favs.forEach(id => {
-                const heart = document.querySelector(`[data-id="${id}"]`);
-                if (heart) heart.classList.add('active');
-            });
-        }
+        userName.innerText = user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0];
+        userPhoto.src = user.photoURL || 'https://ui-avatars.com/api/?name=' + user.email;
     } else {
-        // Usuário deslogado
         loginBtn.style.display = 'block';
         userInfo.style.display = 'none';
     }
