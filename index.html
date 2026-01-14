@@ -186,7 +186,7 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       z-index: 1000;
     }
-    
+
     .modal-overlay {
       display: none;
       position: fixed;
@@ -233,6 +233,39 @@
       font-size: 0.75rem;
       color: #00ff00;
       display: none;
+
+      /* Estilo para o botão de Login e Perfil */
+.user-auth-area {
+    position: absolute;
+    top: 20px;
+    right: 100px; /* ao lado do café */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-login {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.user-info {
+    display: none; /* aparece só após login */
+    align-items: center;
+    gap: 10px;
+}
+
+.user-info img {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+}
     }
   </style>
 </head>
@@ -240,8 +273,16 @@
 <body itemscope itemtype="https://schema.org/WebSite">
 
 <header>
+  <div class="user-auth-area">
+    <button id="loginBtn" class="btn-login" onclick="signInWithGoogle()">Entrar com Google</button>
+    <div id="userInfo" class="user-info">
+      <img id="userPhoto" src="" alt="User">
+      <span id="userName"></span>
+      <button class="btn-login" style="border-color: #ff4747; color: #ff4747;" onclick="logout()">Sair</button>
+    </div>
+  </div>
   <h1>Baú de Promoções</h1>
-  <p>Achadinhos e ofertas que realmente valem a pena</p>
+  <p>Achadinhos e Produtos que velem a pena</p>
 </header>
 
 <main>
@@ -312,6 +353,64 @@
       setTimeout(() => msg.style.display = 'none', 2000);
     });
   }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+  // Sua configuração que você enviou
+  const firebaseConfig = {
+    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+    authDomain: "baudepromocao-oficial.firebaseapp.com",
+    projectId: "baudepromocao-oficial",
+    storageBucket: "baudepromocao-oficial.firebasestorage.app",
+    messagingSenderId: "743146859125",
+    appId: "1:743146859125:web:6d1f5331e22b8ce981263c",
+    measurementId: "G-4VNJR25033"
+  };
+
+  // Inicializa o Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const analytics = getAnalytics(app);
+  const provider = new GoogleAuthProvider();
+
+  // Função para Login (Chame esta função no clique do seu botão)
+  window.signInWithGoogle = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log("Logado como:", result.user.displayName);
+      }).catch((error) => {
+        console.error("Erro ao entrar:", error.message);
+      });
+  };
+
+  // Função para Sair
+  window.logout = () => {
+    signOut(auth);
+  };
+
+  // Observador: Detecta se o usuário está logado ou não
+  onAuthStateChanged(auth, (user) => {
+    const loginBtn = document.getElementById('loginBtn'); // Seu botão de login
+    const userArea = document.getElementById('userInfo'); // Área que mostra nome/foto
+    
+    if (user) {
+      // Usuário logado
+      if(loginBtn) loginBtn.style.display = 'none';
+      if(userArea) {
+          userArea.style.display = 'flex';
+          document.getElementById('userName').innerText = user.displayName;
+          document.getElementById('userPhoto').src = user.photoURL;
+      }
+    } else {
+      // Usuário deslogado
+      if(loginBtn) loginBtn.style.display = 'block';
+      if(userArea) userArea.style.display = 'none';
+    }
+  });
 </script>
 
 </body>
