@@ -378,10 +378,8 @@
 </script>
 
 <script type="module">
-// --- COLOQUE ISSO NO FINAL DO INDEX.HTML (DENTRO DO SCRIPT MODULE) ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-// Adicionamos as funções do Firestore aqui:
 import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -395,56 +393,55 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); // Inicializa o banco de dados
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-let currentUser = null;
-
-// FUNÇÃO PARA SALVAR/REMOVER FAVORITOS (Global para usar nas outras páginas)
-window.toggleWishlist = async (productId) => {
-  if (!currentUser) {
-    alert("Faz login para salvar nos teus favoritos! 😊");
-    return;
-  }
-
-  const userRef = doc(db, "wishlists", currentUser.uid);
-  const btn = document.querySelector(`[data-id="${productId}"]`);
-
-  try {
-    const docSnap = await getDoc(userRef);
-    if (btn.classList.contains('active')) {
-      await updateDoc(userRef, { items: arrayRemove(productId) });
-      btn.classList.remove('active');
-    } else {
-      if (!docSnap.exists()) {
-        await setDoc(userRef, { items: [productId] });
-      } else {
-        await updateDoc(userRef, { items: arrayUnion(productId) });
-      }
-      btn.classList.add('active');
+// --- FUNÇÃO DE LOGIN ---
+window.signInWithGoogle = async () => {
+    try {
+        await signInWithPopup(auth, provider);
+    } catch (error) {
+        console.error("Erro ao logar:", error);
+        alert("Erro ao entrar com Google: " + error.message);
     }
-  } catch (e) {
-    console.error("Erro ao salvar:", e);
-  }
 };
 
-// Observador de Login
+// --- FUNÇÃO DE LOGOUT ---
+window.logout = () => {
+    signOut(auth).then(() => {
+        location.reload(); // Recarrega para limpar os dados da tela
+    });
+};
+
+// --- MONITOR DE USUÁRIO (O coração do sistema) ---
 onAuthStateChanged(auth, async (user) => {
-  currentUser = user;
-  // ... (mantenha a lógica de mostrar foto/nome que já fizemos)
-  
-  if (user) {
-    // Se logou, vamos pintar os corações dos produtos que já são favoritos
-    const userRef = doc(db, "wishlists", user.uid);
-    const docSnap = await getDoc(userRef);
-    if (docSnap.exists()) {
-      const favs = docSnap.data().items;
-      favs.forEach(id => {
-        const heart = document.querySelector(`[data-id="${id}"]`);
-        if (heart) heart.classList.add('active');
-      });
+    const loginBtn = document.getElementById('loginBtn');
+    const userInfo = document.getElementById('userInfo');
+    const userName = document.getElementById('userName');
+    const userPhoto = document.getElementById('userPhoto');
+
+    if (user) {
+        // Usuário logado
+        loginBtn.style.display = 'none';
+        userInfo.style.display = 'flex';
+        userName.innerText = user.displayName.split(' ')[0]; // Pega só o primeiro nome
+        userPhoto.src = user.photoURL;
+
+        // Pintar favoritos se existirem
+        const userRef = doc(db, "wishlists", user.uid);
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+            const favs = docSnap.data().items;
+            favs.forEach(id => {
+                const heart = document.querySelector(`[data-id="${id}"]`);
+                if (heart) heart.classList.add('active');
+            });
+        }
+    } else {
+        // Usuário deslogado
+        loginBtn.style.display = 'block';
+        userInfo.style.display = 'none';
     }
-  }
 });
 </script>
 
