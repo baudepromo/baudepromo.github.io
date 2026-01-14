@@ -206,6 +206,42 @@
     transform: scale(1.1);
 }
 
+/* Container do coração para ficar posicionado corretamente */
+.wishlist-wrapper {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 20;
+}
+
+.heart-btn {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.heart-btn.active {
+    background: #ffffff;
+    color: #ff4747;
+    border-color: #ff4747;
+    transform: scale(1.1);
+}
+
+.heart-btn:hover {
+    transform: scale(1.2);
+    background: rgba(0, 0, 0, 0.7);
+}
+
         @media (max-width: 768px) {
             .detail-card { grid-template-columns: 1fr; }
             .img-side { height: 250px; }
@@ -244,11 +280,11 @@ async function loadProductDetails() {
         }
 
         contentArea.innerHTML = `
-            <button class="share-btn" onclick="shareLink('${product.title}', '${window.location.href}')" title="Compartilhar">
+            <button class="share-btn" onclick="shareLink('${product.title}', '${window.location.href}')">
                 <i class="fa-solid fa-share-nodes"></i>
             </button>
 
-            <div class="wishlist-container">
+            <div class="wishlist-wrapper">
                 <button id="heart-${product.id}" class="heart-btn" onclick="toggleWishlist('${product.id}')">
                     <i class="fa-solid fa-heart"></i>
                 </button>
@@ -264,8 +300,8 @@ async function loadProductDetails() {
                 <div class="price-tag">R$ ${product.price}</div>
 
                 <div class="features">
-                    <p>🔥 <strong>Oferta verificada hoje.</strong></p>
-                    <p>✅ Link oficial da ${product.store}.</p>
+                    <p>🔥 <strong>Promoção detectada!</strong></p>
+                    <p>✅ Verificado por Baú de Promoções.</p>
                 </div>
 
                 <a href="${product.link}" target="_blank" class="cta-button">
@@ -274,11 +310,11 @@ async function loadProductDetails() {
             </div>
         `;
 
-        // Verifica se o usuário já tem esse item nos favoritos ao carregar
-        checkIfFavorite(product.id);
+        // Verifica se o usuário já favoritou esse item antes
+        if (window.checkIfFavorite) window.checkIfFavorite(product.id);
 
     } catch (error) {
-        console.error("Erro:", error);
+        console.error("Erro ao carregar:", error);
     }
 }
 
@@ -347,44 +383,51 @@ loadProductDetails();
 
     // Alternar Favorito e Registrar E-mail
     window.toggleWishlist = async (productId) => {
-        if (!currentUser) {
-            alert("Acesse sua conta para favoritar e receber alertas de promoção!");
-            return;
-        }
+    if (!auth.currentUser) {
+        alert("Ops! Faça login para salvar seus favoritos e receber ofertas por e-mail.");
+        return;
+    }
 
-        const userRef = doc(db, "wishlists", currentUser.uid);
-        const heartBtn = document.getElementById(`heart-${productId}`);
-        const isAdding = !heartBtn.classList.contains('active');
+    const userRef = doc(db, "wishlists", auth.currentUser.uid);
+    const heartBtn = document.getElementById(`heart-${productId}`);
+    
+    try {
+        const docSnap = await getDoc(userRef);
+        const isFav = heartBtn.classList.contains('active');
 
-        try {
-            const docSnap = await getDoc(userRef);
-            
-            if (isAdding) {
-                if (!docSnap.exists()) {
-                    // Aqui salvamos o e-mail do usuário pela primeira vez para sua lista de tráfego
-                    await setDoc(userRef, { 
-                        email: currentUser.email, 
-                        uid: currentUser.uid,
-                        items: [productId],
-                        updatedAt: new Date()
-                    });
-                } else {
-                    await updateDoc(userRef, { 
-                        items: arrayUnion(productId),
-                        updatedAt: new Date()
-                    });
-                }
-                heartBtn.classList.add('active');
-            } else {
-                await updateDoc(userRef, { 
-                    items: arrayRemove(productId) 
+        if (!isFav) {
+            // ADICIONANDO AOS FAVORITOS + CAPTURA DE EMAIL
+            if (!docSnap.exists()) {
+                await setDoc(userRef, { 
+                    email: auth.currentUser.email, // Captura o email para seu tráfego
+                    items: [productId] 
                 });
-                heartBtn.classList.remove('active');
+            } else {
+                await updateDoc(userRef, { items: arrayUnion(productId) });
             }
-        } catch (e) {
-            console.error("Erro ao salvar:", e);
+            heartBtn.classList.add('active');
+        } else {
+            // REMOVENDO
+            await updateDoc(userRef, { items: arrayRemove(productId) });
+            heartBtn.classList.remove('active');
         }
-    };
+    } catch (e) {
+        console.error("Erro no Firebase:", e);
+    }
+};
+
+// Função para checar o estado inicial ao carregar a página
+window.checkIfFavorite = async (productId) => {
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const userRef = doc(db, "wishlists", user.uid);
+            const docSnap = await getDoc(userRef);
+            if (docSnap.exists() && docSnap.data().items.includes(productId)) {
+                document.getElementById(`heart-${productId}`)?.classList.add('active');
+            }
+        }
+    });
+};
 </script>
 
 </body>
