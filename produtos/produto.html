@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* REUTILIZANDO O TEMA ESCURO */
+        :root {
+            --bg-body: #0a0f18;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --primary-accent: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            background-image: radial-gradient(at 50% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+        .back-btn:hover { color: white; }
+
+        .detail-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            max-width: 900px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .img-side {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .img-side img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .info-side {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .category-tag {
+            color: var(--primary-accent);
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .price-tag {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #4ade80;
+            margin-bottom: 30px;
+        }
+
+        .features {
+            margin-bottom: 40px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            background: var(--primary-accent);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 18px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .loading { text-align: center; font-size: 1.2rem; }
+
+        @media (max-width: 768px) {
+            .detail-card { grid-template-columns: 1fr; }
+            .img-side { padding: 30px; height: 300px; }
+            .info-side { padding: 30px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+
+    <div id="content-area" class="detail-card">
+        <div class="info-side loading">
+            <p>Carregando oferta...</p>
+        </div>
+    </div>
+
+<script>
+    async function loadProductDetails() {
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('id');
+        const contentArea = document.getElementById("content-area");
+
+        if (!productId) {
+            window.location.href = "index.html";
+            return;
+        }
+
+        try {
+            const response = await fetch('products.json');
+            let products = await response.json();
+            
+            // Tratamento de ID (caso o JSON não tenha, usamos index como no index.html)
+            products = products.map((p, index) => ({ ...p, id: p.id || index.toString() }));
+            
+            const product = products.find(p => p.id == productId);
+
+            if (!product) {
+                contentArea.innerHTML = `<div class="info-side"><h2 style="text-align:center">Produto não encontrado :(</h2></div>`;
+                return;
+            }
+
+            // Renderiza o conteúdo
+            contentArea.innerHTML = `
+                <div class="img-side">
+                    <img src="${product.img}" alt="${product.title}">
+                </div>
+                <div class="info-side">
+                    <span class="category-tag">${product.store} • ${product.category}</span>
+                    <h1>${product.title}</h1>
+                    <div class="price-tag">R$ ${product.price}</div>
+                    
+                    <div class="features">
+                        <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
+                        <p>✅ Compra 100% segura pela ${product.store}.</p>
+                        <p>📦 Frete e prazos calculados na loja.</p>
+                    </div>
+
+                    <a href="${product.link}" target="_blank" class="cta-button" onclick="trackClick('${product.id}')">
+                        Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            `;
+
+        } catch (error) {
+            console.error(error);
+            contentArea.innerHTML = `<div class="info-side">Erro ao carregar o produto.</div>`;
+        }
+    }
+
+    // Função pronta para uso futuro (analytics)
+    function trackClick(id) {
+        console.log("Clique de afiliado no produto:", id);
+        // Aqui você pode adicionar Facebook Pixel ou Google Analytics no futuro
+    }
+
+    loadProductDetails();
+</script>
+
+</body>
+</html>
