@@ -128,6 +128,65 @@
         
         .loading { text-align: center; font-size: 1.2rem; }
 
+        /* --- ADICIONE ISTO AO CSS DO produto.html --- */
+
+/* O Container do card precisa ser relativo para o botão ficar dentro dele */
+.detail-card {
+    position: relative; /* Importante! */
+}
+
+/* Estilo do Botão de Compartilhar */
+.share-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.1); /* Fundo sutil */
+    color: var(--text-main);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+.share-btn:hover {
+    background: var(--primary-accent);
+    transform: rotate(15deg) scale(1.1);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+}
+
+/* Feedback visual "Link Copiado" */
+.toast-msg {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px); /* Começa escondido */
+    background: #10b981; /* Verde sucesso */
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.toast-msg.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
         @media (max-width: 768px) {
             .detail-card { grid-template-columns: 1fr; }
             .img-side { padding: 30px; height: 300px; }
@@ -145,6 +204,32 @@
             <p>Carregando oferta...</p>
         </div>
     </div>
+
+    // Renderiza o conteúdo (COM O BOTÃO DE SHARE NOVO)
+            contentArea.innerHTML = `
+                <button class="share-btn" onclick="shareProduct('${product.title}', '${product.store}')" title="Compartilhar Oferta">
+                    <i class="fa-solid fa-share-nodes"></i>
+                </button>
+
+                <div class="img-side">
+                    <img src="${product.img}" alt="${product.title}">
+                </div>
+                <div class="info-side">
+                    <span class="category-tag">${product.store} • ${product.category}</span>
+                    <h1>${product.title}</h1>
+                    <div class="price-tag">R$ ${product.price}</div>
+                    
+                    <div class="features">
+                        <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
+                        <p>✅ Compra 100% segura pela ${product.store}.</p>
+                        <p>📦 Frete e prazos calculados na loja.</p>
+                    </div>
+
+                    <a href="${product.link}" target="_blank" class="cta-button" onclick="trackClick('${product.id}')">
+                        Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
+            `;
 
 <script>
     async function loadProductDetails() {
@@ -203,6 +288,59 @@
     function trackClick(id) {
         console.log("Clique de afiliado no produto:", id);
         // Aqui você pode adicionar Facebook Pixel ou Google Analytics no futuro
+    }
+
+    // Função Inteligente de Compartilhar
+    async function shareProduct(title, store) {
+        const url = window.location.href; // Pega o link da página atual com o ID
+        const shareData = {
+            title: `Oferta: ${title}`,
+            text: `Olha essa oferta incrível que eu achei no Baú (${store}): ${title}`,
+            url: url
+        };
+
+        // Tenta usar o compartilhamento nativo do celular (Android/iOS)
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+                console.log('Compartilhado com sucesso');
+            } catch (err) {
+                console.log('Usuário fechou o compartilhamento', err);
+            }
+        } else {
+            // Se estiver no PC e não suportar, copia o link
+            copyToClipboard(url);
+        }
+    }
+
+    // Função de Copiar Link (Fallback)
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast();
+        }).catch(err => {
+            console.error('Erro ao copiar', err);
+        });
+    }
+
+    // Mostra a notificação "Link Copiado!"
+    function showToast() {
+        // Cria o elemento se não existir
+        let toast = document.getElementById("toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "toast";
+            toast.className = "toast-msg";
+            toast.innerHTML = `<i class="fa-solid fa-check-circle"></i> Link copiado!`;
+            document.body.appendChild(toast);
+        }
+
+        // Animação
+        setTimeout(() => toast.classList.add("show"), 100);
+        
+        // Remove depois de 3 segundos
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
     }
 
     loadProductDetails();
