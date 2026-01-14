@@ -258,25 +258,44 @@
 
             // Renderiza o conteúdo
             contentArea.innerHTML = `
-                <div class="img-side">
-                    <img src="${product.img}" alt="${product.title}">
-                </div>
-                <div class="info-side">
-                    <span class="category-tag">${product.store} • ${product.category}</span>
-                    <h1>${product.title}</h1>
-                    <div class="price-tag">R$ ${product.price}</div>
-                    
-                    <div class="features">
-                        <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
-                        <p>✅ Compra 100% segura pela ${product.store}.</p>
-                        <p>📦 Frete e prazos calculados na loja.</p>
-                    </div>
+    <div class="img-side">
+        <img src="${product.img}" alt="${product.title}">
+    </div>
+    <div class="info-side">
+        ...
+    </div>
+`;
 
-                    <a href="${product.link}" target="_blank" class="cta-button" onclick="trackClick('${product.id}')">
-                        Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                </div>
-            `;
+contentArea.innerHTML = `
+    <button class="share-btn"
+        onclick="shareProduct('${product.title}', '${product.store}')"
+        title="Compartilhar Oferta">
+        <i class="fa-solid fa-share-nodes"></i>
+    </button>
+
+    <div class="img-side">
+        <img src="${product.img}" alt="${product.title}">
+    </div>
+
+    <div class="info-side">
+        <span class="category-tag">${product.store} • ${product.category}</span>
+        <h1>${product.title}</h1>
+        <div class="price-tag">R$ ${product.price}</div>
+
+        <div class="features">
+            <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
+            <p>✅ Compra 100% segura pela ${product.store}.</p>
+            <p>📦 Frete e prazos calculados na loja.</p>
+        </div>
+
+        <a href="${product.link}" target="_blank"
+           class="cta-button"
+           onclick="trackClick('${product.id}')">
+            Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+    </div>
+`;
+
 
         } catch (error) {
             console.error(error);
