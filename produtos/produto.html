@@ -224,130 +224,190 @@
     </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+    getAuth,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    arrayUnion,
+    arrayRemove
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-        authDomain: "baudepromocao-oficial.firebaseapp.com",
-        projectId: "baudepromocao-oficial",
-        storageBucket: "baudepromocao-oficial.firebasestorage.app",
-        messagingSenderId: "743146859125",
-        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-    };
+/* 🔥 FIREBASE CONFIG */
+const firebaseConfig = {
+    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+    authDomain: "baudepromocao-oficial.firebaseapp.com",
+    projectId: "baudepromocao-oficial",
+    storageBucket: "baudepromocao-oficial.firebasestorage.app",
+    messagingSenderId: "743146859125",
+    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
 
-    let currentUser = null;
+let currentUser = null;
 
-    // --- LOGIN COM GOOGLE ---
-    document.getElementById('btn-google-login').onclick = async () => {
-        try {
-            await signInWithPopup(auth, provider);
-            document.getElementById('login-modal').style.display = 'none';
-        } catch (e) { console.error("Erro no login:", e); }
-    };
+/* 🔐 LOGIN GOOGLE */
+async function loginWithGoogle() {
+    try {
+        await signInWithPopup(auth, provider);
+        document.getElementById('login-modal').style.display = 'none';
+    } catch (err) {
+        console.error("Erro no login:", err);
+    }
+}
 
-    // --- CARREGAR PRODUTO ---
-    async function loadProductDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const productId = params.get('id');
-        const contentArea = document.getElementById("content-area");
-
-        try {
-            const response = await fetch('products.json');
-            const products = await response.json();
-            const product = products.find(p => p.id.toString() === productId);
-
-            if (!product) return;
-
-            contentArea.innerHTML = `
-                <button class="share-btn" onclick="window.shareLink('${product.title}', window.location.href)">
-                    <i class="fa-solid fa-share-nodes"></i>
-                </button>
-                <div class="img-side">
-                    <div class="wishlist-wrapper">
-                        <button id="heart-${product.id}" class="heart-btn" onclick="window.toggleWishlist('${product.id}')">
-                            <i class="fa-solid fa-heart"></i>
-                        </button>
-                    </div>
-                    <img src="${product.img}" alt="${product.title}">
-                </div>
-                <div class="info-side">
-                    <span style="color:var(--primary-accent); font-weight:700;">${product.store}</span>
-                    <h1>${product.title}</h1>
-                    <div class="price-tag">R$ ${product.price}</div>
-                    <a href="${product.link}" target="_blank" class="cta-button">Ir para a Loja</a>
-                </div>
-            `;
-            if (currentUser) checkIfFavorite(product.id);
-        } catch (e) { console.error(e); }
+/* ❤️ FAVORITOS */
+window.toggleWishlist = async (productId) => {
+    if (!auth.currentUser) {
+        document.getElementById('login-modal').style.display = 'flex';
+        return;
     }
 
-    // --- LÓGICA DO LIKE + CAPTURA DE EMAIL ---
-    window.toggleWishlist = async (productId) => {
-        if (!auth.currentUser) {
-            document.getElementById('login-modal').style.display = 'flex';
-            return;
-        }
+    const userRef = doc(db, "wishlists", auth.currentUser.uid);
+    const heartBtn = document.getElementById(`heart-${productId}`);
+    const isAdding = !heartBtn.classList.contains('active');
 
-        const userRef = doc(db, "wishlists", auth.currentUser.uid);
-        const heartBtn = document.getElementById(`heart-${productId}`);
-        const isAdding = !heartBtn.classList.contains('active');
+    try {
+        const snap = await getDoc(userRef);
 
-        try {
-            const docSnap = await getDoc(userRef);
-            if (isAdding) {
-                // Aqui você captura o e-mail para seu tráfego!
-                if (!docSnap.exists()) {
-                    await setDoc(userRef, { 
-                        email: auth.currentUser.email, 
-                        nome: auth.currentUser.displayName,
-                        items: [productId],
-                        data: new Date()
-                    });
-                } else {
-                    await updateDoc(userRef, { items: arrayUnion(productId) });
-                }
-                heartBtn.classList.add('active');
-                showToast("Salvo nos favoritos! ❤️");
+        if (isAdding) {
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    email: auth.currentUser.email,
+                    nome: auth.currentUser.displayName,
+                    items: [productId],
+                    criadoEm: new Date()
+                });
             } else {
-                await updateDoc(userRef, { items: arrayRemove(productId) });
-                heartBtn.classList.remove('active');
+                await updateDoc(userRef, {
+                    items: arrayUnion(productId)
+                });
             }
-        } catch (e) { console.error(e); }
-    };
+            heartBtn.classList.add('active');
+            showToast("Salvo nos favoritos ❤️");
+        } else {
+            await updateDoc(userRef, {
+                items: arrayRemove(productId)
+            });
+            heartBtn.classList.remove('active');
+        }
+    } catch (e) {
+        console.error(e);
+    }
+};
 
-    // Auxiliares
-    async function checkIfFavorite(productId) {
-        const docSnap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
-        if (docSnap.exists() && docSnap.data().items.includes(productId)) {
+/* 🔍 CHECA FAVORITO */
+async function checkIfFavorite(productId) {
+    if (!auth.currentUser) return;
+
+    const snap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
+    if (snap.exists()) {
+        const items = snap.data().items || [];
+        if (items.includes(productId)) {
             document.getElementById(`heart-${productId}`)?.classList.add('active');
         }
     }
+}
 
-    function showToast(msg) {
-        const t = document.createElement("div");
-        t.innerText = msg;
-        t.style = "position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:#4ade80; color:#000; padding:10px 20px; border-radius:50px; font-weight:bold; z-index:1000;";
-        document.body.appendChild(t);
-        setTimeout(() => t.remove(), 2000);
+/* 📦 CARREGAR PRODUTO */
+async function loadProductDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+    const contentArea = document.getElementById("content-area");
+
+    try {
+        const res = await fetch('products.json');
+        const products = await res.json();
+        const product = products.find(p => String(p.id) === productId);
+
+        if (!product) return;
+
+        contentArea.innerHTML = `
+            <button class="share-btn" onclick="shareLink('${product.title}', location.href)">
+                <i class="fa-solid fa-share-nodes"></i>
+            </button>
+
+            <div class="img-side">
+                <div class="wishlist-wrapper">
+                    <button id="heart-${product.id}" class="heart-btn" onclick="toggleWishlist('${product.id}')">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+                <img src="${product.img}" alt="${product.title}">
+            </div>
+
+            <div class="info-side">
+                <span style="color:#3b82f6;font-weight:700">${product.store}</span>
+                <h1>${product.title}</h1>
+                <div class="price-tag">R$ ${product.price}</div>
+                <a href="${product.link}" target="_blank" class="cta-button">
+                    Ir para a Loja
+                </a>
+            </div>
+        `;
+
+        checkIfFavorite(product.id);
+
+    } catch (e) {
+        console.error(e);
     }
+}
+
+/* 🔔 TOAST */
+function showToast(msg) {
+    const t = document.createElement("div");
+    t.textContent = msg;
+    t.style.cssText = `
+        position:fixed;
+        bottom:20px;
+        left:50%;
+        transform:translateX(-50%);
+        background:#4ade80;
+        color:#000;
+        padding:12px 22px;
+        border-radius:40px;
+        font-weight:700;
+        z-index:2000;
+    `;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2000);
+}
+
+/* 🔗 SHARE */
+window.shareLink = async (title, url) => {
+    if (navigator.share) {
+        await navigator.share({ title, url });
+    } else {
+        navigator.clipboard.writeText(url);
+        alert("Link copiado!");
+    }
+};
+
+/* 🚀 INIT */
+document.addEventListener("DOMContentLoaded", () => {
+    document
+        .getElementById('btn-google-login')
+        .addEventListener('click', loginWithGoogle);
 
     onAuthStateChanged(auth, (user) => {
         currentUser = user;
         loadProductDetails();
     });
-
-    window.shareLink = async (title, url) => {
-        if (navigator.share) await navigator.share({ title, url });
-        else { navigator.clipboard.writeText(url); alert("Link copiado!"); }
-    };
+});
 </script>
+
 
 <div id="login-modal">
     <div class="modal-content">
