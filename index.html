@@ -378,45 +378,44 @@
 </script>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// --- COLOQUE ISSO NO FINAL DO INDEX.HTML (DENTRO DO SCRIPT MODULE) ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+// Adicionamos as funções do Firestore aqui:
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-    authDomain: "baudepromocao-oficial.firebaseapp.com",
-    projectId: "baudepromocao-oficial",
-    storageBucket: "baudepromocao-oficial.firebasestorage.app",
-    messagingSenderId: "743146859125",
-    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+  authDomain: "baudepromocao-oficial.firebaseapp.com",
+  projectId: "baudepromocao-oficial",
+  storageBucket: "baudepromocao-oficial.firebasestorage.app",
+  messagingSenderId: "743146859125",
+  appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app); // Inicializa o banco de dados
+const provider = new GoogleAuthProvider();
 
-  let currentUser = null;
+let currentUser = null;
 
-  // Função para favoritar/desfavoritar
-  window.toggleWishlist = async (productId) => {
-    if (!currentUser) {
-      alert("Você precisa estar logado para salvar favoritos!");
-      return;
-    }
+// FUNÇÃO PARA SALVAR/REMOVER FAVORITOS (Global para usar nas outras páginas)
+window.toggleWishlist = async (productId) => {
+  if (!currentUser) {
+    alert("Faz login para salvar nos teus favoritos! 😊");
+    return;
+  }
 
-    const userRef = doc(db, "wishlists", currentUser.uid);
-    const btn = document.querySelector(`[data-id="${productId}"]`);
+  const userRef = doc(db, "wishlists", currentUser.uid);
+  const btn = document.querySelector(`[data-id="${productId}"]`);
 
+  try {
+    const docSnap = await getDoc(userRef);
     if (btn.classList.contains('active')) {
-      // Remove da lista
-      await updateDoc(userRef, {
-        items: arrayRemove(productId)
-      });
+      await updateDoc(userRef, { items: arrayRemove(productId) });
       btn.classList.remove('active');
     } else {
-      // Adiciona na lista (cria o documento se não existir)
-      const docSnap = await getDoc(userRef);
       if (!docSnap.exists()) {
         await setDoc(userRef, { items: [productId] });
       } else {
@@ -424,38 +423,29 @@
       }
       btn.classList.add('active');
     }
-  };
+  } catch (e) {
+    console.error("Erro ao salvar:", e);
+  }
+};
 
-  // Monitorar Login
-  onAuthStateChanged(auth, async (user) => {
-    currentUser = user;
-    const loginBtn = document.getElementById('loginBtn');
-    const userArea = document.getElementById('userInfo');
-
-    if (user) {
-      loginBtn.style.display = 'none';
-      userArea.style.display = 'flex';
-      document.getElementById('userName').innerText = user.displayName.split(' ')[0];
-      document.getElementById('userPhoto').src = user.photoURL;
-      
-      // Carregar favoritos existentes para pintar os corações
-      const userRef = doc(db, "wishlists", user.uid);
-      const docSnap = await getDoc(userRef);
-      if (docSnap.exists()) {
-        const favorites = docSnap.data().items;
-        favorites.forEach(id => {
-          const btn = document.querySelector(`[data-id="${id}"]`);
-          if (btn) btn.classList.add('active');
-        });
-      }
-    } else {
-      loginBtn.style.display = 'block';
-      userArea.style.display = 'none';
+// Observador de Login
+onAuthStateChanged(auth, async (user) => {
+  currentUser = user;
+  // ... (mantenha a lógica de mostrar foto/nome que já fizemos)
+  
+  if (user) {
+    // Se logou, vamos pintar os corações dos produtos que já são favoritos
+    const userRef = doc(db, "wishlists", user.uid);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+      const favs = docSnap.data().items;
+      favs.forEach(id => {
+        const heart = document.querySelector(`[data-id="${id}"]`);
+        if (heart) heart.classList.add('active');
+      });
     }
-  });
-
-  window.signInWithGoogle = () => signInWithPopup(auth, provider);
-  window.logout = () => signOut(auth);
+  }
+});
 </script>
 
 </body>

@@ -299,5 +299,59 @@ card.innerHTML = `
     loadProductDetails();
 </script>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+    authDomain: "baudepromocao-oficial.firebaseapp.com",
+    projectId: "baudepromocao-oficial",
+    storageBucket: "baudepromocao-oficial.firebasestorage.app",
+    messagingSenderId: "743146859125",
+    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let userLogado = null;
+
+  onAuthStateChanged(auth, (user) => {
+    userLogado = user;
+    // Se o usuário estiver logado, podemos verificar se este produto já é favorito
+  });
+
+  // Torna a função acessível ao clique do botão
+  window.toggleWishlist = async (productId) => {
+    if (!userLogado) {
+      alert("Faça login para salvar favoritos!");
+      return;
+    }
+
+    const userRef = doc(db, "wishlists", userLogado.uid);
+    const btn = document.querySelector(`[data-id="${productId}"]`);
+
+    try {
+      const docSnap = await getDoc(userRef);
+      if (btn.classList.contains('active')) {
+        await updateDoc(userRef, { items: arrayRemove(productId) });
+        btn.classList.remove('active');
+      } else {
+        if (!docSnap.exists()) {
+          await setDoc(userRef, { items: [productId] });
+        } else {
+          await updateDoc(userRef, { items: arrayUnion(productId) });
+        }
+        btn.classList.add('active');
+      }
+    } catch (e) {
+      console.error("Erro:", e);
+    }
+  };
+</script>
+
 </body>
 </html>

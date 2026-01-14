@@ -199,8 +199,10 @@ function renderProducts(lista) {
     lista.forEach(p => {
         const card = document.createElement("div");
         card.className = "product-card";
-        // O link agora aponta para produto.html com o ID
         card.innerHTML = `
+            <button class="wishlist-btn" data-id="${p.id}" onclick="event.preventDefault(); toggleWishlist('${p.id}')">
+                <i class="fa-solid fa-heart"></i>
+            </button>
             <div class="img-container">
                 <img src="${p.img}" alt="${p.title}" class="product-img">
             </div>
