@@ -188,115 +188,66 @@
             <p>Carregando oferta...</p>
         </div>
     </div>
-
 <script>
-    async function loadProductDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const productId = params.get('id');
-        const contentArea = document.getElementById("content-area");
+async function loadProductDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+    const contentArea = document.getElementById("content-area");
 
-        if (!productId) {
-            window.location.href = "index.html";
+    if (!productId) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    try {
+        // Busca o JSON
+        const response = await fetch('products.json');
+        if (!response.ok) throw new Error("Erro ao carregar banco de dados");
+        
+        let products = await response.json();
+        
+        // Garante que o ID seja comparado como string
+        const product = products.find(p => p.id.toString() === productId.toString());
+
+        if (!product) {
+            contentArea.innerHTML = `<div class="info-side" style="grid-column: span 2; text-align: center;"><h2>Produto não encontrado :(</h2></div>`;
             return;
         }
 
-        try {
-            const response = await fetch('products.json');
-            let products = await response.json();
-            
-            // Mapeia IDs se necessário
-            products = products.map((p, index) => ({ ...p, id: p.id || index.toString() }));
-            const product = products.find(p => p.id == productId);
+        // Renderiza o conteúdo
+        contentArea.innerHTML = `
+            <button class="share-btn" onclick="shareProduct('${product.title.replace(/'/g, "\\'")}', '${product.store}')" title="Compartilhar">
+                <i class="fa-solid fa-share-nodes"></i>
+            </button>
 
-            if (!product) {
-                contentArea.innerHTML = `<div class="info-side" style="grid-column: span 2; text-align: center;"><h2>Produto não encontrado :(</h2></div>`;
-                return;
-            }
+            <div class="img-side">
+                <img src="${product.img}" alt="${product.title}">
+            </div>
 
-            // Renderiza o conteúdo corretamente dentro da função
-            contentArea.innerHTML = `
-                <button class="share-btn" onclick="shareProduct('${product.title.replace(/'/g, "\\'")}', '${product.store}')" title="Compartilhar">
-                    <i class="fa-solid fa-share-nodes"></i>
-                </button>
+            <div class="info-side">
+                <span class="category-tag">${product.store} • ${product.category}</span>
+                <h1>${product.title}</h1>
+                <div class="price-tag">R$ ${product.price}</div>
 
-                <div class="img-side">
-                    <img src="${product.img}" alt="${product.title}">
+                <div class="features">
+                    <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
+                    <p>✅ Compra 100% segura pela ${product.store}.</p>
+                    <p>📦 Frete e prazos calculados na loja.</p>
                 </div>
 
-                <div class="info-side">
-                    <span class="category-tag">${product.store} • ${product.category}</span>
-                    <h1>${product.title}</h1>
-                    <div class="price-tag">R$ ${product.price}</div>
-
-                    <div class="features">
-                        <p>🔥 <strong>Oferta por tempo limitado.</strong></p>
-                        <p>✅ Compra 100% segura pela ${product.store}.</p>
-                        <p>📦 Frete e prazos calculados na loja.</p>
-                    </div>
-
-                    <a href="${product.link}" target="_blank" class="cta-button" onclick="trackClick('${product.id}')">
-                        Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                </div>
-            `;
-        } catch (error) {
-            console.error(error);
-            contentArea.innerHTML = `<div class="info-side">Erro ao carregar o produto.</div>`;
-        }
+                <a href="${product.link}" target="_blank" class="cta-button">
+                    Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        `;
+    } catch (error) {
+        console.error("Erro detalhado:", error);
+        contentArea.innerHTML = `<div class="info-side" style="grid-column: span 2; text-align: center;"><h2>Erro ao carregar o produto. Verifique sua conexão.</h2></div>`;
     }
+}
 
-    function trackClick(id) {
-        console.log("Clique no produto:", id);
-    }
-
-    async function shareProduct(title, store) {
-        const url = window.location.href;
-        const shareData = {
-            title: `Oferta: ${title}`,
-            text: `Olha essa oferta incrível: ${title}`,
-            url: url
-        };
-
-        if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-            } catch (err) {
-                console.log('Compartilhamento cancelado');
-            }
-        } else {
-            copyToClipboard(url);
-        }
-    }
-
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            showToast();
-        });
-    }
-
-    function showToast() {
-        let toast = document.getElementById("toast");
-        if (!toast) {
-            toast = document.createElement("div");
-            toast.id = "toast";
-            toast.className = "toast-msg";
-            toast.innerHTML = `<i class="fa-solid fa-check-circle"></i> Link copiado!`;
-            document.body.appendChild(toast);
-        }
-        setTimeout(() => toast.classList.add("show"), 100);
-        setTimeout(() => toast.classList.remove("show"), 3000);
-    }
-
-    // Exemplo de como inserir o botão no seu código de gerar cards:
-card.innerHTML = `
-    <button class="wishlist-btn" data-id="${p.id}" onclick="toggleWishlist('${p.id}')">
-        <i class="fa-solid fa-heart"></i>
-    </button>
-    <img src="${p.img}" ...>
-    ...
-`;
-
-    loadProductDetails();
+// Chame a função após definir tudo
+loadProductDetails();
 </script>
 
 <script type="module">
