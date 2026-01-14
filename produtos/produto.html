@@ -149,36 +149,27 @@
 
         .toast-msg.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        .wishlist-btn {
+        .product-card { position: relative; } /* Garante que o coração fique preso ao card */
+
+.wishlist-btn {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255,255,255,0.1);
     color: white;
     width: 35px;
     height: 35px;
     border-radius: 50%;
     cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
+    z-index: 10;
+    transition: all 0.3s ease;
 }
 
 .wishlist-btn.active {
-    color: #ff4747; /* Cor do coração preenchido */
-}
-
-/* Badge de quantos itens tem na wishlist (opcional) */
-#wishlistCount {
-    background: #ff4747;
-    color: white;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-    border-radius: 10px;
-    margin-left: 5px;
+    color: #ff4747; /* Vermelho quando favorito */
+    background: white;
 }
 
         @media (max-width: 768px) {
@@ -296,14 +287,13 @@
         setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    // Exemplo de como deve ficar o HTML do seu card de produto:
-article.innerHTML = `
-  <button class="wishlist-btn" data-id="${p.id}" onclick="toggleWishlist('${p.id}')">
-    ❤
-  </button>
-  <img src="${p.img}" alt="${p.title}">
-  <h2>${p.title}</h2>
-  ...
+    // Exemplo de como inserir o botão no seu código de gerar cards:
+card.innerHTML = `
+    <button class="wishlist-btn" data-id="${p.id}" onclick="toggleWishlist('${p.id}')">
+        <i class="fa-solid fa-heart"></i>
+    </button>
+    <img src="${p.img}" ...>
+    ...
 `;
 
     loadProductDetails();
