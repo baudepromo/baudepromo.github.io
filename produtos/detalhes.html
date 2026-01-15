@@ -221,86 +221,168 @@
     </div>
 
 <script type="module">
-    // --- (MANTENHA SEU CÓDIGO FIREBASE IGUAL AO ANTERIOR AQUI) ---
-    // ... importações e config do firebase ...
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // Função de renderização melhorada
-    async function loadProductDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const encodedId = params.get('id');
-        if (!encodedId) return;
+const firebaseConfig = {
+    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+    authDomain: "baudepromocao-oficial.firebaseapp.com",
+    projectId: "baudepromocao-oficial",
+    storageBucket: "baudepromocao-oficial.firebasestorage.app",
+    messagingSenderId: "743146859125",
+    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+
+// --- TORNANDO AS FUNÇÕES GLOBAIS PARA O ONCLICK FUNCIONAR ---
+
+window.toggleWishlist = async (productId) => {
+    if (!auth.currentUser) {
+        // Se você tiver um modal de login, chame-o aqui
+        alert("Por favor, faça login para salvar favoritos!");
+        return;
+    }
+
+    const heartBtn = document.getElementById(`heart-${productId}`);
+    const userRef = doc(db, "wishlists", auth.currentUser.uid);
+    
+    // Feedback visual imediato
+    const isAdding = !heartBtn.classList.contains('active');
+    heartBtn.classList.toggle('active');
+
+    try {
+        const snap = await getDoc(userRef);
         
+        if (isAdding) {
+            if (!snap.exists()) {
+                await setDoc(userRef, {
+                    email: auth.currentUser.email,
+                    items: [String(productId)],
+                    atualizadoEm: new Date()
+                });
+            } else {
+                await updateDoc(userRef, { items: arrayUnion(String(productId)) });
+            }
+            showToast("Salvo nos favoritos ❤️");
+        } else {
+            await updateDoc(userRef, { items: arrayRemove(String(productId)) });
+            showToast("Removido dos favoritos");
+        }
+    } catch (e) {
+        console.error("Erro no Firebase:", e);
+        heartBtn.classList.toggle('active'); // Reverte em caso de erro
+    }
+};
+
+window.shareLink = (title, url) => {
+    if (navigator.share) {
+        navigator.share({ title, url }).catch(console.error);
+    } else {
+        navigator.clipboard.writeText(url);
+        showToast("Link copiado!");
+    }
+};
+
+// --- LÓGICA DE CARREGAMENTO ---
+
+async function loadProductDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const encodedId = params.get('id');
+    if (!encodedId) return;
+    
+    try {
         const productId = atob(encodedId); 
         const contentArea = document.getElementById("content-area");
 
-        try {
-            const res = await fetch('products.json');
-            const products = await res.json();
-            const product = products.find(p => String(p.id) === String(productId));
+        const res = await fetch('products.json');
+        const products = await res.json();
+        const product = products.find(p => String(p.id) === String(productId));
 
-            if (!product) {
-                contentArea.innerHTML = "<h2 style='padding: 50px'>Oferta Expirada!</h2>";
-                return;
-            }
+        if (!product) {
+            contentArea.innerHTML = "<h2 style='padding: 50px; text-align:center;'>Oferta Expirada!</h2>";
+            return;
+        }
 
-            contentArea.innerHTML = `
-                <div class="img-side">
-                    <div class="floating-actions">
-                        <button id="heart-${product.id}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id}')">
-                            <i class="fa-solid fa-heart"></i>
-                        </button>
-                        <button class="icon-btn" onclick="shareLink('${product.title}', location.href)">
-                            <i class="fa-solid fa-share-nodes"></i>
-                        </button>
-                    </div>
-                    <img src="${product.img}" alt="${product.title}">
+        contentArea.innerHTML = `
+            <div class="img-side">
+                <div class="floating-actions">
+                    <button id="heart-${product.id}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id}')">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <button class="icon-btn" onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </button>
                 </div>
-                <div class="info-side">
-                    <span class="store-tag">${product.store}</span>
-                    <h1>${product.title}</h1>
-                    
-                    <div class="price-wrapper">
-                        <p class="price-label">Preço exclusivo no Baú:</p>
-                        <div class="price-tag"><span>R$</span> ${product.price}</div>
-                    </div>
-
-                    <div class="benefits-grid">
-                        <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
-                        <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
-                        <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
-                        <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
-                    </div>
-
-                    <div class="actions">
-                        <a href="${product.link}" target="_blank" class="cta-button">
-                            Aproveitar Promoção <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; margin-left: 10px"></i>
-                        </a>
-                        <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px">
-                            Você será redirecionado para o site oficial da ${product.store}.
-                        </p>
-                    </div>
+                <img src="${product.img}" alt="${product.title}">
+            </div>
+            <div class="info-side">
+                <span class="store-tag">${product.store}</span>
+                <h1>${product.title}</h1>
+                
+                <div class="price-wrapper">
+                    <p class="price-label">Preço exclusivo no Baú:</p>
+                    <div class="price-tag"><span>R$</span> ${product.price}</div>
                 </div>
-            `;
 
+                <div class="benefits-grid">
+                    <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
+                    <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
+                    <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
+                    <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
+                </div>
+
+                <div class="actions">
+                    <a href="${product.link}" target="_blank" class="cta-button">
+                        Aproveitar Promoção <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; margin-left: 10px"></i>
+                    </a>
+                    <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px">
+                        Você será redirecionado para o site oficial da ${product.store}.
+                    </p>
+                </div>
+            </div>
+        `;
+
+        // Verifica se já é favorito após renderizar o botão
+        if (auth.currentUser) {
             checkIfFavorite(product.id);
-        } catch (e) { console.error(e); }
+        }
+    } catch (e) { 
+        console.error("Erro ao carregar detalhes:", e); 
     }
-    
-    // (MANTENHA AS OUTRAS FUNÇÕES: toggleWishlist, checkIfFavorite, shareLink, etc.)
-    // Apenas mude a função showToast para combinar com o novo estilo:
-    function showToast(msg) {
-        const t = document.createElement("div");
-        t.className = "toast";
-        t.innerHTML = `<i class="fa-solid fa-check-circle" style="color: var(--success)"></i> ${msg}`;
-        document.body.appendChild(t);
-        setTimeout(() => {
-            t.style.opacity = "0";
-            setTimeout(() => t.remove(), 500);
-        }, 2500);
+}
+
+async function checkIfFavorite(productId) {
+    try {
+        const snap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
+        if (snap.exists() && snap.data().items?.includes(String(productId))) {
+            document.getElementById(`heart-${productId}`)?.classList.add('active');
+        }
+    } catch (e) {
+        console.error("Erro ao verificar favorito:", e);
     }
-    
-    // Inicia
+}
+
+function showToast(msg) {
+    const t = document.createElement("div");
+    t.className = "toast";
+    t.innerHTML = `<i class="fa-solid fa-check-circle" style="color: var(--success)"></i> ${msg}`;
+    document.body.appendChild(t);
+    setTimeout(() => {
+        t.style.opacity = "0";
+        setTimeout(() => t.remove(), 500);
+    }, 2500);
+}
+
+// Inicialização
+onAuthStateChanged(auth, (user) => {
     loadProductDetails();
+});
 </script>
+
 </body>
 </html>
