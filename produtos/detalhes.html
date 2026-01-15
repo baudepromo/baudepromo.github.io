@@ -312,7 +312,7 @@ async function loadProductDetails() {
     if (!encodedId) return;
     
     try {
-        const productId = atob(encodedId); 
+        const productId = decodeURIComponent(escape(atob(encodedId))); 
         const contentArea = document.getElementById("content-area");
 
         const res = await fetch('products.json');
