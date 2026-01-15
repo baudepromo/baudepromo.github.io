@@ -351,7 +351,7 @@
 
     async function loadProductDetails() {
         const params = new URLSearchParams(window.location.search);
-        const encodedId = params.get('id');
+        const encodedId = btoa(encodeURIComponent(product.id));
         const contentArea = document.getElementById("content-area");
 
         if (!encodedId) {
@@ -361,7 +361,7 @@
         
         try {
             // CORREÇÃO: Decodifica apenas uma vez e trata erro
-            const productId = atob(encodedId); 
+            const productId = decodeURIComponent(atob(encodedId));
 
             const res = await fetch('products.json');
             if(!res.ok) throw new Error("Erro ao carregar JSON");
