@@ -73,6 +73,99 @@
     @media (max-width: 600px) {
       .container { margin: 20px; padding: 25px; }
     }
+
+    /* --- FOOTER PROFISSIONAL --- */
+    footer {
+        background: rgba(15, 31, 38, 0.95);
+        border-top: 1px solid rgba(30, 203, 225, 0.2);
+        padding: 60px 20px 20px;
+        margin-top: 50px;
+        color: var(--text);
+    }
+
+    .footer-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+    }
+
+    .footer-brand h2 {
+        color: var(--accent);
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+    }
+
+    .footer-brand p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .footer-links h3 {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    .footer-links ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 12px;
+    }
+
+    .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--accent);
+        padding-left: 5px;
+    }
+
+    .footer-bottom {
+        max-width: 1100px;
+        margin: 40px auto 0;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    .disclaimer {
+        font-size: 0.75rem;
+        color: #66828a;
+        margin-top: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Responsividade */
+    @media (max-width: 850px) {
+        .footer-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .footer-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .footer-links a:hover {
+            padding-left: 0;
+        }
+    }
+    
   </style>
 </head>
 <body>
@@ -117,7 +210,48 @@
 </div>
 
 <footer>
-  <p>&copy; 2026 Baú de Promoções - Curadoria de Ofertas Online</p>
+    <div class="footer-container">
+        <div class="footer-brand">
+            <h2>Baú de Promoções</h2>
+            <p>Sua curadoria de confiança para achadinhos da Shopee, Amazon e AliExpress. Buscamos as melhores ofertas para que você economize com segurança e praticidade.</p>
+        </div>
+
+        <div class="footer-links">
+            <h3>Navegação</h3>
+            <ul>
+                <li><a href="https://baudepromo.github.io">Início</a></li>
+                <li><a href="https://baudepromo.github.io/sobre">Sobre Nós</a></li>
+                <li><a href="https://baudepromo.github.io/achadinhos">Achadinhos</a></li>
+                <li><a href="https://baudepromo.github.io/contatos">Contato</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-links">
+            <h3>Legal</h3>
+            <ul>
+                <li><a href="https://baudepromo.github.io/politica-de-privacidade">Privacidade</a></li>
+                <li><a href="https://baudepromo.github.io/termos-de-uso">Termos de Uso</a></li>
+                <li><a href="https://baudepromo.github.io/afiliados">Afiliados</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-links">
+            <h3>Siga-nos</h3>
+            <ul>
+                <li><a href="https://instagram.com/baudepromocaos" target="_blank">Instagram</a></li>
+                <li><a href="https://tiktok.com/@baudepromocoes" target="_blank">TikTok</a></li>
+                <li><a href="https://youtube.com/@BaúdePromoções" target="_blank">Youtube</a></li>
+                <li><a href="https://x.com/baudepromocao" target="_blank">X</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <p>&copy; 2026 Baú de Promoções. Todos os direitos reservados.</p>
+        <p class="disclaimer">
+            <strong>Aviso:</strong> Participamos de programas de afiliados. Ao comprar através de nossos links, podemos receber uma comissão, sem nenhum custo adicional para você. Os preços e a disponibilidade podem variar conforme as lojas parceiras.
+        </p>
+    </div>
 </footer>
 
 </body>
