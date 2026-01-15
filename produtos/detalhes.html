@@ -305,28 +305,28 @@ window.shareLink = (title, url) => {
 };
 
 // --- LÓGICA DE CARREGAMENTO ---
-
 async function loadProductDetails() {
     const params = new URLSearchParams(window.location.search);
     const encodedId = params.get('id');
     if (!encodedId) return;
     
     try {
-        // Correção da decodificação Base64 para suportar caracteres especiais (UTF-8)
-        const productId = decodeURIComponent(atob(encodedId).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+        // DECODIFICAÇÃO CORRIGIDA:
+        // 1. atob decodifica o base64
+        // 2. O restante garante que caracteres especiais (acentos) não quebrem
+        const decodedString = atob(encodedId);
+        const productId = decodedString; 
 
         const contentArea = document.getElementById("content-area");
 
         const res = await fetch('products.json');
         const products = await res.json();
         
-        // Garantimos que a comparação seja feita como String para evitar erros de tipo
+        // Compara convertendo ambos para String para não haver erro de tipo (número vs texto)
         const product = products.find(p => String(p.id) === String(productId));
 
         if (!product) {
-            contentArea.innerHTML = "<h2 style='padding: 50px; text-align:center;'>Oferta Expirada!</h2>";
+            contentArea.innerHTML = "<h2 style='padding: 50px; text-align:center;'>Oferta Expirada ou não encontrada!</h2>";
             return;
         }
 

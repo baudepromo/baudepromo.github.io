@@ -224,14 +224,9 @@ async function loadAndDisplay() {
 function renderProducts(lista) {
     productGrid.innerHTML = "";
     
-    if (lista.length === 0) {
-        productGrid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #94a3b8;'>Nenhum produto encontrado.</p>";
-        return;
-    }
-
     lista.forEach(p => {
-        // Criamos a máscara do ID
-        const idMascarado = btoa(String(p.id));
+        // Codificação simples e limpa
+        const idMascarado = btoa(String(p.id)); 
 
         const card = document.createElement("div");
         card.className = "product-card";
@@ -240,7 +235,7 @@ function renderProducts(lista) {
                 <img src="${p.img}" alt="${p.title}" class="product-img">
             </div>
             <div class="product-info">
-                <span class="store-badge badge-${p.store}">${p.store}</span>
+                <span class="store-badge badge-${p.store.toLowerCase().replace(/\s/g, '')}">${p.store}</span>
                 <h3 class="product-title">${p.title}</h3>
                 <div class="price-container">
                     <p class="product-price">R$ ${p.price}</p>
