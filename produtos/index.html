@@ -209,10 +209,10 @@ async function loadAndDisplay() {
         allProducts = await response.json();
         
         // Seus produtos precisam de ID. Se não tiverem, geramos um temporário (não recomendado para produção)
-        allProducts = allProducts.map((p, index) => ({
-            ...p,
-            id: p.id || index // Fallback se não existir ID no JSON
-        }));
+        const products = (await response.json()).map((p, index) => ({
+    ...p,
+    id: p.id ?? index
+}));
 
         renderProducts(allProducts.filter(p => p.category === currentCategory));
     } catch (erro) {
