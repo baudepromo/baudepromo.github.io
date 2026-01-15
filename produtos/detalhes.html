@@ -241,23 +241,36 @@ const provider = new GoogleAuthProvider();
 
 // --- TORNANDO AS FUNÇÕES GLOBAIS PARA O ONCLICK FUNCIONAR ---
 
+// --- DENTRO DO SEU SCRIPT TYPE="MODULE" ---
+
+// Função de Login com Google
+window.loginWithGoogle = async () => {
+    try {
+        await signInWithPopup(auth, provider);
+        document.getElementById('login-modal').style.display = 'none';
+        showToast("Bem-vindo(a) ao Baú! 🎉");
+        // Recarrega os detalhes para verificar se o item já era favorito
+        location.reload(); 
+    } catch (err) {
+        console.error("Erro ao logar:", err);
+    }
+};
+
+// Toggle Wishlist com Gatilho de Cadastro
 window.toggleWishlist = async (productId) => {
+    // SE NÃO ESTIVER LOGADO: Abre o modal e para a execução
     if (!auth.currentUser) {
-        // Se você tiver um modal de login, chame-o aqui
-        alert("Por favor, faça login para salvar favoritos!");
+        document.getElementById('login-modal').style.display = 'flex';
         return;
     }
 
     const heartBtn = document.getElementById(`heart-${productId}`);
     const userRef = doc(db, "wishlists", auth.currentUser.uid);
-    
-    // Feedback visual imediato
     const isAdding = !heartBtn.classList.contains('active');
     heartBtn.classList.toggle('active');
 
     try {
         const snap = await getDoc(userRef);
-        
         if (isAdding) {
             if (!snap.exists()) {
                 await setDoc(userRef, {
@@ -275,9 +288,12 @@ window.toggleWishlist = async (productId) => {
         }
     } catch (e) {
         console.error("Erro no Firebase:", e);
-        heartBtn.classList.toggle('active'); // Reverte em caso de erro
+        heartBtn.classList.toggle('active');
     }
 };
+
+// Vincular o clique do botão do Google
+document.getElementById('btn-google-login').addEventListener('click', window.loginWithGoogle);
 
 window.shareLink = (title, url) => {
     if (navigator.share) {
@@ -383,6 +399,25 @@ onAuthStateChanged(auth, (user) => {
     loadProductDetails();
 });
 </script>
+
+<div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: #111827; padding: 40px; border-radius: 32px; border: 1px solid var(--glass-border); text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+        <div style="width: 80px; height: 80px; background: rgba(255, 71, 71, 0.1); borderRadius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+            <i class="fa-solid fa-heart" style="color: #ff4747; font-size: 2.5rem;"></i>
+        </div>
+        <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #fff;">Salve suas ofertas!</h2>
+        <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px;">Faça login para salvar seus produtos favoritos e receber alertas quando o preço baixar.</p>
+        
+        <button id="btn-google-login" style="width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s;">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
+            Entrar com Google
+        </button>
+
+        <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: var(--text-muted); margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+            Continuar navegando
+        </button>
+    </div>
+</div>
 
 </body>
 </html>
