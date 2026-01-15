@@ -197,8 +197,7 @@ function renderProducts(lista) {
     }
 
     lista.forEach(p => {
-        // --- CODIFICAÇÃO DO ID ---
-        // btoa() transforma o ID em uma máscara Base64 (ex: 1 vira "MQ==")
+        // Criamos a máscara do ID
         const idMascarado = btoa(String(p.id));
 
         const card = document.createElement("div");
