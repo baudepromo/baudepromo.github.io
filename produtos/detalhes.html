@@ -270,74 +270,51 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // --- FUNÇÕES GLOBAIS (Ligadas ao Window) ---
-
-    // 1. Login
     window.loginWithGoogle = async () => {
         try {
             await signInWithPopup(auth, provider);
             document.getElementById('login-modal').style.display = 'none';
             showToast("Login realizado! 🎉");
-            
-            // Recarrega o status do favorito se já houver um produto na tela
-            const urlParams = new URLSearchParams(window.location.search);
-            const encodedId = urlParams.get('id');
-            if(encodedId) {
-                try {
-                    const id = atob(encodedId);
-                    checkIfFavorite(id);
-                } catch(e) {}
-            }
+            loadProductDetails(); // Recarrega para aplicar favoritos
         } catch (err) {
             console.error("Erro ao logar:", err);
             showToast("Erro ao fazer login");
         }
     };
 
-    // Adiciona o listener ao botão de login assim que o script carregar
     document.getElementById('btn-google-login').addEventListener('click', window.loginWithGoogle);
 
-    // 2. Toggle Wishlist
     window.toggleWishlist = async (productId) => {
         if (!auth.currentUser) {
             document.getElementById('login-modal').style.display = 'flex';
             return;
         }
 
-        const productIdStr = String(productId);
         const heartBtn = document.getElementById(`heart-${productId}`);
         const userRef = doc(db, "wishlists", auth.currentUser.uid);
-        
-        // UI Otimista
         const wasActive = heartBtn.classList.contains('active');
-        heartBtn.classList.toggle('active');
 
         try {
+            heartBtn.classList.toggle('active');
             const snap = await getDoc(userRef);
             
-            if (!wasActive) { // Adicionar
+            if (!wasActive) {
                 if (!snap.exists()) {
-                    await setDoc(userRef, {
-                        email: auth.currentUser.email,
-                        items: [productIdStr],
-                        updatedAt: new Date()
-                    });
+                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(productId)], updatedAt: new Date() });
                 } else {
-                    await updateDoc(userRef, { items: arrayUnion(productIdStr) });
+                    await updateDoc(userRef, { items: arrayUnion(String(productId)) });
                 }
                 showToast("Salvo nos favoritos ❤️");
-            } else { // Remover
-                await updateDoc(userRef, { items: arrayRemove(productIdStr) });
+            } else {
+                await updateDoc(userRef, { items: arrayRemove(String(productId)) });
                 showToast("Removido dos favoritos");
             }
         } catch (e) {
-            console.error("Erro Firebase:", e);
-            heartBtn.classList.toggle('active'); // Reverte visualmente se der erro
+            heartBtn.classList.toggle('active');
             showToast("Erro ao salvar.");
         }
     };
 
-    // 3. Compartilhar
     window.shareLink = (title, url) => {
         if (navigator.share) {
             navigator.share({ title, url }).catch(console.error);
@@ -347,36 +324,29 @@
         }
     };
 
-    // --- LÓGICA DE CARREGAMENTO ---
-
     async function loadProductDetails() {
         const params = new URLSearchParams(window.location.search);
-        const encodedId = btoa(encodeURIComponent(product.id));
+        const encodedId = params.get('id'); // Pega o ID da URL
         const contentArea = document.getElementById("content-area");
 
         if (!encodedId) {
-            contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Produto não especificado.</h2></div>";
+            contentArea.innerHTML = "<h2>Produto não encontrado.</h2>";
             return;
         }
         
         try {
-            // CORREÇÃO: Decodifica apenas uma vez e trata erro
+            // Decodifica o ID que veio do index.html
             const productId = decodeURIComponent(atob(encodedId));
 
             const res = await fetch('products.json');
-            if(!res.ok) throw new Error("Erro ao carregar JSON");
-            
             const products = await res.json();
-            
-            // Compara convertendo para String para garantir match
-            const product = products.find(p => String(p.id) === String(productId));
+            const product = products.find(p => String(p.id) === productId);
 
             if (!product) {
-                contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Oferta expirada ou não encontrada!</h2></div>";
+                contentArea.innerHTML = "<h2>Oferta expirada!</h2>";
                 return;
             }
 
-            // Renderiza
             contentArea.innerHTML = `
                 <div class="img-side">
                     <div class="floating-actions">
@@ -392,68 +362,45 @@
                 <div class="info-side">
                     <span class="store-tag">${product.store}</span>
                     <h1>${product.title}</h1>
-                    
                     <div class="price-wrapper">
                         <p class="price-label">Preço exclusivo no Baú:</p>
                         <div class="price-tag"><span>R$</span> ${product.price}</div>
                     </div>
-
                     <div class="benefits-grid">
                         <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
                         <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
                         <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
                         <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
                     </div>
-
                     <div class="actions">
-                        <a href="${product.link}" target="_blank" class="cta-button">
-                            Aproveitar Promoção <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; margin-left: 10px"></i>
-                        </a>
-                        <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px">
-                            Você será redirecionado para o site oficial da ${product.store}.
-                        </p>
+                        <a href="${product.link}" target="_blank" class="cta-button">Aproveitar Promoção</a>
                     </div>
                 </div>
             `;
 
-            if (auth.currentUser) {
-                checkIfFavorite(product.id);
-            }
+            if (auth.currentUser) checkIfFavorite(product.id);
 
         } catch (e) { 
-            console.error("Erro loading:", e); 
-            contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Erro ao carregar detalhes.</h2><p>Código inválido ou erro de conexão.</p></div>";
+            contentArea.innerHTML = "<h2>Erro ao carregar detalhes.</h2>";
         }
     }
 
     async function checkIfFavorite(productId) {
         if(!auth.currentUser) return;
-        try {
-            const snap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
-            // Verifica se existe E se o array contém o ID (string)
-            if (snap.exists() && snap.data().items?.includes(String(productId))) {
-                document.getElementById(`heart-${productId}`)?.classList.add('active');
-            }
-        } catch (e) {
-            console.error("Erro check fav:", e);
+        const snap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
+        if (snap.exists() && snap.data().items?.includes(String(productId))) {
+            document.getElementById(`heart-${productId}`)?.classList.add('active');
         }
     }
 
     function showToast(msg) {
         const t = document.createElement("div");
         t.className = "toast";
-        t.innerHTML = `<i class="fa-solid fa-check-circle" style="color: var(--success)"></i> ${msg}`;
+        t.innerHTML = `<i class="fa-solid fa-check-circle" style="color: #4ade80"></i> ${msg}`;
         document.body.appendChild(t);
-        setTimeout(() => {
-            t.style.opacity = "0";
-            setTimeout(() => t.remove(), 500);
-        }, 2500);
+        setTimeout(() => { t.style.opacity = "0"; setTimeout(() => t.remove(), 500); }, 2500);
     }
 
-    // Expor Toast globalmente se necessário, ou usar local
-    window.showToast = showToast;
-
-    // Inicialização
     onAuthStateChanged(auth, (user) => {
         loadProductDetails();
     });
