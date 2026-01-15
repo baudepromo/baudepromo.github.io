@@ -6,6 +6,7 @@
     <title>Baú de Promoção | Ofertas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="img/favicon.jpg" />
     <style>
         /* --- MANTIVE SUAS VARIÁVEIS E ESTILOS ORIGINAIS --- */
         :root {
@@ -37,7 +38,18 @@
             border-right: 1px solid var(--glass-border); display: flex; flex-direction: column;
             padding: 30px 20px; position: fixed; height: 100vh; z-index: 100;
         }
-        .logo-sidebar { text-align: center; margin-bottom: 40px; }
+        .logo-sidebar {
+    text-align: center;
+    margin-bottom: 40px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.logo-sidebar:hover {
+    opacity: 0.9;
+}
+
         .logo-sidebar img { width: 70px; height: 70px; border-radius: 20px; border: 2px solid var(--primary-accent); padding: 5px; margin-bottom: 15px; }
         .logo-sidebar h2 { font-size: 1.2rem; font-weight: 800; -webkit-background-clip: text; color: white; }
         .menu { display: flex; flex-direction: column; gap: 8px; }
@@ -164,10 +176,11 @@
 </head>
 <body>
 <aside class="sidebar">
-    <div class="logo-sidebar">
-        <img src="img/perfil.png" alt="Logo">
-        <h2>Baú de promoções</h2>
-    </div>
+    <a href="https://baudepromo.github.io" class="logo-sidebar">
+    <img src="img/perfil.png" alt="Logo">
+    <h2>Baú de promoções</h2>
+</a>
+
     <nav class="menu">
         <button class="tab-btn active" data-tab="eletronicos"><i class="fa-solid fa-bolt"></i> <span>Eletrônicos</span></button>
         <button class="tab-btn" data-tab="casa"><i class="fa-solid fa-house"></i> <span>Casa</span></button>

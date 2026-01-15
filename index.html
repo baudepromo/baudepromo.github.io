@@ -1,26 +1,98 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" prefix="og: http://ogp.me/ns#">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Baú de Promoções | Melhores Achadinhos e Ofertas 2026</title>
-  <meta name="description" content="Achadinhos e promoções da Shopee, Amazon e AliExpress. Produtos testados, reviews sinceros e dicas para afiliados iniciantes." />
-  <meta name="keywords" content="achadinhos shopee, promoções amazon, ofertas online, afiliados, baú de promoções" />
+  <title>Baú de Promoções 2026 | Achadinhos Shopee, Ofertas Amazon, Cupons e Produtos Virais</title>
+  <meta name="description" content="Baú de Promoções reúne os melhores achadinhos da Shopee, ofertas da Amazon, cupons AliExpress e produtos virais testados. Economize com promoções reais em 2026." />
+  <meta name="keywords" content="achadinhos shopee, ofertas amazon hoje, cupons aliexpress, produtos virais tiktok, promoções 2026, baú de promoções, produtos baratos online" />
+
   <meta name="author" content="Baú de Promoções" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://baudepromo.github.io/" />
 
-  <meta property="og:title" content="Baú de Promoções – Achadinhos e Ofertas Online" />
-  <meta property="og:description" content="Economize com os melhores produtos das maiores lojas online." />
-  <meta property="og:image" content="img/perfil.jpg" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:title" content="Baú de Promoções | Melhores Achadinhos e Ofertas Online" />
+  <meta property="og:description" content="Economize com curadoria profissional dos melhores produtos da internet. Shopee, Amazon e mais!" />
+  <meta property="og:image" content="https://baudepromo.github.io/img/perfil.jpg" />
+  <meta property="og:image:alt" content="Logo Baú de Promoções" />
   <meta property="og:url" content="https://baudepromo.github.io/" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Baú de Promoções" />
 
-  <link rel="icon" href="img/favicon.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Baú de Promoções | Achadinhos 2026" />
+  <meta name="twitter:description" content="As melhores ofertas da Shopee e Amazon em um só lugar." />
+  <meta name="twitter:image" content="https://baudepromo.github.io/img/perfil.jpg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="https://baudepromo.github.io/img/perfil.jpg">
+
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Baú de Promoções",
+    "url": "https://baudepromo.github.io/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://baudepromo.github.io/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Baú de Promoções",
+  "url": "https://baudepromo.github.io/",
+  "logo": "https://baudepromo.github.io/img/favicon.jpg",
+  "description": "Plataforma especializada em achadinhos Shopee, ofertas Amazon, cupons AliExpress e produtos virais.",
+  "sameAs": [
+    "https://instagram.com/seuperfil",
+    "https://tiktok.com/@seuperfil"
+  ]
+}
+</script>
+
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O Baú de Promoções é confiável?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sim. O Baú de Promoções realiza curadoria manual e direciona apenas para lojas oficiais como Shopee, Amazon e AliExpress."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Os links do Baú são afiliados?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Alguns links podem gerar comissão sem custo adicional ao usuário, ajudando a manter o projeto."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como receber promoções atualizadas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Criando uma conta gratuita no site, o usuário pode receber alertas e novidades de ofertas."
+      }
+    }
+  ]
+}
+</script>
 
   <style>
     :root {
@@ -284,16 +356,15 @@
       display: none;
     }
 
-    /* Responsividade Celular */
-    @media (max-width: 600px) {
-        header { padding-top: 100px; }
-        .user-auth-area {
-            right: 50%;
-            transform: translateX(50%);
-            width: 100%;
-            justify-content: center;
-        }
-        header h1 { font-size: 2.2rem; }
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
     }
 
     /* Estilo do Modal de Login */
@@ -340,79 +411,199 @@
     }
     .divider span { background: var(--card); padding: 0 10px; color: #777; }
 
+    /* --- MENU HAMBÚRGUER --- */
+    
+    /* Ajuste para o botão de Login não ficar em cima do menu */
+    .user-auth-area {
+        right: 80px; /* Moveu para a esquerda para dar espaço ao menu */
+        transition: var(--transition);
+    }
+
+    /* O Botão do Menu (3 riscos) */
+    .hamburger-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 2000; /* Acima de quase tudo */
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .hamburger-btn span {
+        display: block;
+        width: 30px;
+        height: 3px;
+        background-color: var(--accent);
+        border-radius: 3px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Animação do ícone virando X */
+    .hamburger-btn.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 6px);
+    }
+    .hamburger-btn.active span:nth-child(2) {
+        opacity: 0;
+    }
+    .hamburger-btn.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -6px);
+    }
+
+    /* A gaveta do menu (escondida por padrão) */
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Escondido na direita */
+        width: 280px;
+        height: 100vh;
+        background: rgba(15, 31, 38, 0.95);
+        backdrop-filter: blur(15px);
+        border-left: 1px solid var(--accent);
+        padding: 80px 20px 20px;
+        transition: 0.4s ease;
+        z-index: 1900;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .mobile-menu.active {
+        right: 0; /* Aparece */
+    }
+
+    /* Links do Menu */
+    .mobile-menu a {
+        color: var(--text);
+        text-decoration: none;
+        font-size: 1.1rem;
+        padding: 12px;
+        border-radius: 8px;
+        transition: var(--transition);
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mobile-menu a:hover {
+        background: rgba(30, 203, 225, 0.1);
+        border-color: var(--accent);
+        color: var(--accent);
+        padding-left: 20px; /* Efeito de deslizar */
+    }
+
+    /* Ajuste Mobile: Login e Menu */
+    @media (max-width: 600px) {
+        .user-auth-area {
+            top: 25px;
+            right: 70px; /* Mantém ao lado do menu */
+            transform: none; /* Remove a centralização antiga */
+            width: auto;
+        }
+        
+        /* Esconde o nome do usuário no mobile para economizar espaço */
+        .user-info span {
+            display: none;
+        }
+    }
+
   </style>
 </head>
 
 <body>
 
 <header>
+  <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Abrir Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <nav class="mobile-menu" id="sideMenu">
+    <a href="/">🏠 Início</a>
+    <a href="/achadinhos">🛒 Achadinhos Shopee</a>
+    <a href="/amazon">📦 Ofertas Amazon</a>
+    <a href="/cupons">🎟️ Cupons</a>
+    <a href="/viral">🔥 Produtos Virais</a>
+    <hr style="border-color: rgba(255,255,255,0.1)">
+    <a href="#" onclick="toggleModal()">☕ Apoiar Projeto</a>
+    <a href="/contato">✉️ Contato</a>
+  </nav>
   <div class="user-auth-area">
-    <button id="loginBtn" class="btn-login" onclick="openAuthModal()">Entrar</button>
+    <button id="loginBtn" class="btn-login" onclick="openAuthModal()" aria-label="Fazer Login">Entrar</button>
     <div id="userInfo" class="user-info">
-      <img id="userPhoto" src="" alt="User">
+      <img id="userPhoto" src="" alt="Foto do Usuário" loading="lazy">
       <span id="userName"></span>
       <button class="btn-login" style="border-color: #ff4747; color: #ff4747; padding: 5px 10px;" onclick="logout()">Sair</button>
     </div>
   </div>
   <h1>Baú de Promoções</h1>
-  <p>Achadinhos e Produtos que valem a pena</p>
+  <p>Encontre os Melhores Achadinhos e Produtos que Valem a Pena</p>
 </header>
-
-<div id="authModal" class="auth-modal">
-  <div class="auth-form">
-    <span onclick="closeAuthModal()" style="float:right; cursor:pointer;">×</span>
-    <h3 id="authTitle">Fazer Login</h3>
-    
-    <input type="email" id="authEmail" placeholder="Seu e-mail">
-    <input type="password" id="authPassword" placeholder="Sua senha">
-    
-    <button class="btn" style="width:100%" id="mainAuthBtn" onclick="handleEmailAuth()">Entrar</button>
-    
-    <div class="divider"><span>ou</span></div>
-    
-    <button class="btn-login" style="width:100%; margin-bottom:10px;" onclick="signInWithGoogle()">
-      Entrar com Google
-    </button>
-    
-    <p class="auth-toggle" id="authToggle" onclick="toggleAuthMode()">
-      Não tem conta? Cadastre-se agora.
-    </p>
-  </div>
-</div>
 
 <main>
   <article>
-    <img src="img/achadinhos.jpg" alt="Achadinhos da Shopee">
-    <h2>Achadinhos 🛒</h2>
-    <p>Produtos criativos, baratos e virais encontrados nas redes sociais.</p>
-    <a class="btn" href="https://baudepromo.github.io/achadinhos">Ver Achados</a>
+    <img src="img/achadinhos.jpg" alt="Seleção de Achadinhos da Shopee e produtos virais" loading="lazy">
+    <h2>Achadinhos da Shopee e Redes Sociais 🛒</h2>
+    <p>Produtos criativos, baratos e virais encontrados no TikTok e Instagram, agora no seu Baú.</p>
+    <a class="btn" href="/achadinhos" aria-label="Ver lista de achadinhos">Ver Achados</a>
   </article>
 
   <article>
-    <img src="img/logistics.jpg" alt="Produtos em alta">
-    <h2>Produtos em Alta 🔥</h2>
-    <p>Curadoria de ofertas da Amazon, Mercado Livre e AliExpress.</p>
-    <a class="btn" href="https://baudepromo.github.io/produtos">Ver Promoções</a>
+    <img src="img/logistics.jpg" alt="Ofertas em destaque da Amazon e Mercado Livre" loading="lazy">
+    <h2>Ofertas Amazon e Produtos em Alta 🔥</h2>
+    <p>Curadoria rigorosa de promoções da Amazon, Mercado Livre e AliExpress com os menores preços.</p>
+    <a class="btn" href="/produtos" aria-label="Ver promoções de produtos">Ver Promoções</a>
   </article>
 
   <article>
-    <img src="img/afiliado.jpg" alt="Guia de afiliados">
-    <h2>Guia para Afiliados</h2>
-    <p>Aprenda a montar sua estrutura de vendas online do zero.</p>
-    <span class="btn badge-soon">Em Breve</span>
+    <img src="img/promo.jpg" alt="Cupons em Alta" loading="lazy">
+    <h2>Melhores cupons em alta</h2>
+    <p>varios cupons de diversas lojas como Mercado Livre, Shopee, Aliexpress...</p>
+    <span class="btn badge-soon" title="Conteúdo em desenvolvimento">Em Breve</span>
   </article>
 </main>
 
 <section class="about-blog">
   <div class="about-container">
-    <h2>Sobre o Baú de Promoções</h2>
-    <p>O <strong>Baú de Promoções</strong> é sua fonte confiável para encontrar achadinhos e promoções...</p>
+    <h2>Perguntas Frequentes sobre o Baú</h2>
+    <div style="margin-top:20px;">
+        <h3>Os links do Baú de Promoções são seguros?</h3>
+        <p>Sim! Todos os produtos são verificados e os links direcionam para as lojas oficiais como Shopee e Amazon.</p>
+        
+        <h3>Como recebo as promoções por e-mail?</h3>
+        <p>Basta criar sua conta clicando no botão 'Entrar' e ativar as notificações de alerta nos produtos desejados.</p>
+    </div>
   </div>
 </section>
 
+<section class="sr-only">
+  <h2>Achadinhos Shopee e Ofertas Online</h2>
+  <p>
+    O Baú de Promoções é um site especializado em achadinhos da Shopee,
+    ofertas da Amazon, cupons AliExpress e produtos virais do TikTok e Instagram.
+    Nossa curadoria analisa custo-benefício, avaliações reais e tendências de mercado
+    para entregar apenas promoções confiáveis.
+  </p>
+
+  <p>
+    Atualizamos diariamente com ofertas 2026, produtos baratos online,
+    descontos relâmpago e oportunidades para quem deseja economizar
+    ou ganhar dinheiro como afiliado.
+  </p>
+</section>
+
 <footer>
-  <p>&copy; 2026 Baú de Promoções • Compras inteligentes na web</p>
+  <p>&copy; 2026 <strong>Baú de Promoções</strong> • Especialista em Achadinhos e Ofertas Online</p>
 </footer>
+
+</body>
 
 <div class="donation-float" onclick="toggleModal()">☕</div>
 
@@ -429,6 +620,24 @@
 </div>
 
 <script>
+  function toggleMenu() {
+    const btn = document.querySelector('.hamburger-btn');
+    const menu = document.getElementById('sideMenu');
+    
+    btn.classList.toggle('active');
+    menu.classList.toggle('active');
+  }
+
+  // Fechar menu ao clicar fora dele
+  document.addEventListener('click', function(event) {
+    const menu = document.getElementById('sideMenu');
+    const btn = document.querySelector('.hamburger-btn');
+    
+    // Se o clique NÃO for no menu E NÃO for no botão, fecha o menu
+    if (!menu.contains(event.target) && !btn.contains(event.target) && menu.classList.contains('active')) {
+      toggleMenu();
+    }
+  });
   function toggleModal() {
     const modal = document.getElementById('donationModal');
     modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
@@ -532,6 +741,27 @@ onAuthStateChanged(auth, async (user) => {
     }
 });
 </script>
+
+<div id="authModal" class="auth-modal" style="display: none;">
+  <div class="auth-form">
+    <span class="close-modal" onclick="closeAuthModal()" style="position: relative; top: -10px; right: -10px; float: right;">×</span>
+    <h3 id="authTitle" style="color: var(--accent);">Fazer Login</h3>
+    
+    <input type="email" id="authEmail" placeholder="Seu E-mail">
+    <input type="password" id="authPassword" placeholder="Sua Senha">
+    
+    <button class="btn" id="mainAuthBtn" onclick="handleEmailAuth()" style="width: 100%; margin-top: 10px;">Entrar</button>
+    
+    <div class="divider"><span>OU</span></div>
+    
+    <button class="btn" onclick="signInWithGoogle()" style="width: 100%; background: #fff; color: #333;">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" style="vertical-align: middle; margin-right: 8px;"> 
+      Entrar com Google
+    </button>
+    
+    <p id="authToggle" class="auth-toggle" onclick="toggleAuthMode()">Não tem conta? Cadastre-se agora.</p>
+  </div>
+</div>
 
 </body>
 </html>
