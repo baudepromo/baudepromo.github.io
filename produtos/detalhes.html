@@ -326,7 +326,20 @@
 
     async function loadProductDetails() {
         const params = new URLSearchParams(window.location.search);
-        const encodedId = params.get('id'); // Pega o ID da URL
+        const encodedId = params.get('id');
+if (encodedId) {
+    try {
+        // Decodificação segura para caracteres especiais
+        const productId = decodeURIComponent(escape(atob(encodedId)));
+        
+        const res = await fetch('products.json');
+        const products = await res.json();
+        const product = products.find(p => String(p.id) === productId);
+        // ... restante do seu código ...
+    } catch (e) {
+        console.error("Erro ao decodificar ID:", e);
+    }
+}
         const contentArea = document.getElementById("content-area");
 
         if (!encodedId) {

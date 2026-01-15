@@ -233,7 +233,7 @@
         lista.forEach(p => {
             // Garante que o ID seja string para o btoa funcionar sem erros
             const idString = String(p.id);
-            const idMascarado = btoa(idString); 
+            const idMascarado = btoa(unescape(encodeURIComponent(p.id)));
 
             const card = document.createElement("div");
             card.className = "product-card";
