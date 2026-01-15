@@ -51,6 +51,7 @@
             border-radius: 100px;
             transition: 0.3s;
             backdrop-filter: blur(10px);
+            z-index: 100;
         }
         .back-btn:hover { background: rgba(255,255,255,0.1); transform: translateX(-5px); }
 
@@ -66,6 +67,7 @@
             grid-template-columns: 1.1fr 0.9fr;
             overflow: hidden;
             box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            min-height: 600px; /* Garante altura mínima */
         }
 
         /* Lado da Imagem */
@@ -110,14 +112,13 @@
             line-height: 1.2;
             font-weight: 800;
             margin-bottom: 20px;
+            margin-top: 0;
             background: linear-gradient(to right, #fff, #94a3b8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .price-wrapper {
-            margin: 30px 0;
-        }
+        .price-wrapper { margin: 30px 0; }
         .price-label { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px; }
         .price-tag { font-size: 3.5rem; font-weight: 800; color: var(--success); display: flex; align-items: flex-start; gap: 5px; }
         .price-tag span { font-size: 1.5rem; margin-top: 10px; }
@@ -159,6 +160,9 @@
             text-align: center;
             transition: 0.3s;
             box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            border: none;
+            cursor: pointer;
+            display: block;
         }
         .cta-button:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6); }
 
@@ -198,233 +202,262 @@
             display: flex; align-items: center; gap: 10px;
             animation: slideUp 0.4s ease-out;
         }
-
         @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 30px; opacity: 1; } }
 
+        /* Modal Login */
+        .modal-overlay {
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
+            z-index: 9999; align-items: center; justify-content: center;
+        }
+
         @media (max-width: 900px) {
-            .detail-card { grid-template-columns: 1fr; border-radius: 0; }
+            .detail-card { grid-template-columns: 1fr; border-radius: 0; min-height: auto; }
             .img-side { height: 350px; margin: 10px; }
             .info-side { padding: 40px 30px; }
             h1 { font-size: 1.8rem; }
+            .back-btn { top: 15px; left: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i> Voltar para Ofertas</a>
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i> Voltar</a>
 
     <div id="content-area" class="detail-card">
-        <div style="grid-column: span 2; padding: 100px; text-align: center;">
-            <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary-accent)"></i>
-            <p style="margin-top: 20px; color: var(--text-muted)">Buscando a melhor oferta...</p>
+        <div style="grid-column: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 50px;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: var(--primary-accent)"></i>
+            <p style="margin-top: 20px; color: var(--text-muted)">Carregando oferta...</p>
+        </div>
+    </div>
+
+    <div id="login-modal" class="modal-overlay">
+        <div style="background: #111827; padding: 40px; border-radius: 32px; border: 1px solid var(--glass-border); text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+            <div style="width: 80px; height: 80px; background: rgba(255, 71, 71, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="fa-solid fa-heart" style="color: #ff4747; font-size: 2.5rem;"></i>
+            </div>
+            <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #fff;">Salve suas ofertas!</h2>
+            <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px;">Faça login para salvar seus produtos favoritos e receber alertas.</p>
+            
+            <button id="btn-google-login" style="width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s;">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
+                Entrar com Google
+            </button>
+
+            <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: var(--text-muted); margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Cancelar
+            </button>
         </div>
     </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-    authDomain: "baudepromocao-oficial.firebaseapp.com",
-    projectId: "baudepromocao-oficial",
-    storageBucket: "baudepromocao-oficial.firebasestorage.app",
-    messagingSenderId: "743146859125",
-    appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-};
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-// --- TORNANDO AS FUNÇÕES GLOBAIS PARA O ONCLICK FUNCIONAR ---
+    // --- FUNÇÕES GLOBAIS (Ligadas ao Window) ---
 
-// --- DENTRO DO SEU SCRIPT TYPE="MODULE" ---
-
-// Função de Login com Google
-window.loginWithGoogle = async () => {
-    try {
-        await signInWithPopup(auth, provider);
-        document.getElementById('login-modal').style.display = 'none';
-        showToast("Bem-vindo(a) ao Baú! 🎉");
-        // Recarrega os detalhes para verificar se o item já era favorito
-        location.reload(); 
-    } catch (err) {
-        console.error("Erro ao logar:", err);
-    }
-};
-
-// Toggle Wishlist com Gatilho de Cadastro
-window.toggleWishlist = async (productId) => {
-    // SE NÃO ESTIVER LOGADO: Abre o modal e para a execução
-    if (!auth.currentUser) {
-        document.getElementById('login-modal').style.display = 'flex';
-        return;
-    }
-
-    const heartBtn = document.getElementById(`heart-${productId}`);
-    const userRef = doc(db, "wishlists", auth.currentUser.uid);
-    const isAdding = !heartBtn.classList.contains('active');
-    heartBtn.classList.toggle('active');
-
-    try {
-        const snap = await getDoc(userRef);
-        if (isAdding) {
-            if (!snap.exists()) {
-                await setDoc(userRef, {
-                    email: auth.currentUser.email,
-                    items: [String(productId)],
-                    atualizadoEm: new Date()
-                });
-            } else {
-                await updateDoc(userRef, { items: arrayUnion(String(productId)) });
+    // 1. Login
+    window.loginWithGoogle = async () => {
+        try {
+            await signInWithPopup(auth, provider);
+            document.getElementById('login-modal').style.display = 'none';
+            showToast("Login realizado! 🎉");
+            
+            // Recarrega o status do favorito se já houver um produto na tela
+            const urlParams = new URLSearchParams(window.location.search);
+            const encodedId = urlParams.get('id');
+            if(encodedId) {
+                try {
+                    const id = atob(encodedId);
+                    checkIfFavorite(id);
+                } catch(e) {}
             }
-            showToast("Salvo nos favoritos ❤️");
-        } else {
-            await updateDoc(userRef, { items: arrayRemove(String(productId)) });
-            showToast("Removido dos favoritos");
+        } catch (err) {
+            console.error("Erro ao logar:", err);
+            showToast("Erro ao fazer login");
         }
-    } catch (e) {
-        console.error("Erro no Firebase:", e);
-        heartBtn.classList.toggle('active');
-    }
-};
+    };
 
-// Vincular o clique do botão do Google
-document.getElementById('btn-google-login').addEventListener('click', window.loginWithGoogle);
+    // Adiciona o listener ao botão de login assim que o script carregar
+    document.getElementById('btn-google-login').addEventListener('click', window.loginWithGoogle);
 
-window.shareLink = (title, url) => {
-    if (navigator.share) {
-        navigator.share({ title, url }).catch(console.error);
-    } else {
-        navigator.clipboard.writeText(url);
-        showToast("Link copiado!");
-    }
-};
-
-// --- LÓGICA DE CARREGAMENTO ---
-async function loadProductDetails() {
-    const params = new URLSearchParams(window.location.search);
-    const encodedId = params.get('id');
-    if (!encodedId) return;
-    
-    try {
-        // DECODIFICAÇÃO CORRIGIDA:
-        // 1. atob decodifica o base64
-        // 2. O restante garante que caracteres especiais (acentos) não quebrem
-        const decodedString = atob(encodedId);
-        const productId = decodedString; 
-
-        const contentArea = document.getElementById("content-area");
-
-        const res = await fetch('products.json');
-        const products = await res.json();
-        
-        // Compara convertendo ambos para String para não haver erro de tipo (número vs texto)
-        const product = products.find(p => String(p.id) === String(productId));
-
-        if (!product) {
-            contentArea.innerHTML = "<h2 style='padding: 50px; text-align:center;'>Oferta Expirada ou não encontrada!</h2>";
+    // 2. Toggle Wishlist
+    window.toggleWishlist = async (productId) => {
+        if (!auth.currentUser) {
+            document.getElementById('login-modal').style.display = 'flex';
             return;
         }
 
-        // Renderização do HTML (Mantendo seu template original)
-        contentArea.innerHTML = `
-            <div class="img-side">
-                <div class="floating-actions">
-                    <button id="heart-${product.id}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id}')">
-                        <i class="fa-solid fa-heart"></i>
-                    </button>
-                    <button class="icon-btn" onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
-                        <i class="fa-solid fa-share-nodes"></i>
-                    </button>
-                </div>
-                <img src="${product.img}" alt="${product.title}">
-            </div>
-            <div class="info-side">
-                <span class="store-tag">${product.store}</span>
-                <h1>${product.title}</h1>
-                
-                <div class="price-wrapper">
-                    <p class="price-label">Preço exclusivo no Baú:</p>
-                    <div class="price-tag"><span>R$</span> ${product.price}</div>
-                </div>
-
-                <div class="benefits-grid">
-                    <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
-                    <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
-                    <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
-                    <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
-                </div>
-
-                <div class="actions">
-                    <a href="${product.link}" target="_blank" class="cta-button">
-                        Aproveitar Promoção <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; margin-left: 10px"></i>
-                    </a>
-                    <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px">
-                        Você será redirecionado para o site oficial da ${product.store}.
-                    </p>
-                </div>
-            </div>
-        `;
-
-        if (auth.currentUser) {
-            checkIfFavorite(product.id);
-        }
-    } catch (e) { 
-        console.error("Erro ao decodificar ID ou carregar produto:", e); 
-        document.getElementById("content-area").innerHTML = "<h2 style='padding: 50px; text-align:center;'>Erro ao carregar oferta.</h2>";
-    }
-}
-
-async function checkIfFavorite(productId) {
-    try {
-        const snap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
-        if (snap.exists() && snap.data().items?.includes(String(productId))) {
-            document.getElementById(`heart-${productId}`)?.classList.add('active');
-        }
-    } catch (e) {
-        console.error("Erro ao verificar favorito:", e);
-    }
-}
-
-function showToast(msg) {
-    const t = document.createElement("div");
-    t.className = "toast";
-    t.innerHTML = `<i class="fa-solid fa-check-circle" style="color: var(--success)"></i> ${msg}`;
-    document.body.appendChild(t);
-    setTimeout(() => {
-        t.style.opacity = "0";
-        setTimeout(() => t.remove(), 500);
-    }, 2500);
-}
-
-// Inicialização
-onAuthStateChanged(auth, (user) => {
-    loadProductDetails();
-});
-</script>
-
-<div id="login-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 9999; align-items: center; justify-content: center;">
-    <div style="background: #111827; padding: 40px; border-radius: 32px; border: 1px solid var(--glass-border); text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
-        <div style="width: 80px; height: 80px; background: rgba(255, 71, 71, 0.1); borderRadius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            <i class="fa-solid fa-heart" style="color: #ff4747; font-size: 2.5rem;"></i>
-        </div>
-        <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #fff;">Salve suas ofertas!</h2>
-        <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px;">Faça login para salvar seus produtos favoritos e receber alertas quando o preço baixar.</p>
+        const productIdStr = String(productId);
+        const heartBtn = document.getElementById(`heart-${productId}`);
+        const userRef = doc(db, "wishlists", auth.currentUser.uid);
         
-        <button id="btn-google-login" style="width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s;">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20">
-            Entrar com Google
-        </button>
+        // UI Otimista
+        const wasActive = heartBtn.classList.contains('active');
+        heartBtn.classList.toggle('active');
 
-        <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: var(--text-muted); margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
-            Continuar navegando
-        </button>
-    </div>
-</div>
+        try {
+            const snap = await getDoc(userRef);
+            
+            if (!wasActive) { // Adicionar
+                if (!snap.exists()) {
+                    await setDoc(userRef, {
+                        email: auth.currentUser.email,
+                        items: [productIdStr],
+                        updatedAt: new Date()
+                    });
+                } else {
+                    await updateDoc(userRef, { items: arrayUnion(productIdStr) });
+                }
+                showToast("Salvo nos favoritos ❤️");
+            } else { // Remover
+                await updateDoc(userRef, { items: arrayRemove(productIdStr) });
+                showToast("Removido dos favoritos");
+            }
+        } catch (e) {
+            console.error("Erro Firebase:", e);
+            heartBtn.classList.toggle('active'); // Reverte visualmente se der erro
+            showToast("Erro ao salvar.");
+        }
+    };
+
+    // 3. Compartilhar
+    window.shareLink = (title, url) => {
+        if (navigator.share) {
+            navigator.share({ title, url }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(url);
+            showToast("Link copiado!");
+        }
+    };
+
+    // --- LÓGICA DE CARREGAMENTO ---
+
+    async function loadProductDetails() {
+        const params = new URLSearchParams(window.location.search);
+        const encodedId = params.get('id');
+        const contentArea = document.getElementById("content-area");
+
+        if (!encodedId) {
+            contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Produto não especificado.</h2></div>";
+            return;
+        }
+        
+        try {
+            // CORREÇÃO: Decodifica apenas uma vez e trata erro
+            const productId = atob(encodedId); 
+
+            const res = await fetch('products.json');
+            if(!res.ok) throw new Error("Erro ao carregar JSON");
+            
+            const products = await res.json();
+            
+            // Compara convertendo para String para garantir match
+            const product = products.find(p => String(p.id) === String(productId));
+
+            if (!product) {
+                contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Oferta expirada ou não encontrada!</h2></div>";
+                return;
+            }
+
+            // Renderiza
+            contentArea.innerHTML = `
+                <div class="img-side">
+                    <div class="floating-actions">
+                        <button id="heart-${product.id}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id}')">
+                            <i class="fa-solid fa-heart"></i>
+                        </button>
+                        <button class="icon-btn" onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
+                            <i class="fa-solid fa-share-nodes"></i>
+                        </button>
+                    </div>
+                    <img src="${product.img}" alt="${product.title}">
+                </div>
+                <div class="info-side">
+                    <span class="store-tag">${product.store}</span>
+                    <h1>${product.title}</h1>
+                    
+                    <div class="price-wrapper">
+                        <p class="price-label">Preço exclusivo no Baú:</p>
+                        <div class="price-tag"><span>R$</span> ${product.price}</div>
+                    </div>
+
+                    <div class="benefits-grid">
+                        <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
+                        <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
+                        <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
+                        <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
+                    </div>
+
+                    <div class="actions">
+                        <a href="${product.link}" target="_blank" class="cta-button">
+                            Aproveitar Promoção <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; margin-left: 10px"></i>
+                        </a>
+                        <p style="text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px">
+                            Você será redirecionado para o site oficial da ${product.store}.
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            if (auth.currentUser) {
+                checkIfFavorite(product.id);
+            }
+
+        } catch (e) { 
+            console.error("Erro loading:", e); 
+            contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Erro ao carregar detalhes.</h2><p>Código inválido ou erro de conexão.</p></div>";
+        }
+    }
+
+    async function checkIfFavorite(productId) {
+        if(!auth.currentUser) return;
+        try {
+            const snap = await getDoc(doc(db, "wishlists", auth.currentUser.uid));
+            // Verifica se existe E se o array contém o ID (string)
+            if (snap.exists() && snap.data().items?.includes(String(productId))) {
+                document.getElementById(`heart-${productId}`)?.classList.add('active');
+            }
+        } catch (e) {
+            console.error("Erro check fav:", e);
+        }
+    }
+
+    function showToast(msg) {
+        const t = document.createElement("div");
+        t.className = "toast";
+        t.innerHTML = `<i class="fa-solid fa-check-circle" style="color: var(--success)"></i> ${msg}`;
+        document.body.appendChild(t);
+        setTimeout(() => {
+            t.style.opacity = "0";
+            setTimeout(() => t.remove(), 500);
+        }, 2500);
+    }
+
+    // Expor Toast globalmente se necessário, ou usar local
+    window.showToast = showToast;
+
+    // Inicialização
+    onAuthStateChanged(auth, (user) => {
+        loadProductDetails();
+    });
+</script>
 
 </body>
 </html>
