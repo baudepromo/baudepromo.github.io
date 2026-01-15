@@ -325,78 +325,70 @@
     };
 
     async function loadProductDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const encodedId = params.get('id');
-if (encodedId) {
+    const params = new URLSearchParams(window.location.search);
+    const encodedId = params.get('id');
+    const contentArea = document.getElementById("content-area");
+
+    if (!encodedId) {
+        contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Produto não encontrado.</h2></div>";
+        return;
+    }
+    
     try {
-        // Decodificação segura para caracteres especiais
+        // 1. Decodificação Segura (Obrigatório ser igual ao index.html)
         const productId = decodeURIComponent(escape(atob(encodedId)));
-        
+
+        // 2. Carrega o JSON
         const res = await fetch('products.json');
         const products = await res.json();
+        
+        // 3. Busca o produto (Garante que ambos sejam strings para comparar)
         const product = products.find(p => String(p.id) === productId);
-        // ... restante do seu código ...
-    } catch (e) {
-        console.error("Erro ao decodificar ID:", e);
-    }
-}
-        const contentArea = document.getElementById("content-area");
 
-        if (!encodedId) {
-            contentArea.innerHTML = "<h2>Produto não encontrado.</h2>";
+        if (!product) {
+            contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Oferta expirada!</h2><p>Este produto não está mais disponível no nosso catálogo.</p></div>";
             return;
         }
-        
-        try {
-            // Decodifica o ID que veio do index.html
-            const productId = decodeURIComponent(atob(encodedId));
 
-            const res = await fetch('products.json');
-            const products = await res.json();
-            const product = products.find(p => String(p.id) === productId);
-
-            if (!product) {
-                contentArea.innerHTML = "<h2>Oferta expirada!</h2>";
-                return;
-            }
-
-            contentArea.innerHTML = `
-                <div class="img-side">
-                    <div class="floating-actions">
-                        <button id="heart-${product.id}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id}')">
-                            <i class="fa-solid fa-heart"></i>
-                        </button>
-                        <button class="icon-btn" onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
-                            <i class="fa-solid fa-share-nodes"></i>
-                        </button>
-                    </div>
-                    <img src="${product.img}" alt="${product.title}">
+        // 4. Renderiza o conteúdo
+        contentArea.innerHTML = `
+            <div class="img-side">
+                <div class="floating-actions">
+                    <button id="heart-${product.id.replace(/\s+/g, '-')}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id.replace(/'/g, "\\'")}')">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+                    <button class="icon-btn" onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </button>
                 </div>
-                <div class="info-side">
-                    <span class="store-tag">${product.store}</span>
-                    <h1>${product.title}</h1>
-                    <div class="price-wrapper">
-                        <p class="price-label">Preço exclusivo no Baú:</p>
-                        <div class="price-tag"><span>R$</span> ${product.price}</div>
-                    </div>
-                    <div class="benefits-grid">
-                        <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
-                        <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
-                        <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
-                        <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
-                    </div>
-                    <div class="actions">
-                        <a href="${product.link}" target="_blank" class="cta-button">Aproveitar Promoção</a>
-                    </div>
+                <img src="${product.img}" alt="${product.title}">
+            </div>
+            <div class="info-side">
+                <span class="store-tag">${product.store}</span>
+                <h1>${product.title}</h1>
+                <div class="price-wrapper">
+                    <p class="price-label">Preço exclusivo no Baú:</p>
+                    <div class="price-tag"><span>R$</span> ${product.price}</div>
                 </div>
-            `;
+                <div class="benefits-grid">
+                    <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
+                    <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
+                    <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
+                    <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
+                </div>
+                <div class="actions">
+                    <a href="${product.link}" target="_blank" class="cta-button">Aproveitar Promoção</a>
+                </div>
+            </div>
+        `;
 
-            if (auth.currentUser) checkIfFavorite(product.id);
+        if (auth.currentUser) checkIfFavorite(product.id);
 
-        } catch (e) { 
-            contentArea.innerHTML = "<h2>Erro ao carregar detalhes.</h2>";
-        }
+    } catch (e) { 
+        console.error("Erro ao carregar detalhes:", e);
+        contentArea.innerHTML = "<div style='text-align:center; padding: 50px'><h2>Erro técnico.</h2><p>Ocorreu um problema ao processar o link.</p></div>";
     }
+}
 
     async function checkIfFavorite(productId) {
         if(!auth.currentUser) return;

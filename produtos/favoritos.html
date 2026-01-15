@@ -191,7 +191,7 @@
             // 4. Renderizar
             grid.innerHTML = "";
             myFavorites.forEach(p => {
-                const encodedId = btoa(p.id); // Base64 simples
+                const encodedId = btoa(unescape(encodeURIComponent(p.id))); // Base64 simples
                 grid.innerHTML += `
                     <div class="product-card">
                         <img src="${p.img}" alt="${p.title}">
