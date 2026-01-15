@@ -131,14 +131,38 @@
             .main-content { margin-left: 0; margin-bottom: 80px; padding: 20px; }
             .search-container { max-width: 100%; }
         }
+
+        /* --- BOTÃO FAVORITOS --- */
+.favoritos-btn {
+    margin-top: 20px;
+    background: linear-gradient(135deg, #ff5f6d, #ff4747);
+    color: white !important;
+    font-weight: 700;
+    box-shadow: 0 8px 25px rgba(255, 71, 71, 0.35);
+    text-decoration: none;
+}
+
+.favoritos-btn i {
+    color: white;
+}
+
+.favoritos-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 71, 71, 0.5);
+}
+
+/* Mobile: mantém o destaque */
+@media (max-width: 600px) {
+    .favoritos-btn {
+        margin-top: 0;
+        border-radius: 16px;
+        padding: 14px;
+    }
+}
+
     </style>
 </head>
 <body>
-
-    <a href="favoritos.html" class="nav-link">
-    <i class="fa-solid fa-heart"></i> Meus Favoritos
-    </a>
-
 <aside class="sidebar">
     <div class="logo-sidebar">
         <img src="img/perfil.png" alt="Logo">
@@ -151,6 +175,11 @@
         <button class="tab-btn" data-tab="moda"><i class="fa-solid fa-shirt"></i> <span>Moda</span></button>
         <button class="tab-btn" data-tab="beleza"><i class="fa-solid fa-person"></i> <span>Beleza</span></button>
         <button class="tab-btn" data-tab="saude"><i class="fa-solid fa-heart"></i> <span>Saúde</span></button>
+        <a href="favoritos.html" class="tab-btn favoritos-btn">
+    <i class="fa-solid fa-heart"></i>
+    <span>Meus Favoritos</span>
+</a>
+
     </nav>
 </aside>
 
