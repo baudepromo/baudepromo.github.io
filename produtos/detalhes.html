@@ -312,11 +312,17 @@ async function loadProductDetails() {
     if (!encodedId) return;
     
     try {
-        const productId = decodeURIComponent(escape(atob(encodedId))); 
+        // Correção da decodificação Base64 para suportar caracteres especiais (UTF-8)
+        const productId = decodeURIComponent(atob(encodedId).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
         const contentArea = document.getElementById("content-area");
 
         const res = await fetch('products.json');
         const products = await res.json();
+        
+        // Garantimos que a comparação seja feita como String para evitar erros de tipo
         const product = products.find(p => String(p.id) === String(productId));
 
         if (!product) {
@@ -324,6 +330,7 @@ async function loadProductDetails() {
             return;
         }
 
+        // Renderização do HTML (Mantendo seu template original)
         contentArea.innerHTML = `
             <div class="img-side">
                 <div class="floating-actions">
@@ -363,12 +370,12 @@ async function loadProductDetails() {
             </div>
         `;
 
-        // Verifica se já é favorito após renderizar o botão
         if (auth.currentUser) {
             checkIfFavorite(product.id);
         }
     } catch (e) { 
-        console.error("Erro ao carregar detalhes:", e); 
+        console.error("Erro ao decodificar ID ou carregar produto:", e); 
+        document.getElementById("content-area").innerHTML = "<h2 style='padding: 50px; text-align:center;'>Erro ao carregar oferta.</h2>";
     }
 }
 
