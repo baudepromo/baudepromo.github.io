@@ -277,82 +277,123 @@
     </div>
 
     <script>
-        let products = [];
-        let filteredProducts = [];
-        let page = 1;
-        const perPage = 12;
+/* ===============================
+   ESTADO GLOBAL
+================================ */
+let allProducts = [];
+let filteredProducts = [];
+let currentPage = 1;
 
-        // Função para embaralhar o array (Algoritmo Fisher-Yates)
-function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
+const PER_PAGE = 12;
+
+/* ===============================
+   SHUFFLE (Fisher-Yates)
+================================ */
+function shuffle(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return array;
+    return shuffled;
 }
 
+/* ===============================
+   LOAD (EMBARALHA 1 VEZ)
+================================ */
 async function loadProducts() {
     try {
-        const res = await fetch('data/products.json'); 
+        const res = await fetch('data/products.json');
         const data = await res.json();
-        
-        // EMBARALHA os produtos assim que carrega
-        products = shuffleArray(data); 
-        
-        filteredProducts = [...products];
+
+        // 🔥 EMBARALHA UMA ÚNICA VEZ POR VISITA
+        allProducts = shuffle(data);
+
+        filteredProducts = [...allProducts];
         render();
-    } catch (error) {
-        console.error("Erro ao carregar produtos:", error);
-        document.getElementById('grid').innerHTML = "<p>Erro ao carregar ofertas.</p>";
+    } catch (err) {
+        console.error(err);
+        document.getElementById('grid').innerHTML =
+            '<p>Erro ao carregar produtos.</p>';
     }
 }
 
-        function render() {
-            const grid = document.getElementById('grid');
-            grid.innerHTML = '';
+/* ===============================
+   RENDER
+================================ */
+function render() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
 
-            const start = (page - 1) * perPage;
-            const end = start + perPage;
-            const itemsToShow = filteredProducts.slice(start, end);
+    const start = (currentPage - 1) * PER_PAGE;
+    const end = start + PER_PAGE;
 
-            itemsToShow.forEach(p => {
-                grid.innerHTML += `
-                    <a href="${p.link}" class="card" target="_blank">
-                        <span class="badge">${p.badge || 'Oferta'}</span>
-                        <div class="card-img-wrapper">
-                            <img src="${p.image || p.img}" alt="${p.title}">
-                        </div>
-                        <div class="info">
-                            <div class="title">${p.title}</div>
-                            <div class="price-row">
-                                <div class="old">${p.oldPrice || ''}</div>
-                                <div class="price">R$ ${p.currentPrice || p.price}</div>
-                                <div class="btn">EU QUERO</div>
-                            </div>
-                        </div>
-                    </a>
-                `;
-            });
+    filteredProducts.slice(start, end).forEach((p, index) => {
+        grid.insertAdjacentHTML('beforeend', `
+            <a href="${p.link}" class="card" target="_blank"
+               style="animation-delay:${index * 0.03}s">
+               
+                <span class="badge">${p.badge || 'OFERTA'}</span>
 
-            document.getElementById('page').innerText = page;
-            document.getElementById('prev').disabled = page === 1;
-            document.getElementById('next').disabled = end >= filteredProducts.length;
-        }
+                <div class="card-img-wrapper">
+                    <img src="${p.image || p.img}" alt="${p.title}">
+                </div>
 
-        // Filtro de Busca
-        document.getElementById('search').addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            filteredProducts = products.filter(p => 
-                p.title.toLowerCase().includes(term)
-            );
-            page = 1;
-            render();
-        });
+                <div class="info">
+                    <div class="title">${p.title}</div>
 
-        document.getElementById('prev').onclick = () => { if(page > 1) { page--; render(); window.scrollTo(0,0); } }
-        document.getElementById('next').onclick = () => { if((page * perPage) < filteredProducts.length) { page++; render(); window.scrollTo(0,0); } }
+                    <div class="price-row">
+                        ${p.oldPrice ? `<div class="old">${p.oldPrice}</div>` : ''}
+                        <div class="price">R$ ${p.currentPrice || p.price}</div>
+                        <div class="btn">EU QUERO</div>
+                    </div>
+                </div>
+            </a>
+        `);
+    });
 
-        loadProducts();
-    </script>
+    document.getElementById('page').innerText = currentPage;
+    document.getElementById('prev').disabled = currentPage === 1;
+    document.getElementById('next').disabled =
+        end >= filteredProducts.length;
+}
+
+/* ===============================
+   SEARCH
+================================ */
+document.getElementById('search').addEventListener('input', e => {
+    const term = e.target.value.toLowerCase();
+    filteredProducts = allProducts.filter(p =>
+        p.title.toLowerCase().includes(term)
+    );
+    currentPage = 1;
+    render();
+});
+
+/* ===============================
+   PAGINATION
+================================ */
+document.getElementById('prev').onclick = () => {
+    if (currentPage > 1) {
+        currentPage--;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+};
+
+document.getElementById('next').onclick = () => {
+    if ((currentPage * PER_PAGE) < filteredProducts.length) {
+        currentPage++;
+        render();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+};
+
+/* ===============================
+   INIT
+================================ */
+loadProducts();
+</script>
+
 </body>
 </html>
