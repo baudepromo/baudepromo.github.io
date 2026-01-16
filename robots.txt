@@ -1,4 +1,9 @@
+# Permitir que todos os robôs acessem o site
 User-agent: *
 Allow: /
 
+# Bloquear a página de favoritos (porque ela é vazia para o Google)
+Disallow: /favoritos.html
+
+# Indicar onde está o seu sitemap (troque pela sua URL real)
 Sitemap: https://baudepromo.github.io/sitemap.xml
