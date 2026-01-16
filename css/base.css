@@ -10,3 +10,21 @@ body {
     font-size: 1.25rem;
     font-weight: 700;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Faz o corpo ter o tamanho da tela toda */
+}
+
+footer {
+    margin-top: auto; /* Empurra o footer para o final se a página for curta */
+}
+
+body.dark {
+    --bg: #0f1115;
+    --card: #1a1d24;
+    --text: #f1f2f6;
+    --muted: #a4b0be;
+    --shadow: 0 8px 24px rgba(0,0,0,.4);
+}

@@ -1,18 +1,30 @@
 [
   {
-    "id": 1,
-    "nome": "Mini Processador USB",
-    "img": "https://via.placeholder.com/200",
-    "preco": "R$ 29,90",
-    "preco_antigo": "R$ 59,90", 
-    "link": "https://s.shopee.com.br/7pmwSdAwb9"
+    "name": "Fone Bluetooth Sem Fio",
+    "image": "https://via.placeholder.com/300",
+    "oldPrice": 99.9,
+    "newPrice": 59.9,
+    "link": "#"
   },
   {
-    "id": 2,
-    "nome": "Luminária LED",
-    "img": "https://via.placeholder.com/200",
-    "preco": "R$ 45,00",
-    "preco_antigo": "R$ 60,00",
-    "link": "https://s.shopee.com.br/7pmwSdAwb9"
+    "name": "Smartwatch Esportivo",
+    "image": "https://via.placeholder.com/300",
+    "oldPrice": 199.9,
+    "newPrice": 129.9,
+    "link": "#"
+  },
+  {
+    "name": "Lâmpada LED Inteligente",
+    "image": "https://via.placeholder.com/300",
+    "oldPrice": 39.9,
+    "newPrice": 19.9,
+    "link": "#"
+  },
+  {
+    "name": "Suporte Veicular Magnético",
+    "image": "https://via.placeholder.com/300",
+    "oldPrice": 49.9,
+    "newPrice": 29.9,
+    "link": "#"
   }
 ]

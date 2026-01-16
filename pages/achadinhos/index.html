@@ -1,58 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achadinhos - Baú de Promoção</title>
-    <link rel="stylesheet" href="/css/main.css">
-    <meta name="description" content="Encontre os melhores produtos virais, promoções imperdíveis e cupons de desconto no Baú de Promoção. Atualizado diariamente!">
-<meta name="keywords" content="promoção, achadinhos, shopee, ofertas, desconto, cupom">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://baudepromo.github.io/">
-<meta property="og:title" content="Baú de Promoção - Ofertas Virais e Cupons">
-<meta property="og:description" content="Garimpamos os preços mais baixos da internet. Confira nossos achadinhos do dia!">
-<meta property="og:image" content="https://www.seudominio.com.br/assets/banner-social.jpg"> <meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://baudepromo.github.io/">
-<meta property="twitter:title" content="Baú de Promoção - Ofertas Virais">
-<meta property="twitter:description" content="Garimpamos os preços mais baixos da internet. Confira nossos achadinhos do dia!">
-<meta property="twitter:image" content="https://www.seudominio.com.br/assets/banner-social.jpg">
+<title>Baú de Achadinhos | Ofertas Reais</title>
+
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/pages/achadinhos.css">
 </head>
+
 <body>
 
-    <header>
-        <div class="menu-toggle" onclick="document.getElementById('main-nav').classList.toggle('active')">
-            <span></span><span></span><span></span>
-        </div>
-        <div style="font-weight: bold; font-size: 1.2rem;">ACHADINHOS</div>
-        <div style="width: 25px;"></div>
-        
-        <nav id="main-nav">
-            <ul>
-                <li><a href="/">Início</a></li>
-                <li><a href="achadinhos.html">Achadinhos</a></li>
-                </ul>
-        </nav>
-    </header>
+<header>
+    <strong>Baú de Achadinhos</strong>
+    <button class="dark-toggle" onclick="toggleDark()">🌙</button>
+</header>
 
-    <div class="container" style="margin-top: 20px;">
-        <h2 class="section-title">✨ Seleção Aleatória do Dia</h2>
-        <p style="padding: 0 20px; color: #666;">A ordem dos produtos muda toda vez que você entra aqui!</p>
-    </div>
+<section class="banner">
+    <h1>Achadinhos com Desconto Real 🔥</h1>
+    <p>% OFF calculado automaticamente</p>
+</section>
 
-    <div class="container">
-        <div id="achadinhos-container" class="products-grid">
-            <p style="padding:20px;">Carregando ofertas...</p>
-        </div>
-    </div>
+<div class="search-wrapper">
+    <input
+        type="search"
+        id="searchInput"
+        placeholder="Buscar achadinho"
+    >
+</div>
 
-    <div class="pagination">
-        <button id="prev-btn" class="page-btn">Anterior</button>
-        <span id="page-info" style="align-self: center; font-weight: bold;">Página 1</span>
-        <button id="next-btn" class="page-btn">Próximo</button>
-    </div>
+<select id="sortDiscount" class="filter">
+    <option value="default">Ordenar</option>
+    <option value="discount">Maior desconto</option>
+</select>
 
-    <script src="/js/pages/achadinhos.js"></script>
+<div class="container">
+    <h2 class="section-title">🔥 Achadinhos do Dia</h2>
+    <div class="products-grid" id="products"></div>
+</div>
 
+<div style="text-align:center; margin:30px 0;">
+    <button id="loadMore" class="buy-btn">Carregar mais</button>
+</div>
+
+<div id="footer-placeholder"></div>
+
+<script src="/js/footer.js"></script>
+
+<script src="/js/achadinhos.js"></script>
 </body>
 </html>

@@ -37,3 +37,33 @@ nav#main-nav.active { display: block; }
 .achados { border-left: 6px solid var(--success-color); }
 .promocoes { border-left: 6px solid var(--primary-color); }
 .cupons { border-left: 6px solid var(--info-color); }
+
+.search-bar {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: none;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    background: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+.search-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+#searchInput {
+    width: 60%;
+    max-width: 420px;
+    padding: 10px 14px;
+    border-radius: 30px;
+    border: none;
+    font-size: .9rem;
+    background: var(--card);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
