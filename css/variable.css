@@ -1,42 +1,11 @@
-/* variables.css */
-
 :root {
-    /* --- CORES PRINCIPAIS (DARK THEME) --- */
-    --bg-main: #0b1220;
-    --bg-gradient: radial-gradient(1200px circle at top, #14213d, #0b1220 60%);
-    
-    /* --- EFEITO GLASSMORPHISM --- */
-    --glass-bg: rgba(255, 255, 255, 0.06);
-    --glass-border: rgba(255, 255, 255, 0.12);
-    --glass-blur: blur(14px);
-    --glass-blur-nav: blur(18px);
-
-    /* --- CORES DE DESTAQUE E AÇÃO --- */
-    --primary: #38bdf8;
-    --primary-hover: #0ea5e9;
-    --primary-soft: rgba(56, 189, 248, 0.15);
-    --accent: #facc15; /* Cor amarela do Pix/Destaques */
-    --success: #22c55e;
-    --error: #ff4747;
-    
-    /* --- TIPOGRAFIA --- */
-    --text-main: #ffffff;
-    --text-muted: #9ca3af;
-    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
-
-    /* --- BORDAS E ARREDONDAMENTO --- */
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
-    --radius-full: 999px;
-
-    /* --- ANIMAÇÕES --- */
-    --transition: all 0.35s ease;
-    --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.35);
-    --shadow-btn: 0 12px 30px rgba(56, 189, 248, 0.35);
-
-    /* --- Z-INDEX HIERARCHY --- */
-    --z-index-nav: 1900;
-    --z-index-hamburger: 2000;
-    --z-index-modal: 3000;
+    --primary-color: #ff4757;
+    --secondary-color: #ffa502;
+    --success-color: #2ed573;
+    --info-color: #1e90ff;
+    --background-light: #f4f4f4;
+    --white: #ffffff;
+    --text-dark: #333333;
+    --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    --radius: 15px;
 }

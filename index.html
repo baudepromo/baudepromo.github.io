@@ -1,641 +1,126 @@
 <!DOCTYPE html>
-<html lang="pt-BR" prefix="og: http://ogp.me/ns#">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Baú de Promoções 2026 | Achadinhos Shopee, Ofertas Amazon, Cupons e Produtos Virais</title>
-    <meta name="description" content="Baú de Promoções reúne os melhores achadinhos da Shopee, ofertas da Amazon, cupons AliExpress e produtos virais testados. Economize com promoções reais em 2026." />
-    <meta name="keywords" content="achadinhos shopee, ofertas amazon hoje, cupons aliexpress, produtos virais tiktok, promoções 2026, baú de promoções, produtos baratos online" />
-    <meta name="author" content="Baú de Promoções" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
-    <link rel="canonical" href="https://baudepromo.github.io/" />
-    <link rel="icon" href="/assets/img/favicon.webp"/>
-
-    <meta property="og:locale" content="pt_BR" />
-    <meta property="og:title" content="Baú de Promoções | Melhores Achadinhos e Ofertas Online" />
-    <meta property="og:description" content="Economize com curadoria profissional dos melhores produtos da internet. Shopee, Amazon e mais!" />
-    <meta property="og:image" content="https://baudepromo.github.io/img/perfil.jpg" />
-    <meta property="og:image:alt" content="Logo Baú de Promoções" />
-    <meta property="og:url" content="https://baudepromo.github.io/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Baú de Promoções" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Baú de Promoções | Achadinhos 2026" />
-    <meta name="twitter:description" content="As melhores ofertas da Shopee e Amazon em um só lugar." />
-    <meta name="twitter:image" content="https://baudepromo.github.io/img/perfil.jpg" />
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="preload" as="image" href="https://baudepromo.github.io/img/perfil.jpg">
-
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4VNJR25033');
-</script>
-
-    <script type="application/ld+json">
-    [
-        {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "name": "Baú de Promoções",
-            "url": "https://baudepromo.github.io/",
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://baudepromo.github.io/search?q={search_term_string}",
-                "query-input": "required name=search_term_string"
-            }
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "Baú de Promoções",
-            "url": "https://baudepromo.github.io/",
-            "logo": "https://baudepromo.github.io/img/favicon.jpg",
-            "description": "Plataforma especializada em achadinhos Shopee, ofertas Amazon, cupons AliExpress e produtos virais.",
-            "sameAs": ["https://instagram.com/seuperfil", "https://tiktok.com/@seuperfil"]
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": [
-                {
-                    "@type": "Question",
-                    "name": "O Baú de Promoções é confiável?",
-                    "acceptedAnswer": { "@type": "Answer", "text": "Sim. O Baú de Promoções realiza curadoria manual e direciona apenas para lojas oficiais." }
-                },
-                {
-                    "@type": "Question",
-                    "name": "Os links do Baú são afiliados?",
-                    "acceptedAnswer": { "@type": "Answer", "text": "Alguns links podem gerar comissão sem custo adicional ao usuário." }
-                }
-            ]
-        }
-    ]
-    </script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baú de Promoção - Os melhores achados</title>
     <style>
-        :root {
-    --bg-main: #0b1220;
-    --bg-gradient: radial-gradient(1200px circle at top, #14213d, #0b1220 60%);
-    --glass-bg: rgba(255, 255, 255, 0.06);
-    --glass-border: rgba(255, 255, 255, 0.12);
+        /* Estilos Gerais */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f4f4; color: #333; }
 
-    --primary: #38bdf8;
-    --primary-soft: rgba(56, 189, 248, 0.15);
-    --success: #22c55e;
+        /* Menu Hambúrguer */
+        header { background: #ff4757; color: white; padding: 1rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .menu-toggle { cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
+        .menu-toggle span { width: 25px; height: 3px; background: white; border-radius: 2px; }
+        
+        nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ff4757; padding: 1rem; }
+        nav.active { display: block; }
+        nav ul { list-style: none; }
+        nav ul li { padding: 10px 0; border-bottom: 1px solid #ff6b81; }
+        nav ul li a { color: white; text-decoration: none; font-weight: bold; }
 
-    --text-main: #ffffff;
-    --text-muted: #9ca3af;
+        /* Banner Principal */
+        .banner { background: linear-gradient(45deg, #ff4757, #ffa502); color: white; padding: 40px 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
+        .banner h1 { font-size: 2rem; margin-bottom: 10px; }
+        .banner p { font-size: 1rem; opacity: 0.9; }
 
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
+        /* Lista de Produtos Virais (Horizontal/Vertical) */
+        .section-title { padding: 20px; font-size: 1.2rem; font-weight: bold; }
+        .product-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 0 20px 20px; scrollbar-width: none; }
+        .product-scroll::-webkit-scrollbar { display: none; }
+        .product-card { min-width: 150px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .product-card img { width: 100%; border-radius: 10px; margin-bottom: 10px; }
+        .product-card p { font-size: 0.9rem; font-weight: bold; color: #ff4757; }
 
-    --transition: all 0.35s ease;
-}
+        /* Categorias de Botões */
+        .categories { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
+        .cat-button { background: white; padding: 20px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: #333; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        .cat-button i { font-size: 1.5rem; }
+        .achados { border-left: 5px solid #2ed573; }
+        .promocoes { border-left: 5px solid #ff4757; }
+        .cupons { border-left: 5px solid #1e90ff; }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-body {
-    background: var(--bg-gradient);
-    color: var(--text-main);
-    min-height: 100vh;
-    line-height: 1.6;
-    overflow-x: hidden;
-}
-
-/* ================= HEADER ================= */
-
-header {
-    max-width: 1100px;
-    margin: auto;
-    padding: 90px 20px 50px;
-    text-align: center;
-    position: relative;
-}
-
-header h1 {
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
-    font-weight: 800;
-    letter-spacing: -1.5px;
-}
-
-header p {
-    margin-top: 14px;
-    font-size: 1.05rem;
-    color: var(--primary);
-    font-weight: 500;
-}
-
-/* ================= USER AUTH ================= */
-
-.user-auth-area {
-    position: absolute;
-    top: 20px;
-    right: 80px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 100;
-}
-
-.btn-login {
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    padding: 9px 18px;
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-login:hover {
-    background: var(--primary);
-    color: #001c2a;
-}
-
-.user-info {
-    display: none;
-    align-items: center;
-    gap: 10px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    padding: 6px 14px;
-    border-radius: 999px;
-    backdrop-filter: blur(10px);
-}
-
-.user-info img {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 2px solid var(--primary);
-}
-
-/* ================= HAMBURGER ================= */
-
-.hamburger-btn {
-    position: absolute;
-    top: 22px;
-    right: 22px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 2000;
-}
-
-.hamburger-btn span {
-    width: 30px;
-    height: 3px;
-    background: var(--primary);
-    border-radius: 4px;
-    transition: 0.3s;
-}
-
-.hamburger-btn.active span:nth-child(1) {
-    transform: rotate(45deg) translate(6px, 6px);
-}
-.hamburger-btn.active span:nth-child(2) {
-    opacity: 0;
-}
-.hamburger-btn.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* ================= MOBILE MENU ================= */
-
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 280px;
-    height: 100vh;
-    background: rgba(11, 18, 32, 0.95);
-    backdrop-filter: blur(18px);
-    border-left: 1px solid var(--glass-border);
-    padding: 90px 20px 40px; /* Aumentei o padding inferior para não cortar o último item */
-    transition: 0.45s ease;
-    z-index: 1900;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-
-    /* --- ADICIONE AS LINHAS ABAIXO --- */
-    overflow-y: auto; /* Permite o scroll vertical */
-    scrollbar-width: thin; /* Deixa a barra de scroll fina no Firefox */
-    scrollbar-color: var(--primary) transparent; /* Cor da barra no Firefox */
-}
-
-/* Opcional: Estilizar a barra de scroll para navegadores Chrome/Safari */
-.mobile-menu::-webkit-scrollbar {
-    width: 4px;
-}
-.mobile-menu::-webkit-scrollbar-thumb {
-    background-color: var(--primary);
-    border-radius: 10px;
-}
-
-.mobile-menu.active {
-    right: 0;
-}
-
-.mobile-menu a {
-    color: var(--text-main);
-    text-decoration: none;
-    padding: 14px;
-    border-radius: var(--radius-sm);
-    font-size: 1.05rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: var(--transition);
-}
-
-.mobile-menu a:hover {
-    background: var(--primary-soft);
-    color: var(--primary);
-    padding-left: 20px;
-}
-
-/* ================= MAIN / CARDS ================= */
-
-main {
-    max-width: 1100px;
-    margin: auto;
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-}
-
-article {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(14px);
-    border-radius: var(--radius-lg);
-    padding: 26px;
-    display: flex;
-    flex-direction: column;
-    transition: var(--transition);
-}
-
-article:hover {
-    transform: translateY(-10px);
-    border-color: var(--primary);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
-}
-
-article img {
-    width: 100%;
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-    margin-bottom: 18px;
-}
-
-article h2 {
-    font-size: 1.3rem;
-    margin-bottom: 8px;
-}
-
-article p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-bottom: 18px;
-}
-
-/* ================= BUTTONS ================= */
-
-.btn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-    color: #001c2a;
-    padding: 14px;
-    border-radius: var(--radius-md);
-    font-weight: 800;
-    text-align: center;
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.btn:hover {
-    transform: scale(1.03);
-    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.35);
-}
-
-/* ================= ABOUT / FAQ ================= */
-
-.about-blog {
-    max-width: 1100px;
-    margin: 60px auto;
-    padding: 20px;
-}
-
-.about-container {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: 40px;
-    backdrop-filter: blur(14px);
-}
-
-.about-container h2 {
-    margin-bottom: 20px;
-}
-
-.about-container h3 {
-    margin-top: 20px;
-}
-
-/* ================= FLOAT BUTTON ================= */
-
-.donation-float {
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #facc15, #fde047);
-    color: #1a1a1a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    transition: var(--transition);
-}
-
-.donation-float:hover {
-    transform: scale(1.1);
-}
-
-/* ================= MODALS ================= */
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(6px);
-    z-index: 3000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    padding: 30px;
-    border-radius: var(--radius-lg);
-    max-width: 360px;
-    width: 92%;
-    backdrop-filter: blur(16px);
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 600px) {
-    header {
-        padding-top: 70px;
-    }
-
-    .user-auth-area {
-        right: 70px;
-    }
-
-    .user-info span {
-        display: none;
-    }
-}
-
-.sr-only {
-    position: absolute; /* tira do fluxo normal */
-    width: 1px;         /* tamanho mínimo */
-    height: 1px;
-    padding: 0;
-    margin: -1px;       /* remove da tela */
-    overflow: hidden;   /* esconde conteúdo */
-    clip: rect(0, 0, 0, 0); /* esconde visualmente */
-    white-space: nowrap; /* evita quebra de linha */
-    border: 0;
-}
+        /* Logo e Texto Central */
+        .brand-intro { text-align: center; padding: 30px 20px 10px; }
+        .brand-intro h2 { color: #ff4757; margin-bottom: 5px; }
     </style>
-    <link rel="stylesheet" href="/assets/css/stylebase.css">
 </head>
-
 <body>
 
-<header>
-    <button class="hamburger-btn" onclick="toggleMenu()" aria-label="Abrir Menu">
-        <span></span><span></span><span></span>
-    </button>
+    <header>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div style="font-weight: bold; font-size: 1.2rem;">BAÚ DE PROMOÇÃO</div>
+        <div style="width: 25px;"></div> <nav id="main-nav">
+            <ul>
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Eletrônicos</a></li>
+                <li><a href="#">Casa e Cozinha</a></li>
+                <li><a href="#">Beleza</a></li>
+                <li><a href="#">Sobre Nós</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <nav class="mobile-menu" id="sideMenu">
-        <a href="/">Início</a>
-        <a href="/achadinhos">🛒 Achadinhos Shopee</a>
-        <a href="/cupons">🎟️ Cupons</a>
-        <a href="/produtos">🔥 Melhores Produtos</a>
-        <hr style="opacity: 0.1; margin: 10px 0;">
-        <a href="#" onclick="toggleModal()">☕ Apoiar Projeto</a>
-        <a href="/afiliados">🤝 Programa de Afiliados <span style="font-size: 0.7rem; background: var(--accent); color: #000; padding: 2px 5px; border-radius: 4px; margin-left: 5px;">BREVE</span></a>
-        <a href="/contatos">💬 Contato</a>
-        <a href="/sobre">ℹ️ Sobre</a>
-        <a href="/termos-de-uso">⚖️ Termos</a>
-        <a href="/politica-de-privacidade">🫂 Politica de Privacidade</a>
-    </nav>
+    <section class="banner">
+        <h1>Ofertas Imbatíveis! 💎</h1>
+        <p>Garimpamos os melhores preços da internet para você.</p>
+    </section>
 
-    <div class="user-auth-area">
-        <button id="loginBtn" class="btn-login" onclick="openAuthModal()">Entrar</button>
-        <div id="userInfo" class="user-info">
-            <img id="userPhoto" src="" alt="Foto" loading="lazy">
-            <span id="userName"></span>
-            <button class="btn-login" style="border-color: #ff4747; color: #ff4747;" onclick="logout()">Sair</button>
+    <h2 class="section-title">🔥 Produtos Virais</h2>
+    <div class="product-scroll">
+        <div class="product-card">
+            <img src="https://via.placeholder.com/150" alt="Produto">
+            <p>Mini Processador</p>
+            <span>R$ 29,90</span>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/150" alt="Produto">
+            <p>Luminária LED</p>
+            <span>R$ 45,00</span>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/150" alt="Produto">
+            <p>Fone Bluetooth</p>
+            <span>R$ 89,90</span>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/150" alt="Produto">
+            <p>Smartwatch</p>
+            <span>R$ 120,00</span>
         </div>
     </div>
 
-    <h1>Baú de Promoções</h1>
-    <p>Encontre os Melhores Achadinhos e Produtos que Valem a Pena</p>
-</header>
-
-<main>
-    <article>
-        <img src="/assets/img/achadinhos.webp" alt="Achadinhos Shopee">
-        <h2>Achadinhos da Shopee 🛒</h2>
-        <p>Produtos criativos, baratos e virais encontrados no TikTok e Instagram.</p>
-        <a class="btn" href="/achadinhos">Ver Achados</a>
-    </article>
-
-    <article>
-        <img src="/assets/img/logistics.webp" alt="Produtos">
-        <h2>Ofertas e Produtos em Alta 🔥</h2>
-        <p>Curadoria rigorosa de promoções da Amazon, Mercado Livre e AliExpress.</p>
-        <a class="btn" href="/produtos">Ver Promoções</a>
-    </article>
-
-    <article>
-        <img src="/assets/img/promo.webp" alt="Cupons">
-        <h2>Melhores Cupons 🎟️</h2>
-        <p>Cupons atualizados de diversas lojas como Mercado Livre, Shopee e AliExpress.</p>
-        <a class="btn" href="/cupons">Ver Cupons</a>
-    </article>
-</main>
-
-<section class="about-blog">
-    <div class="about-container">
-        <h2>Perguntas Frequentes</h2>
-        <div style="margin-top:20px;">
-            <h3>Os links do Baú de Promoções são seguros?</h3>
-            <p>Sim! Todos os produtos são verificados e redirecionam para lojas oficiais.</p>
-            <h3 style="margin-top:20px;">Como recebo as promoções?</h3>
-            <p>Crie sua conta clicando no botão 'Entrar' para receber alertas personalizados.</p>
-        </div>
+    <div class="brand-intro">
+        <h2>Baú de Promoção</h2>
+        <p>Sua curadoria diária de ofertas, cupons e achados imperdíveis.</p>
     </div>
-</section>
 
-<section class="sr-only">
-    <h2>Achadinhos Shopee e Ofertas Online 2026</h2>
-    <p>O Baú de Promoções é especializado em curadoria de achadinhos, cupons AliExpress e ofertas Amazon.</p>
-</section>
+    <section class="categories">
+        <a href="pages/achadinhos/index.html" class="cat-button achados">
+            <span>✨ Achados da Semana</span>
+            <span>➔</span>
+        </a>
+        <a href="#" class="cat-button promocoes">
+            <span>🏷️ Promoções Ativas</span>
+            <span>➔</span>
+        </a>
+        <a href="#" class="cat-button cupons">
+            <span>🎟️ Cupons de Desconto</span>
+            <span>➔</span>
+        </a>
+    </section>
 
-<div class="donation-float" onclick="toggleModal()">☕</div>
-
-<div class="modal-overlay" id="donationModal">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <span style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:24px;" onclick="toggleModal()">×</span>
-        <h2 style="color:var(--accent)">Apoie o Projeto</h2>
-        <p> Se já te ajudamos alguma vez 💛, contribua via Pix.</p>
-        <img src="/assets/img/qrcode-pix.webp" alt="QR Code PIX" style="width:200px; margin:15px auto; border-radius:10px; display:block;">
-        <p class="pix-key" id="pixKey" style="font-family:monospace; color:var(--accent); font-size:0.8rem;">baudepromocao@gmail.com</p>
-        <button class="btn" onclick="copyPix()" style="width:100%; margin-top:10px;">Copiar PIX</button>
-        <span id="copiedMsg" style="color:#00ff00; display:none; font-size:0.8rem; margin-top:5px;">Copiado! ✔</span>
-    </div>
-</div>
-
-<div id="authModal" class="modal-overlay">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <span style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:24px;" onclick="closeAuthModal()">×</span>
-        <h3 id="authTitle" style="color: var(--accent); margin-bottom:15px;">Fazer Login</h3>
-        <div class="auth-form">
-            <input type="email" id="authEmail" placeholder="Seu E-mail">
-            <input type="password" id="authPassword" placeholder="Sua Senha">
-            <button class="btn" id="mainAuthBtn" onclick="handleEmailAuth()" style="width: 100%;">Entrar</button>
-            <div class="divider"><span>OU</span></div>
-            <button class="btn" onclick="signInWithGoogle()" style="width: 100%; background: #fff; color: #333; display:flex; align-items:center; justify-content:center;">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" style="margin-right:8px;"> Google
-            </button>
-            <p id="authToggle" style="cursor:pointer; color:var(--accent); font-size:0.85rem; margin-top:15px;" onclick="toggleAuthMode()">Não tem conta? Cadastre-se.</p>
-        </div>
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-        authDomain: "baudepromocao-oficial.firebaseapp.com",
-        projectId: "baudepromocao-oficial",
-        storageBucket: "baudepromocao-oficial.firebasestorage.app",
-        messagingSenderId: "743146859125",
-        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    let isSignUpMode = false;
-
-    // Globals para o HTML
-    window.openAuthModal = () => document.getElementById('authModal').style.display = 'flex';
-    window.closeAuthModal = () => document.getElementById('authModal').style.display = 'none';
-    window.toggleAuthMode = () => {
-        isSignUpMode = !isSignUpMode;
-        document.getElementById('authTitle').innerText = isSignUpMode ? 'Criar Conta' : 'Fazer Login';
-        document.getElementById('mainAuthBtn').innerText = isSignUpMode ? 'Cadastrar' : 'Entrar';
-        document.getElementById('authToggle').innerText = isSignUpMode ? 'Já tem conta? Login.' : 'Não tem conta? Cadastre-se.';
-    };
-
-    window.handleEmailAuth = async () => {
-        const email = document.getElementById('authEmail').value;
-        const password = document.getElementById('authPassword').value;
-        try {
-            if (isSignUpMode) await createUserWithEmailAndPassword(auth, email, password);
-            else await signInWithEmailAndPassword(auth, email, password);
-            closeAuthModal();
-        } catch (e) { alert("Erro: " + e.message); }
-    };
-
-    window.signInWithGoogle = () => signInWithPopup(auth, provider).then(closeAuthModal).catch(console.error);
-    window.logout = () => signOut(auth);
-
-    onAuthStateChanged(auth, (user) => {
-        const loginBtn = document.getElementById('loginBtn');
-        const userInfo = document.getElementById('userInfo');
-        if (user) {
-            loginBtn.style.display = 'none';
-            userInfo.style.display = 'flex';
-            document.getElementById('userName').innerText = user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0];
-            document.getElementById('userPhoto').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.email}`;
-        } else {
-            loginBtn.style.display = 'block';
-            userInfo.style.display = 'none';
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('main-nav');
+            nav.classList.toggle('active');
         }
-    });
-</script>
-
-<script>
-    function toggleMenu() {
-        document.querySelector('.hamburger-btn').classList.toggle('active');
-        document.getElementById('sideMenu').classList.toggle('active');
-    }
-
-    function toggleModal() {
-        const m = document.getElementById('donationModal');
-        m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-    }
-
-    function copyPix() {
-        const key = document.getElementById('pixKey').innerText;
-        navigator.clipboard.writeText(key).then(() => {
-            const msg = document.getElementById('copiedMsg');
-            msg.style.display = 'block';
-            setTimeout(() => msg.style.display = 'none', 2000);
-        });
-    }
-
-    // Fecha menus e modais ao clicar fora
-    window.onclick = function(event) {
-        const donationModal = document.getElementById('donationModal');
-        const authModal = document.getElementById('authModal');
-        if (event.target == donationModal) toggleModal();
-        if (event.target == authModal) closeAuthModal();
-    }
-</script>
-
-<footer id="footer"></footer>
-
-<script src="/assets/js/main.js" defer></script>
-
+    </script>
 </body>
 </html>

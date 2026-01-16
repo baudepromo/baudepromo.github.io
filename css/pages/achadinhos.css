@@ -1,0 +1,37 @@
+/* Grid para página de listagem */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Responsivo automático */
+    gap: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Paginação */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+    margin-bottom: 40px;
+}
+
+.page-btn {
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.page-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: var(--secondary-color);
+}
