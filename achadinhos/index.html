@@ -3,10 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baú de Promoções | Achadinhos</title>
+    
+    <title>Baú de Promoções | Melhores Achadinhos e Ofertas Online</title>
+    <meta name="description" content="Encontre as melhores ofertas, promoções e achadinhos da internet. Seleção diária de produtos com descontos exclusivos no Baú de Promoções.">
+    <meta name="keywords" content="promoções, achadinhos, ofertas, descontos, compras online, cupons">
+    <link rel="canonical" href="https://seusite.com.br">
 
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Baú de Promoções | Achadinhos e Ofertas">
+    <meta property="og:description" content="As melhores ofertas da internet curadas para você economizar todos os dias.">
+    <meta property="og:image" content="URL_DA_SUA_IMAGEM_DE_PREVIEW.jpg">
+    <meta property="og:url" content="https://seusite.com.br">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Baú de Promoções">
+
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Baú de Promoções - Melhores Ofertas",
+      "description": "Lista de produtos em promoção curados pela nossa equipe."
+    }
+    </script>
 
     <style>
         :root {
@@ -35,16 +61,15 @@
             min-height: 100vh;
         }
 
-        /* Header / Perfil */
-        .profile {
+        /* Estrutura Semântica */
+        header.profile {
             text-align: center;
             max-width: 600px;
             margin-bottom: 40px;
         }
 
         .avatar {
-            width: 100px;
-            height: 100px;
+            width: 100px; height: 100px;
             border-radius: 30px;
             display: grid;
             place-items: center;
@@ -56,8 +81,8 @@
 
         .avatar i { font-size: 40px; color: #000; transform: rotate(5deg); }
 
-        h1 { font-weight: 800; font-size: 2rem; margin-bottom: 8px; letter-spacing: -1px; }
-        .profile p { color: var(--muted); margin-bottom: 24px; }
+        h1 { font-weight: 800; font-size: 2.5rem; margin-bottom: 8px; letter-spacing: -1px; }
+        .profile p { color: var(--muted); margin-bottom: 24px; font-size: 1.1rem; }
 
         .socials { display: flex; gap: 12px; justify-content: center; }
         .socials a {
@@ -103,7 +128,7 @@
         }
 
         /* Grid de Produtos */
-        .grid {
+        main.grid {
             width: 100%;
             max-width: 1000px;
             display: grid;
@@ -121,6 +146,7 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            animation: fadeInUp 0.4s ease backwards;
         }
 
         .card:hover {
@@ -139,7 +165,7 @@
         .card img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Melhora para fotos de produtos */
+            object-fit: contain;
             padding: 10px;
         }
 
@@ -153,7 +179,6 @@
             font-size: 12px;
             font-weight: 700;
             z-index: 2;
-            box-shadow: 0 4px 12px rgba(255, 46, 99, 0.4);
         }
 
         .info {
@@ -176,9 +201,7 @@
         }
 
         .price-row { margin-top: auto; }
-
         .old { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; }
-
         .price {
             font-size: 1.4rem;
             font-weight: 800;
@@ -194,23 +217,17 @@
             color: #002;
             font-weight: 700;
             text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .card:hover .btn {
-            box-shadow: 0 0 20px var(--accent-glow);
-            filter: brightness(1.1);
         }
 
         /* Pagination */
-        .pagination {
+        nav.pagination {
             margin: 50px 0;
             display: flex;
             gap: 20px;
             align-items: center;
         }
 
-        .pagination button {
+        nav.pagination button {
             padding: 12px 28px;
             border-radius: 14px;
             border: 1px solid var(--accent);
@@ -220,181 +237,144 @@
             cursor: pointer;
         }
 
-        .pagination button:hover:not(:disabled) {
-            background: var(--accent);
-            color: #000;
-        }
-
-        .pagination button:disabled { opacity: 0.2; cursor: not-allowed; }
-
-        @media(max-width: 480px) {
-            .grid { grid-template-columns: 1fr; }
-            .avatar { width: 80px; height: 80px; }
-        }
+        nav.pagination button:disabled { opacity: 0.2; }
 
         @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-.card {
-    animation: fadeInUp 0.4s ease backwards;
-}
+        @media(max-width: 480px) {
+            main.grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
-
 <body>
 
-    <div class="profile">
-        <div class="avatar"><i class="fa-solid fa-bolt"></i></div>
+    <header class="profile">
+        <div class="avatar" aria-hidden="true"><i class="fa-solid fa-bolt"></i></div>
         <h1>Baú de Promoções</h1>
-        <p>As melhores ofertas da internet curadas para você.</p>
+        <p>Curadoria profissional das melhores ofertas da internet.</p>
 
-        <div class="socials">
-            <a href="https://www.instagram.com/baudepromocaos"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@baudepromocoes"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://x.com/baudepromocao"><i class="fa-brands fa-twitter"></i></a>
-            <a href="https://www.youtube.com/@Ba%C3%BAdePromo%C3%A7%C3%B5es"><i class="fa-brands fa-youtube"></i></a>
-        </div>
-    </div>
+        <nav class="socials" aria-label="Redes Sociais">
+            <a href="https://www.instagram.com/baudepromocaos" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.tiktok.com/@baudepromocoes" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://x.com/baudepromocao" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
+            <a href="https://www.youtube.com/@BaudePromocoes" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        </nav>
+    </header>
 
-    <div class="search-container">
-        <input type="text" id="search" placeholder="O que você está procurando?">
-    </div>
+    <section class="search-container">
+        <label for="search" class="sr-only" style="display:none">Buscar produtos</label>
+        <input type="text" id="search" placeholder="O que você está procurando hoje?">
+    </section>
 
-    <div class="grid" id="grid">
-        </div>
+    <main class="grid" id="grid">
+        </main>
 
-    <div class="pagination">
-        <button id="prev"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
-        <span id="page">1</span>
-        <button id="next">Próxima <i class="fa-solid fa-chevron-right"></i></button>
-    </div>
+    <nav class="pagination" aria-label="Navegação de páginas">
+        <button id="prev" aria-label="Página anterior"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+        <span id="page" aria-current="page">1</span>
+        <button id="next" aria-label="Próxima página">Próxima <i class="fa-solid fa-chevron-right"></i></button>
+    </nav>
 
     <script>
-/* ===============================
-   ESTADO GLOBAL
-================================ */
-let allProducts = [];
-let filteredProducts = [];
-let currentPage = 1;
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentPage = 1;
+        const PER_PAGE = 12;
 
-const PER_PAGE = 12;
+        function shuffle(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
 
-/* ===============================
-   SHUFFLE (Fisher-Yates)
-================================ */
-function shuffle(array) {
-    const shuffled = [...array];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-}
+        async function loadProducts() {
+            try {
+                // Adicione o caminho real do seu JSON
+                const res = await fetch('data/products.json');
+                const data = await res.json();
+                allProducts = shuffle(data);
+                filteredProducts = [...allProducts];
+                render();
+            } catch (err) {
+                console.error("Erro ao carregar produtos:", err);
+                document.getElementById('grid').innerHTML = '<p>No momento não conseguimos carregar as ofertas. Tente novamente mais tarde.</p>';
+            }
+        }
 
-/* ===============================
-   LOAD (EMBARALHA 1 VEZ)
-================================ */
-async function loadProducts() {
-    try {
-        const res = await fetch('data/products.json');
-        const data = await res.json();
+        function render() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
 
-        // 🔥 EMBARALHA UMA ÚNICA VEZ POR VISITA
-        allProducts = shuffle(data);
+            const start = (currentPage - 1) * PER_PAGE;
+            const end = start + PER_PAGE;
 
-        filteredProducts = [...allProducts];
-        render();
-    } catch (err) {
-        console.error(err);
-        document.getElementById('grid').innerHTML =
-            '<p>Erro ao carregar produtos.</p>';
-    }
-}
+            filteredProducts.slice(start, end).forEach((p, index) => {
+                // SEO: Otimização de Imagem com Loading Lazy e Alt Text
+                const imgUrl = p.image || p.img || 'placeholder.jpg';
+                const productTitle = p.title.replace(/"/g, '&quot;');
+                
+                grid.insertAdjacentHTML('beforeend', `
+                    <article class="card-container">
+                        <a href="${p.link}" class="card" target="_blank" rel="noopener noreferrer" style="animation-delay:${index * 0.03}s">
+                            <span class="badge">${p.badge || 'OFERTA'}</span>
+                            <div class="card-img-wrapper">
+                                <img src="${imgUrl}" alt="Oferta: ${productTitle}" loading="lazy">
+                            </div>
+                            <div class="info">
+                                <h2 class="title">${p.title}</h2>
+                                <div class="price-row">
+                                    ${p.oldPrice ? `<div class="old">De: ${p.oldPrice}</div>` : ''}
+                                    <div class="price">Por: R$ ${p.currentPrice || p.price}</div>
+                                    <div class="btn">VER OFERTA</div>
+                                </div>
+                            </div>
+                        </a>
+                    </article>
+                `);
+            });
 
-/* ===============================
-   RENDER
-================================ */
-function render() {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '';
+            document.getElementById('page').innerText = currentPage;
+            document.getElementById('prev').disabled = currentPage === 1;
+            document.getElementById('next').disabled = end >= filteredProducts.length;
+        }
 
-    const start = (currentPage - 1) * PER_PAGE;
-    const end = start + PER_PAGE;
+        // Filtro com Debounce simples para performance
+        let searchTimer;
+        document.getElementById('search').addEventListener('input', e => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                const term = e.target.value.toLowerCase();
+                filteredProducts = allProducts.filter(p => 
+                    p.title.toLowerCase().includes(term)
+                );
+                currentPage = 1;
+                render();
+            }, 300);
+        });
 
-    filteredProducts.slice(start, end).forEach((p, index) => {
-        grid.insertAdjacentHTML('beforeend', `
-            <a href="${p.link}" class="card" target="_blank"
-               style="animation-delay:${index * 0.03}s">
-               
-                <span class="badge">${p.badge || 'OFERTA'}</span>
+        document.getElementById('prev').onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
 
-                <div class="card-img-wrapper">
-                    <img src="${p.image || p.img}" alt="${p.title}">
-                </div>
+        document.getElementById('next').onclick = () => {
+            if ((currentPage * PER_PAGE) < filteredProducts.length) {
+                currentPage++;
+                render();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
 
-                <div class="info">
-                    <div class="title">${p.title}</div>
-
-                    <div class="price-row">
-                        ${p.oldPrice ? `<div class="old">${p.oldPrice}</div>` : ''}
-                        <div class="price">R$ ${p.currentPrice || p.price}</div>
-                        <div class="btn">EU QUERO</div>
-                    </div>
-                </div>
-            </a>
-        `);
-    });
-
-    document.getElementById('page').innerText = currentPage;
-    document.getElementById('prev').disabled = currentPage === 1;
-    document.getElementById('next').disabled =
-        end >= filteredProducts.length;
-}
-
-/* ===============================
-   SEARCH
-================================ */
-document.getElementById('search').addEventListener('input', e => {
-    const term = e.target.value.toLowerCase();
-    filteredProducts = allProducts.filter(p =>
-        p.title.toLowerCase().includes(term)
-    );
-    currentPage = 1;
-    render();
-});
-
-/* ===============================
-   PAGINATION
-================================ */
-document.getElementById('prev').onclick = () => {
-    if (currentPage > 1) {
-        currentPage--;
-        render();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-};
-
-document.getElementById('next').onclick = () => {
-    if ((currentPage * PER_PAGE) < filteredProducts.length) {
-        currentPage++;
-        render();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-};
-
-/* ===============================
-   INIT
-================================ */
-loadProducts();
-</script>
-
+        loadProducts();
+    </script>
 </body>
 </html>
