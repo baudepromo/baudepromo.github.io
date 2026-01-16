@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 4. Carregar os dados do arquivo JSON
-    fetch('data/achadinhos.json')
+    fetch('/data/achadinhos.json')
         .then(response => response.json())
         .then(data => {
             allProducts = shuffleArray(data); // Embaralha ao carregar
