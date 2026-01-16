@@ -231,6 +231,21 @@
             .grid { grid-template-columns: 1fr; }
             .avatar { width: 80px; height: 80px; }
         }
+
+        @keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeInUp 0.4s ease backwards;
+}
     </style>
 </head>
 
@@ -267,18 +282,30 @@
         let page = 1;
         const perPage = 12;
 
-        async function loadProducts() {
-            try {
-                // Verifique se o caminho do JSON está correto para o seu servidor
-                const res = await fetch('data/products.json'); 
-                products = await res.json();
-                filteredProducts = [...products];
-                render();
-            } catch (error) {
-                console.error("Erro ao carregar produtos:", error);
-                document.getElementById('grid').innerHTML = "<p>Erro ao carregar ofertas. Verifique o arquivo JSON.</p>";
-            }
-        }
+        // Função para embaralhar o array (Algoritmo Fisher-Yates)
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+async function loadProducts() {
+    try {
+        const res = await fetch('data/products.json'); 
+        const data = await res.json();
+        
+        // EMBARALHA os produtos assim que carrega
+        products = shuffleArray(data); 
+        
+        filteredProducts = [...products];
+        render();
+    } catch (error) {
+        console.error("Erro ao carregar produtos:", error);
+        document.getElementById('grid').innerHTML = "<p>Erro ao carregar ofertas.</p>";
+    }
+}
 
         function render() {
             const grid = document.getElementById('grid');
