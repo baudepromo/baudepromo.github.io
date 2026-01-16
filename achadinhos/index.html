@@ -1,79 +1,269 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Baú de Promoções | As Melhores Ofertas Shopee</title>
-    
-    <meta name="description" content="Os melhores achadinhos e reviews sinceros da Shopee. Economize com links confiáveis e ofertas exclusivas atualizadas diariamente.">
-    <meta name="keywords" content="Shopee, Achadinhos, Ofertas, Descontos, Reviews, Promoção">
-    <meta name="author" content="Baú de Promoções">
-    
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Baú de Promoções">
-    <meta property="og:description" content="Confira os melhores produtos da Shopee com descontos de até 80%.">
-    <meta property="og:image" content="/assets/img/achadinhos.webp">
-    <meta property="og:url" content="https://baudepromo.github.io">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Baú de Promoções">
-    <meta name="twitter:description" content="Reviews sinceros e ofertas com links afiliados confiáveis.">
+<title>Baú de Promoções | Achadinhos</title>
 
-    <link rel="icon" href="/assets/img/achadinhos.webp" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/style.css">
+<style>
+:root{
+  --bg:#050b10;
+  --glass:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.12);
+  --accent:#00e5ff;
+  --text:#fff;
+  --muted:#aaa;
+}
 
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:radial-gradient(circle at top,#0c2b33,#050b10);
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:24px;
+}
+
+/* Header */
+.profile{
+  text-align:center;
+  max-width:520px;
+}
+
+.avatar{
+  width:96px;
+  height:96px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#00e5ff,#00bcd4);
+  margin:0 auto 16px;
+}
+
+.avatar i{font-size:42px;color:#002}
+
+.socials{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  margin-top:14px;
+}
+
+.socials a{
+  width:38px;height:38px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:white;
+  border:1px solid var(--border);
+  backdrop-filter:blur(8px);
+  transition:.3s;
+}
+
+.socials a:hover{
+  background:var(--accent);
+  color:#002;
+}
+
+/* Search */
+.search{
+  width:100%;
+  max-width:480px;
+  margin:28px 0;
+}
+
+.search input{
+  width:100%;
+  padding:14px 20px;
+  border-radius:30px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  color:white;
+  outline:none;
+}
+
+/* Products */
+.grid{
+  width:100%;
+  max-width:620px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  text-decoration:none;
+  color:white;
+  backdrop-filter:blur(12px);
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.card img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+}
+
+.badge{
+  position:absolute;
+  margin:12px;
+  padding:4px 10px;
+  background:#ff3d81;
+  border-radius:14px;
+  font-size:11px;
+  font-weight:600;
+}
+
+.info{
+  padding:14px;
+  text-align:center;
+}
+
+.title{
+  font-size:14px;
+  min-height:38px;
+}
+
+.old{
+  font-size:12px;
+  color:var(--muted);
+  text-decoration:line-through;
+}
+
+.price{
+  font-size:18px;
+  font-weight:700;
+  color:var(--accent);
+}
+
+.btn{
+  margin-top:10px;
+  padding:8px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#00e5ff,#00bcd4);
+  color:#002;
+  font-weight:700;
+}
+
+/* Pagination */
+.pagination{
+  margin:32px 0;
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+.pagination button{
+  padding:8px 22px;
+  border-radius:20px;
+  border:1px solid var(--accent);
+  background:transparent;
+  color:var(--accent);
+  cursor:pointer;
+}
+
+.pagination button:disabled{opacity:.4}
+
+@media(max-width:420px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
 </head>
+
 <body>
 
-<header>
-    <div class="profile-container">
-        <img src="/assets/img/achadinhos.webp" class="profile" alt="Logo baudepromo Achadinhos" width="130" height="130" />
-    </div>
-    
-    <h1>Baú de Promoções Achadinhos</h1>
-    <p>Curadoria diária dos melhores produtos com preços que você não encontra em qualquer lugar.</p>
+<div class="profile">
+  <div class="avatar"><i class="fa-solid fa-bag-shopping"></i></div>
+  <h1>Baú de Promoções</h1>
+  <p>Achadinhos selecionados todos os dias</p>
 
-    <div class="socials">
-        <a href="https://www.instagram.com/baudepromocaos/" class="fa-brands fa-instagram" title="Siga no Instagram"></a>
-        <a href="https://www.tiktok.com/@baudepromocoes1283" class="fa-brands fa-tiktok" title="Siga no TikTok"></a>
-        <a href="https://www.youtube.com/@BaúdePromoções" class="fa-brands fa-youtube" title="Inscreva-se no YouTube"></a>
-        <a href="https://x.com/baudepromocao" class="fa-brands fa-x-twitter" title="Siga no X"></a>
-        <a href="https://www.facebook.com/profile.php?id=61585472683221" class="fa-brands fa-facebook" title="Curta no Facebook"></a>
-    </div>
-
-    <div class="search-box">
-        <i class="fa fa-search"></i>
-        <input type="text" id="search" placeholder="O que você está procurando hoje?" />
-    </div>
-</header>
-
-<div class="pagination">
-    <button id="prevBtn" onclick="changePage(-1)">Anterior</button>
-    <span id="pageIndicator">Página 1</span>
-    <button id="nextBtn" onclick="changePage(1)">Próxima</button>
+  <div class="socials">
+    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+  </div>
 </div>
 
-<main class="grid" id="grid"></main>
+<div class="search">
+  <input type="text" id="search" placeholder="Buscar produtos...">
+</div>
 
-<p class="empty" id="empty" style="display:none;">
-  Ops! Nenhum produto encontrado.
-</p>
+<div class="grid" id="grid"></div>
 
-    <footer id="footer"></footer>
-<script src="/assets/js/main.js" defer></script>
+<div class="pagination">
+  <button id="prev">Anterior</button>
+  <span id="page">1</span>
+  <button id="next">Próxima</button>
+</div>
 
 <script>
-    const grid = document.getElementById("grid");
+let products = [];
+let page = 1;
+const perPage = 20;
+
+async function loadProducts(){
+  const res = await fetch('data/products.json');
+  products = await res.json();
+  render();
+}
+
+function render(){
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+
+  const start = (page-1)*perPage;
+  const end = start+perPage;
+
+  products.slice(start,end).forEach(p=>{
+    grid.innerHTML += `
+      <a href="${p.link}" class="card" target="_blank">
+        <span class="badge">${p.badge}</span>
+        <img src="${p.image}" alt="${p.title}">
+        <div class="info">
+          <div class="title">${p.title}</div>
+          <div class="old">${p.oldPrice}</div>
+          <div class="price">${p.currentPrice}</div>
+          <div class="btn">Ver Oferta</div>
+        </div>
+      </a>
+    `;
+  });
+
+  document.getElementById('page').innerText = page;
+  document.getElementById('prev').disabled = page === 1;
+  document.getElementById('next').disabled = end >= products.length;
+}
+
+document.getElementById('prev').onclick=()=>{page--;render();}
+document.getElementById('next').onclick=()=>{page++;render();}
+
+loadProducts();
+</script>
+
+<script>
+const grid = document.getElementById("grid");
 const empty = document.getElementById("empty");
 
 async function carregarProdutos() {
   try {
-    const response = await fetch("ssdata/products.json");
+    const response = await fetch("/assets/data/products.json");
 
     if (!response.ok) {
       throw new Error("Erro ao carregar JSON");
@@ -106,7 +296,7 @@ async function carregarProdutos() {
 }
 
 carregarProdutos();
-
 </script>
+
 </body>
 </html>
