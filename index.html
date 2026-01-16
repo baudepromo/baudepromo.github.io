@@ -402,6 +402,18 @@ article p {
         display: none;
     }
 }
+
+.sr-only {
+    position: absolute; /* tira do fluxo normal */
+    width: 1px;         /* tamanho mínimo */
+    height: 1px;
+    padding: 0;
+    margin: -1px;       /* remove da tela */
+    overflow: hidden;   /* esconde conteúdo */
+    clip: rect(0, 0, 0, 0); /* esconde visualmente */
+    white-space: nowrap; /* evita quebra de linha */
+    border: 0;
+}
     </style>
     <link rel="stylesheet" href="/assets/css/stylebase.css">
 </head>
