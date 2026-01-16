@@ -35,3 +35,107 @@
 .page-btn:hover:not(:disabled) {
     background: var(--secondary-color);
 }
+
+/* Estilos das Etiquetas de Preço */
+.price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 10px 0;
+    align-items: center;
+}
+
+.price-tags {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+/* Preço Antigo (Riscado) */
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    background: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Badge de Desconto (Retângulo colorido) */
+.discount-badge {
+    background: var(--success-color); /* Verde */
+    color: white;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* Preço Novo (Grande e Destacado) */
+.new-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* Container do Preço */
+.price-container {
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Linha com Preço Antigo e Desconto */
+.price-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.old-price {
+    font-size: 0.8rem;
+    color: #888;
+    text-decoration: line-through;
+}
+
+.discount-badge {
+    background-color: #2ed573; /* Verde sucesso */
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.new-price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ff4757; /* Vermelho principal */
+}
+
+/* Botão de Compra */
+.buy-button {
+    display: block;
+    background: #ff4757;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.buy-button:hover {
+    transform: scale(1.05);
+}
+
+.product-title {
+    font-size: 0.9rem;
+    height: 40px;
+    overflow: hidden;
+    color: #333;
+}

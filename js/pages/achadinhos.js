@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextBtn = document.getElementById('next-btn');
     const pageInfo = document.getElementById('page-info');
 
-    // 1. Função para embaralhar array (Fisher-Yates Shuffle)
+    // 1. Função para embaralhar os produtos (Shuffle)
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -17,48 +17,81 @@ document.addEventListener("DOMContentLoaded", () => {
         return array;
     }
 
-    // 2. Carregar dados do JSON
-    fetch('/data/achadinhos.json')
-        .then(response => response.json())
-        .then(data => {
-            // Embaralha assim que carrega
-            allProducts = shuffleArray(data);
-            renderPage(currentPage);
-        })
-        .catch(error => console.error('Erro ao carregar produtos:', error));
+    // 2. Função para transformar "R$ 29,90" em um número real (29.90)
+    const parsePrice = (str) => {
+        if (!str) return 0;
+        return parseFloat(str.replace('R$', '').replace('.', '').replace(',', '.').trim());
+    };
 
-    // 3. Renderizar a página atual
+    // 3. Função que desenha os produtos na tela
     function renderPage(page) {
-        gridContainer.innerHTML = ''; // Limpa os produtos atuais
+        gridContainer.innerHTML = ''; 
         
-        // Calcula índices
         const start = (page - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         const pageItems = allProducts.slice(start, end);
 
-        // Cria os cards HTML
         pageItems.forEach(product => {
             const card = document.createElement('div');
             card.className = 'product-card';
+
+            let priceHtml = '';
+            const currentPrice = parsePrice(product.preco);
+            
+            // Se tiver preço antigo, calcula a porcentagem do retângulo de desconto
+            if (product.preco_antigo) {
+                const oldPrice = parsePrice(product.preco_antigo);
+                const discount = Math.round(((oldPrice - currentPrice) / oldPrice) * 100);
+                
+                priceHtml = `
+                    <div class="price-container">
+                        <div class="price-tags">
+                            <span class="old-price">${product.preco_antigo}</span>
+                            <span class="discount-badge">-${discount}% OFF</span>
+                        </div>
+                        <span class="new-price">${product.preco}</span>
+                    </div>
+                `;
+            } else {
+                priceHtml = `
+                    <div class="price-container">
+                        <span class="new-price">${product.preco}</span>
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 <img src="${product.img}" alt="${product.nome}" loading="lazy">
-                <p style="margin-top: 10px; color: #333;">${product.nome}</p>
-                <span style="display:block; margin: 10px 0; font-weight:bold; color: var(--primary-color);">${product.preco}</span>
-                <a href="${product.link}" target="_blank" style="display:block; background: var(--success-color); color: white; padding: 8px; border-radius: 5px; font-size: 0.9rem;">Ver Oferta</a>
+                <p class="product-title">${product.nome}</p>
+                ${priceHtml}
+                <a href="${product.link}" target="_blank" class="buy-button">
+                    Ver Oferta ➜
+                </a>
             `;
             gridContainer.appendChild(card);
         });
 
-        // Atualiza botões
+        // Atualiza os textos e botões de página
         pageInfo.innerText = `Página ${currentPage}`;
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = end >= allProducts.length;
 
-        // Volta ao topo suavemente
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 4. Eventos dos botões
+    // 4. Carregar os dados do arquivo JSON
+    fetch('data/achadinhos.json')
+        .then(response => response.json())
+        .then(data => {
+            allProducts = shuffleArray(data); // Embaralha ao carregar
+            renderPage(currentPage);
+        })
+        .catch(error => {
+            console.error('Erro ao carregar o JSON:', error);
+            gridContainer.innerHTML = '<p>Erro ao carregar os produtos. Verifique se o arquivo data/achadinhos.json existe.</p>';
+        });
+
+    // 5. Comandos dos botões de Anterior e Próximo
     prevBtn.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
