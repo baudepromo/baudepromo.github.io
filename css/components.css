@@ -67,3 +67,59 @@ nav#main-nav.active { display: block; }
     color: var(--text);
     box-shadow: var(--shadow);
 }
+
+/* HEADER */
+.header {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* HAMBURGUER */
+.menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+/* MENU */
+.mobile-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--primary-color);
+    display: none;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.mobile-nav a {
+    padding: 10px 0;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* ATIVO */
+.mobile-nav.active {
+    display: flex;
+}

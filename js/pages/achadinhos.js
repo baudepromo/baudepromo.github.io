@@ -8,7 +8,7 @@ let filteredProducts = [];
 let index = 0;
 
 /* FETCH JSON */
-fetch("/data/achadinhos.json")
+fetch("/data/achadinhos/achadinhos.json")
     .then(res => res.json())
     .then(data => {
         allProducts = data.map(p => ({
@@ -80,4 +80,10 @@ window.addEventListener("scroll", () => {
     ) {
         render();
     }
+    const menuToggle = document.getElementById("menuToggle");
+const mobileNav = document.getElementById("mobileNav");
+
+menuToggle.addEventListener("click", () => {
+    mobileNav.classList.toggle("active");
+});
 });
