@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 2. Carregar dados do JSON
-    fetch('data/achadinhos.json')
+    fetch('/data/achadinhos.json')
         .then(response => response.json())
         .then(data => {
             // Embaralha assim que carrega
