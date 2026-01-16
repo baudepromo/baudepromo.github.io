@@ -60,13 +60,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
             }
 
+            // ... (cálculo do desconto igual ao anterior) ...
+
+            // HTML atualizado para o Design Premium
             card.innerHTML = `
-                <img src="${product.img}" alt="${product.nome}" loading="lazy">
-                <p class="product-title">${product.nome}</p>
-                ${priceHtml}
-                <a href="${product.link}" target="_blank" class="buy-button">
-                    Ver Oferta ➜
-                </a>
+                ${product.preco_antigo ? `<span class="discount-badge">-${discount}%</span>` : ''}
+                
+                <div style="overflow: hidden;">
+                    <img src="${product.img}" alt="${product.nome}" loading="lazy">
+                </div>
+                
+                <div class="card-body">
+                    <p class="product-title">${product.nome}</p>
+                    
+                    <div class="price-container">
+                        ${product.preco_antigo ? `<span class="old-price">${product.preco_antigo}</span>` : ''}
+                        <span class="new-price">${product.preco}</span>
+                    </div>
+
+                    <a href="${product.link}" target="_blank" class="buy-button">
+                        EU QUERO ➜
+                    </a>
+                </div>
             `;
             gridContainer.appendChild(card);
         });
