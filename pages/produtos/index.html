@@ -7,23 +7,6 @@
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/pages/produtos.css">
     <style>
-        /* PERFIL E MENU */
-        .profile-area {
-            text-align: center;
-            width: 100%;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        .profile-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
         /* BARRA DE PESQUISA TRANSPARENTE */
         .modern-search {
             position: sticky;
@@ -39,6 +22,7 @@
             width: 100%;
             padding: 12px;
             border-radius: 8px;
+            outline: none;
         }
 
         /* FILTROS */
@@ -60,12 +44,6 @@
             cursor: pointer;
             transition: 0.3s;
             font-size: 14px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .filter-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(255, 77, 90, 0.2);
         }
 
         .filter-btn.active {
@@ -73,18 +51,47 @@
             color: white;
         }
 
+        /* CARD DO PRODUTO */
         .product-card {
             animation: fadeIn 0.4s ease forwards;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
         }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .social-bar-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 10px;
+        .discount-badge {
+            background: #ff4d5a;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            align-self: flex-start;
+        }
+
+        .btn-oferta {
+            display: block;
+            text-align: center;
+            margin-top: auto;
+            text-decoration: none;
+            background: #ff4d5a;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-oferta:hover {
+            background: #e64450;
         }
     </style>
 </head>
@@ -106,15 +113,6 @@
         >
     </div>
 
-    <div class="social-bar-container">
-        <div class="social-bar">
-            <span>Siga-nos:</span>
-            <a href="#" class="social-link instagram">Instagram</a>
-            <a href="#" class="social-link tiktok">TikTok</a>
-            <a href="#" class="social-link whatsapp">WhatsApp</a>
-        </div>
-    </div>
-
     <main class="container">
         <h2 class="section-title">Explore por Categorias</h2>
         
@@ -129,19 +127,8 @@
     </main>
 
     <script src="/js/main-layout.js" defer></script>
-    <div id="footer-placeholder"></div>
 
     <script>
-        // Lógica do Menu Hamburger
-        const btn = document.getElementById('menuToggle');
-        const menu = document.getElementById('sideMenu');
-        if(btn && menu) {
-            btn.addEventListener('click', () => {
-                btn.classList.toggle('active');
-                menu.classList.toggle('active');
-            });
-        }
-
         let allProducts = [];
 
         // 1. Carrega os produtos do arquivo JSON
@@ -154,18 +141,13 @@
                 displayProducts(allProducts);
             } catch (error) {
                 console.error("Erro ao carregar JSON:", error);
+                document.getElementById('productDisplay').innerHTML = "<p>Erro ao carregar produtos.</p>";
             }
-        }
-
-        // Função para codificar link
-        function encodeLink(url) {
-            return btoa(url);
         }
 
         // 2. Renderiza os produtos na tela
         function displayProducts(products) {
             const grid = document.getElementById('productDisplay');
-            const favorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
             
             if (products.length === 0) {
                 grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 50px;">Nenhum produto encontrado. 😕</p>`;
@@ -173,47 +155,30 @@
             }
 
             grid.innerHTML = products.map(p => {
-                const isFav = favorites.some(f => f.id === p.id);
-                
-                // CORREÇÃO: Definindo a URL de redirecionamento corretamente
-                const encodedLink = encodeLink(p.link);
-                const finalRedirectUrl = `/pages/produtos/info/index.html?id=${p.id}`;
+                // Link para a página de detalhes/info
+                const finalUrl = `/pages/produtos/info/index.html?id=${p.id}`;
 
                 return `
                 <div class="product-card">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                        <span class="discount-badge">OFF</span>
-                        <button onclick="toggleFavorite(${p.id}, this)" style="background:none; border:none; font-size:24px; cursor:pointer;">${heartIcon}</button>
+                    <span class="discount-badge">OFF</span>
+                    
+                    <img src="${p.imagem}" alt="${p.nome}" style="width:100%; height:180px; object-fit:contain; margin: 10px 0;">
+                    
+                    <span class="category-badge" style="font-size:11px; color:#888;">${p.categoria}</span>
+                    <h4 style="margin: 8px 0; min-height: 40px;">${p.nome}</h4>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <span class="old-price" style="text-decoration:line-through; color:#999; font-size:13px;">R$ ${p.precoAntigo}</span><br>
+                        <span class="current-price" style="font-size:18px; font-weight:bold; color:#ff4d5a;">R$ ${p.precoAtual}</span>
                     </div>
                     
-                    <img src="${p.imagem}" alt="${p.nome}" style="width:100%; height:200px; object-fit:contain;">
-                    <span class="category-badge">${p.categoria}</span>
-                    <h4>${p.nome}</h4>
-                    <span class="old-price">R$ ${p.precoAntigo}</span>
-                    <span class="current-price">R$ ${p.precoAtual}</span>
-                    
-                    <a href="${finalRedirectUrl}" target="_blank" class="btn-nav btn-produtos" style="display:block; text-align:center; margin-top:15px; text-decoration:none; background:#ff4d5a; color:white; padding:10px; border-radius:5px;">Ver Oferta</a>
+                    <a href="${finalUrl}" class="btn-oferta">Ver Oferta</a>
                 </div>
                 `;
             }).join('');
         }
 
-        // Função para Favoritos
-        function toggleFavorite(id, btn) {
-            let favorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
-            const product = allProducts.find(p => p.id === id);
-            
-            const index = favorites.findIndex(f => f.id === id);
-            
-            if (index > -1) {
-                favorites.splice(index, 1);
-            } else {
-                favorites.push(product);
-            }
-            localStorage.setItem('userFavorites', JSON.stringify(favorites));
-        }
-
-        // 3. Barra de Pesquisa
+        // 3. Função da Barra de Pesquisa
         function searchProducts() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filtered = allProducts.filter(p => 
@@ -223,10 +188,12 @@
             displayProducts(filtered);
         }
 
-        // 4. Filtro por Categoria
+        // 4. Função de Filtro por Categoria
         function filterProducts(category, event) {
+            // Limpa a busca ao filtrar
             document.getElementById('searchInput').value = '';
             
+            // Atualiza botões ativos
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             if(event) event.target.classList.add('active');
 
@@ -238,6 +205,7 @@
             }
         }
 
+        // Iniciar carregamento
         window.onload = loadProducts;
     </script>
 </body>
