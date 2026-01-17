@@ -1,0 +1,12 @@
+/* ARQUIVO CENTRALIZADOR (ESTRUTURA SMACSS/7-1 ADAPTADA)
+   Este arquivo importa todos os módulos do projeto.
+*/
+
+@import url('variables.css');
+@import url('reset.css');
+@import url('base.css');
+@import url('layout.css');
+@import url('components.css');
+
+/* O responsive deve ser sempre o último para garantir a especificidade */
+@import url('responsive.css');

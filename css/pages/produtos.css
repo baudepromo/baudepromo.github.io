@@ -1,0 +1,140 @@
+/* PERFIL E MENU */
+    .profile-area {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    /* BARRA DE PESQUISA TRANSPARENTE */
+    .modern-search {
+        position: sticky;
+        top: 80px;
+        z-index: 900;
+        background: transparent; /* Removido fundo sólido */
+        padding: 15px 20px;
+    }
+    .modern-search input {
+        background: rgba(255, 255, 255, 0.9); /* Branco levemente transparente */
+        backdrop-filter: blur(5px); /* Efeito de vidro */
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* FILTROS */
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    /* REDES SOCIAIS NO MENU */
+    .social-links-menu {
+        margin-top: auto;
+        display: flex;
+        gap: 15px;
+        padding: 20px 0;
+        justify-content: center;
+        width: 100%;
+    }
+    .social-links-menu .social-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 12px;
+        color: white;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    /* ANIMAÇÃO DE ENTRADA */
+    .product-card {
+        animation: fadeIn 0.4s ease forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Estilização dos Botões de Categoria */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.filter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(255, 77, 90, 0.2);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Ajuste da Barra Social para ficar acima das categorias */
+.social-bar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+/* Garante que o container não dependa do volume de texto */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 50px 20px;
+    min-height: 70vh; /* Ocupa 70% da altura da tela no mínimo */
+}
+
+/* Padronização dos cards de produto */
+.product-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Faz todos os cards da mesma linha terem a mesma altura */
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* Estilo para garantir que a imagem não quebre o layout */
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain; /* Ou 'cover' se preferir cortar um pouco a imagem */
+    margin-bottom: 15px;
+}
