@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/stylebase.css">
 
     <!-- JS MENU -->
-    <meu-menu></meu-menu>
+     <script src="/js/menu.js" defer></script>
     <style>
         .modern-search {
     max-width: 650px;
@@ -34,10 +34,84 @@
     box-shadow: 0 10px 30px rgba(255,77,90,.25);
 }
 
+.social-bar {
+    max-width: 1200px;
+    margin: 25px auto;
+    padding: 12px 20px;
+    background: #fff;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,.05);
+    font-size: 14px;
+}
+
+.social-bar span {
+    font-weight: 600;
+    color: #333;
+}
+
+.social-link {
+    padding: 8px 14px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #fff;
+    font-size: 13px;
+    transition: .3s;
+}
+
+/* cores */
+.social-link.instagram {
+    background: linear-gradient(45deg,#f58529,#dd2a7b,#8134af);
+}
+
+.social-link.tiktok {
+    background: #000;
+}
+
+.social-link.whatsapp {
+    background: #25d366;
+}
+
+.social-link:hover {
+    transform: translateY(-3px);
+    opacity: .9;
+}
+
+.pagination {
+    margin: 50px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.page-btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    background: #f1f1f1;
+    cursor: pointer;
+    font-weight: 600;
+    transition: .25s;
+}
+
+.page-btn:hover {
+    background: #ff4d5a;
+    color: #fff;
+}
+
+.page-btn.active {
+    background: #ff4d5a;
+    color: #fff;
+}
+
     </style>
 </head>
 
 <body>
+    <meu-menu></meu-menu>
 
     <!-- HEADER -->
     <header class="header">

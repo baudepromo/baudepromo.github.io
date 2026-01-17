@@ -1,54 +1,47 @@
 class MeuMenu extends HTMLElement {
     connectedCallback() {
-        // Injetamos apenas o HTML estrutural que o seu CSS já estiliza
         this.innerHTML = `
             <header class="header">
                 <div class="logo">OFERTA MEGA</div>
-                
-                <button class="hamburger" id="hamburgerBtn">
+
+                <button class="hamburger">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
 
-                <nav class="menu" id="navMenu">
-                    <a href="index.html">Início</a>
-                    <a href="#produtos">Produtos</a>
-                    <a href="#achadinhos">Achadinhos</a>
-                    <a href="#cupons">Cupons</a>
+                <nav class="menu">
+                    <a href="/">Início</a>
+                    <a href="/pages/produtos/">Produtos</a>
+                    <a href="/pages/achadinhos/">Achadinhos</a>
+                    <a href="/pages/cupons/">Cupons</a>
                 </nav>
             </header>
         `;
 
-        // Ativa a lógica de clique
         this.initLogic();
     }
 
     initLogic() {
-        const btn = this.querySelector('#hamburgerBtn');
-        const menu = this.querySelector('#navMenu');
+        const btn = this.querySelector('.hamburger');
+        const menu = this.querySelector('.menu');
 
-        if (btn && menu) {
-            btn.addEventListener('click', () => {
-                const isActive = menu.classList.toggle('active');
-                btn.classList.toggle('active');
-                
-                // Gerencia o scroll do body
-                document.body.style.overflow = isActive ? 'hidden' : 'auto';
-            });
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            menu.classList.toggle('active');
 
-            // Fecha o menu ao clicar em um link (melhor UX)
-            const links = menu.querySelectorAll('a');
-            links.forEach(link => {
-                link.addEventListener('click', () => {
-                    menu.classList.remove('active');
-                    btn.classList.remove('active');
-                    document.body.style.overflow = 'auto';
-                });
+            document.body.style.overflow =
+                menu.classList.contains('active') ? 'hidden' : 'auto';
+        });
+
+        this.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                btn.classList.remove('active');
+                menu.classList.remove('active');
+                document.body.style.overflow = 'auto';
             });
-        }
+        });
     }
 }
 
-// Define a tag customizada
 customElements.define('meu-menu', MeuMenu);
