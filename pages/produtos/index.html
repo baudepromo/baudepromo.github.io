@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vitrine de Produtos - Categorias</title>
+    <link rel="stylesheet" href="/css/stylebase.css">
+    <style>
+        .profile-area {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .category-badge {
+            font-size: 11px;
+            text-transform: uppercase;
+            background: #eee;
+            padding: 3px 8px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">BAUDEPROMO</div>
+        <button class="hamburger" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <nav class="menu" id="sideMenu">
+        <div class="profile-area">
+            <img src="sua-foto.jpg" alt="Perfil" class="profile-img">
+            <p style="color: white; font-weight: bold;">João Silva</p>
+        </div>
+        <a href="index.html">Início</a>
+        <a href="#eletronicos">Eletrônicos</a>
+        <a href="#moda">Moda</a>
+        <div class="social-links-menu" style="margin-top: auto; display: flex; gap: 10px;">
+            <a href="#" style="border: none;">IG</a>
+            <a href="#" style="border: none;">TK</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h2 class="section-title">Explore por Categorias</h2>
+        
+        <div class="filter-container" id="filterBar">
+            <button class="filter-btn active" onclick="filterProducts('Todos')">Todos</button>
+            <button class="filter-btn" onclick="filterProducts('Eletrônicos')">Eletrônicos</button>
+            <button class="filter-btn" onclick="filterProducts('Moda')">Moda</button>
+        </div>
+
+        <div class="products-grid" id="productDisplay">
+            </div>
+    </main>
+
+    <script src="/js/main-layout.js" defer></script>
+    <div id="footer-placeholder"></div>
+    
+    <script>
+        // Lógica do Menu Hamburger
+        const btn = document.getElementById('menuToggle');
+        const menu = document.getElementById('sideMenu');
+        btn.addEventListener('click', () => {
+            btn.classList.toggle('active');
+            menu.classList.toggle('active');
+        });
+
+        // Carregamento de Produtos
+        let allProducts = [];
+
+        async function loadProducts() {
+            try {
+                const response = await fetch('produtos.json');
+                allProducts = await response.json();
+                displayProducts(allProducts);
+            } catch (error) {
+                console.error("Erro ao carregar JSON:", error);
+            }
+        }
+
+        function displayProducts(products) {
+            const grid = document.getElementById('productDisplay');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <span class="discount-badge">OFF</span>
+                    <img src="${p.imagem}" alt="${p.nome}">
+                    <span class="category-badge">${p.categoria}</span>
+                    <h4>${p.nome}</h4>
+                    <span class="old-price">R$ ${p.precoAntigo}</span>
+                    <span class="current-price">R$ ${p.precoAtual}</span>
+                    <a href="${p.link}" class="btn-nav btn-produtos" style="margin-top:15px; opacity:1;">Ver Oferta</a>
+                </div>
+            `).join('');
+        }
+
+        function filterProducts(category) {
+            // Atualiza botões
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if(category === 'Todos') {
+                displayProducts(allProducts);
+            } else {
+                const filtered = allProducts.filter(p => p.categoria === category);
+                displayProducts(filtered);
+            }
+        }
+
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>
