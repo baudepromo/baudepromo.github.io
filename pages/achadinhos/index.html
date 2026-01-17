@@ -135,12 +135,12 @@
 
     <!-- SOCIAL BAR -->
     <div class="social-bar">
-        <span>Siga-nos:</span>
-        <a href="#" class="social-link">Instagram</a>
-        <a href="#" class="social-link">TikTok</a>
-        <a href="#" class="social-link">WhatsApp</a>
-        <a href="#" class="social-link">WhatsApp</a>
-    </div>
+    <span>Siga-nos:</span>
+
+    <a href="#" class="social-link instagram">Instagram</a>
+    <a href="#" class="social-link tiktok">TikTok</a>
+    <a href="#" class="social-link whatsapp">WhatsApp</a>
+</div>
 
     <!-- PESQUISA -->
     <div class="search-container modern-search">
@@ -189,6 +189,9 @@ async function loadProducts() {
         }
 
         allProducts = await response.json();
+
+        allProducts.sort(() => Math.random() - 0.5);
+        
         filteredProducts = [...allProducts];
 
         displayProducts();
