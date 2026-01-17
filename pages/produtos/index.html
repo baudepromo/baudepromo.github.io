@@ -4,36 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vitrine de Produtos - Categorias</title>
+<<<<<<< HEAD
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/pages/produtos.css">
+=======
+    <link rel="stylesheet" href="/css/stylebase.css">
+    <style>
+    /* PERFIL E MENU */
+    .profile-area {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
+
+    /* BARRA DE PESQUISA TRANSPARENTE */
+    .modern-search {
+        position: sticky;
+        top: 80px;
+        z-index: 900;
+        background: transparent; /* Removido fundo sólido */
+        padding: 15px 20px;
+    }
+    .modern-search input {
+        background: rgba(255, 255, 255, 0.9); /* Branco levemente transparente */
+        backdrop-filter: blur(5px); /* Efeito de vidro */
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* FILTROS */
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    /* REDES SOCIAIS NO MENU */
+    .social-links-menu {
+        margin-top: auto;
+        display: flex;
+        gap: 15px;
+        padding: 20px 0;
+        justify-content: center;
+        width: 100%;
+    }
+    .social-links-menu .social-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 12px;
+        color: white;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    /* ANIMAÇÃO DE ENTRADA */
+    .product-card {
+        animation: fadeIn 0.4s ease forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Estilização dos Botões de Categoria */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.filter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(255, 77, 90, 0.2);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Ajuste da Barra Social para ficar acima das categorias */
+.social-bar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+    </style>
+>>>>>>> parent of 6f3f624 (keo)
 </head>
 <body>
 
     <header class="header">
-    <div class="logo">BAUDEPROMO</div>
-    <button class="hamburger" id="menuToggle">
-        <span></span><span></span><span></span>
-    </button>
-</header>
+        <div class="logo">BAUDEPROMO</div>
+        <button class="hamburger" id="menuToggle">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
 
-<nav class="menu" id="sideMenu">
-    <div class="profile-area">
-        <img src="/img/perfil.webp" alt="Perfil" class="profile-img">
-        <p style="color: white; font-weight: bold;">Produtos</p>
-    </div>
-    
-    <a href="index.html">Início</a>
-    <a href="#eletronicos">Eletrônicos</a>
-    <a href="#moda">Moda</a>
-
-    <div class="social-links-menu">
-        <a href="#" class="social-link instagram">IG</a>
-        <a href="#" class="social-link tiktok">TK</a>
-        <a href="#" class="social-link whatsapp">WA</a>
-    </div>
-</nav>
-
-<div class="modern-search">
+    <div class="modern-search">
     <input 
         type="text" 
         id="searchInput" 
@@ -42,7 +140,7 @@
     >
 </div>
 
-<div class="social-bar-container">
+    <div class="social-bar-container">
     <div class="social-bar">
         <span>Siga-nos:</span>
         <a href="#" class="social-link instagram">Instagram</a>
