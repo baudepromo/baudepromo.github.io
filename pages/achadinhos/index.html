@@ -48,74 +48,52 @@ HTML
     </div>
 
     <main class="container">
-        <h2 class="section-title">Categorias</h2>
-        <div class="categories-list">
-            <a href="#" class="cat-button achados">
-                <span>✨ Novos Achadinhos</span>
-                <i class="fas fa-chevron-right"></i>
-            </a>
-            <a href="#" class="cat-button promocoes">
-                <span>🔥 Promoções Relâmpago</span>
-                <i class="fas fa-chevron-right"></i>
-            </a>
-            <a href="#" class="cat-button cupons">
-                <span>🎟️ Cupons Exclusivos</span>
-                <i class="fas fa-chevron-right"></i>
-            </a>
+    <h2 class="section-title">Achadinhos do Momento 🔥</h2>
+    
+    <div id="grid-produtos" class="product-grid">
         </div>
+</main>
 
-        <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
+<script>
+    async function carregarProdutos() {
+        try {
+            const response = await fetch('produtos.json');
+            let produtos = await response.json();
 
-        <h2 class="section-title">Destaques do Dia</h2>
-        <div class="footer-grid"> <article class="product-card">
-                <img src="https://via.placeholder.com/150" alt="Produto 1">
-                <h4 style="margin: 10px 0; font-size: 0.9rem;">Fone de Ouvido Bluetooth Pro</h4>
-                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 89,90</p>
-                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
-            </article>
+            // Lógica para embaralhar (Randomizar)
+            produtos = produtos.sort(() => Math.random() - 0.5);
 
-            <article class="product-card">
-                <img src="https://via.placeholder.com/150" alt="Produto 2">
-                <h4 style="margin: 10px 0; font-size: 0.9rem;">Smartwatch Serie 9</h4>
-                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 149,00</p>
-                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
-            </article>
+            const grid = document.getElementById('grid-produtos');
+            grid.innerHTML = ''; // Limpa o grid
 
-            <article class="product-card">
-                <img src="https://via.placeholder.com/150" alt="Produto 3">
-                <h4 style="margin: 10px 0; font-size: 0.9rem;">Luminária RGB Minimalista</h4>
-                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 45,00</p>
-                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
-            </article>
+            produtos.forEach((prod, index) => {
+                const card = document.createElement('article');
+                card.className = 'product-card';
+                // Adiciona um delay na animação para cada card aparecer um após o outro
+                card.style.animationDelay = `${index * 0.1}s`;
 
-            <article class="product-card">
-                <img src="https://via.placeholder.com/150" alt="Produto 4">
-                <h4 style="margin: 10px 0; font-size: 0.9rem;">Kit de Cozinha 12 Peças</h4>
-                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 110,00</p>
-                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
-            </article>
+                card.innerHTML = `
+                    <img src="${prod.imagem}" alt="${prod.nome}" loading="lazy">
+                    <div style="padding: 15px;">
+                        <h4 style="font-size: 0.9rem; margin-bottom: 10px; height: 40px; overflow: hidden;">${prod.nome}</h4>
+                        <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px;">R$ ${prod.preco}</p>
+                        <a href="${prod.link}" class="footer-cta" style="display: block; text-align: center; font-size: 0.8rem;">Ver Detalhes</a>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar produtos:', error);
+        }
+    }
 
-        </div>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="footer-top">
-                <h2>Não perca nenhuma oferta!</h2>
-                <a href="#" class="footer-cta">Entrar no Grupo VIP</a>
-            </div>
+    // Inicia a função ao carregar a página
+    window.onload = carregarProdutos;
+</script>
 
             <div id="footer-placeholder"></div>
 
 <script src="/js/footer.js"></script>
 
-    <script>
-        const btn = document.getElementById('mobile-menu-btn');
-        const nav = document.getElementById('mobile-nav');
-
-        btn.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
-    </script>
 </body>
 </html>

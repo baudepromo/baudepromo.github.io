@@ -1,30 +1,44 @@
 [
   {
-    "name": "Fone Bluetooth Sem Fio",
-    "image": "https://via.placeholder.com/300",
-    "oldPrice": 99.9,
-    "newPrice": 59.9,
+    "id": 1,
+    "nome": "Fone Bluetooth Premium",
+    "preco": "89,90",
+    "imagem": "https://picsum.photos/400/400?random=1",
     "link": "#"
   },
   {
-    "name": "Smartwatch Esportivo",
-    "image": "https://via.placeholder.com/300",
-    "oldPrice": 199.9,
-    "newPrice": 129.9,
+    "id": 2,
+    "nome": "Smartwatch Minimalista",
+    "preco": "129,00",
+    "imagem": "https://picsum.photos/400/400?random=2",
     "link": "#"
   },
   {
-    "name": "Lâmpada LED Inteligente",
-    "image": "https://via.placeholder.com/300",
-    "oldPrice": 39.9,
-    "newPrice": 19.9,
+    "id": 3,
+    "nome": "Luminária de Mesa LED",
+    "preco": "45,50",
+    "imagem": "https://picsum.photos/400/400?random=3",
     "link": "#"
   },
   {
-    "name": "Suporte Veicular Magnético",
-    "image": "https://via.placeholder.com/300",
-    "oldPrice": 49.9,
-    "newPrice": 29.9,
+    "id": 4,
+    "nome": "Teclado Mecânico RGB",
+    "preco": "210,00",
+    "imagem": "https://picsum.photos/400/400?random=4",
+    "link": "#"
+  },
+  {
+    "id": 5,
+    "nome": "Mouse Gamer Pro",
+    "preco": "75,00",
+    "imagem": "https://picsum.photos/400/400?random=5",
+    "link": "#"
+  },
+  {
+    "id": 6,
+    "nome": "Suporte para Notebook",
+    "preco": "32,90",
+    "imagem": "https://picsum.photos/400/400?random=6",
     "link": "#"
   }
 ]
