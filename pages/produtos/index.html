@@ -76,6 +76,45 @@
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
+
+    /* Estilização dos Botões de Categoria */
+.filter-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 22px;
+    border-radius: 50px;
+    border: 2px solid var(--primary);
+    background: white;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.filter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(255, 77, 90, 0.2);
+}
+
+.filter-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Ajuste da Barra Social para ficar acima das categorias */
+.social-bar-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
     </style>
 </head>
 <body>
@@ -96,35 +135,28 @@
     >
 </div>
 
-    <nav class="menu" id="sideMenu">
-    <div class="profile-area">
-        <img src="/img/perfil.webp" alt="Perfil" class="profile-img">
-        <p style="color: white; font-weight: bold;">Produtos</p>
+    <div class="social-bar-container">
+    <div class="social-bar">
+        <span>Siga-nos:</span>
+        <a href="#" class="social-link instagram">Instagram</a>
+        <a href="#" class="social-link tiktok">TikTok</a>
+        <a href="#" class="social-link whatsapp">WhatsApp</a>
     </div>
+</div>
+
+<main class="container">
+    <h2 class="section-title">Explore por Categorias</h2>
     
-    <a href="index.html">Início</a>
-    <a href="#eletronicos">Eletrônicos</a>
-    <a href="#moda">Moda</a>
-
-    <div class="social-links-menu">
-        <a href="#" class="social-link instagram">IG</a>
-        <a href="#" class="social-link tiktok">TK</a>
-        <a href="#" class="social-link whatsapp">WA</a>
+    <div class="filter-container" id="filterBar">
+        <button class="filter-btn active" onclick="filterProducts('Todos')">✨ Todos</button>
+        <button class="filter-btn" onclick="filterProducts('Eletrônicos')">📱 Eletrônicos</button>
+        <button class="filter-btn" onclick="filterProducts('Moda')">👕 Moda</button>
+        <button class="filter-btn" onclick="filterProducts('Cozinha')">🍳 Cozinha</button>
     </div>
-</nav>
 
-    <main class="container">
-        <h2 class="section-title">Explore por Categorias</h2>
-        
-        <div class="filter-container" id="filterBar">
-            <button class="filter-btn active" onclick="filterProducts('Todos')">Todos</button>
-            <button class="filter-btn" onclick="filterProducts('Eletrônicos')">Eletrônicos</button>
-            <button class="filter-btn" onclick="filterProducts('Moda')">Moda</button>
+    <div class="products-grid" id="productDisplay">
         </div>
-
-        <div class="products-grid" id="productDisplay">
-            </div>
-    </main>
+</main>
 
     <script src="/js/main-layout.js" defer></script>
     <div id="footer-placeholder"></div>
