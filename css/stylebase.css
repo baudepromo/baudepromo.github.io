@@ -308,3 +308,28 @@
             padding-left: 0;
         }
     }
+
+    .old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 13px;
+    display: block;
+}
+
+.current-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #2ecc71;
+    color: #fff;
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: bold;
+}

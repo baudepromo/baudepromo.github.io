@@ -11,6 +11,30 @@
 
     <!-- JS MENU -->
     <script src="/js/menu.js" defer></script>
+    <style>
+        .modern-search {
+    max-width: 650px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.modern-search input {
+    width: 100%;
+    padding: 16px 22px;
+    border-radius: 50px;
+    border: none;
+    font-size: 15px;
+    background: #fff;
+    box-shadow: 0 8px 25px rgba(0,0,0,.08);
+    outline: none;
+    transition: .3s;
+}
+
+.modern-search input:focus {
+    box-shadow: 0 10px 30px rgba(255,77,90,.25);
+}
+
+    </style>
 </head>
 
 <body>
@@ -63,13 +87,15 @@
     </div>
 
     <!-- PESQUISA -->
-    <div class="search-container">
-        <input 
-            type="text" 
-            id="searchInput" 
-            placeholder="Procurar um achadinho..."
-        >
-    </div>
+    <div class="search-container modern-search">
+    <input 
+        type="text"
+        id="searchInput"
+        placeholder="🔍 Buscar achadinhos, ofertas, produtos virais..."
+    >
+</div>
+
+
 
     <!-- CONTEÚDO -->
     <main class="container">
@@ -89,83 +115,56 @@
     <!-- FOOTER -->
     <div id="footer-placeholder"></div>
 
-<script src="/js/footer.js"></script>
+<script>
+function displayProducts() {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = "";
 
-    <!-- SCRIPT DOS PRODUTOS -->
-    <script>
-        let allProducts = [];
-        let filteredProducts = [];
-        const itemsPerPage = 8;
-        let currentPage = 1;
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
 
-        async function loadProducts() {
-            try {
-                const response = await fetch('/data/achadinhos.json');
-                allProducts = await response.json();
+    const produtosPagina = filteredProducts.slice(start, end);
 
-                allProducts.sort(() => Math.random() - 0.5);
-                filteredProducts = [...allProducts];
+    produtosPagina.forEach(item => {
 
-                displayProducts();
-            } catch (e) {
-                console.error("Erro ao carregar produtos", e);
-            }
-        }
+        const precoAtual = Number(item.preco);
+        const precoAntigo = Number(item.preco_antigo);
 
-        function displayProducts() {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = "";
+        let descontoHTML = "";
+        let precoHTML = `<p class="current-price">R$ ${precoAtual.toFixed(2)}</p>`;
 
-            const start = (currentPage - 1) * itemsPerPage;
-            const end = start + itemsPerPage;
-
-            filteredProducts.slice(start, end).forEach(item => {
-                grid.innerHTML += `
-                    <div class="product-card">
-                        <img src="${item.imagem}" alt="${item.titulo}">
-                        <h4>${item.titulo}</h4>
-                        <p class="price">R$ ${item.preco}</p>
-                        <a href="${item.link}" class="btn-buy" target="_blank">
-                            Ver Oferta
-                        </a>
-                    </div>
-                `;
-            });
-
-            setupPagination();
-        }
-
-        document.getElementById('searchInput').addEventListener('input', e => {
-            const term = e.target.value.toLowerCase();
-            filteredProducts = allProducts.filter(p =>
-                p.titulo.toLowerCase().includes(term)
+        if (precoAntigo && precoAntigo > precoAtual) {
+            const desconto = Math.round(
+                ((precoAntigo - precoAtual) / precoAntigo) * 100
             );
-            currentPage = 1;
-            displayProducts();
-        });
 
-        function setupPagination() {
-            const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
-            const wrapper = document.getElementById('pagination');
-            wrapper.innerHTML = "";
+            descontoHTML = `<span class="discount-badge">-${desconto}%</span>`;
 
-            for (let i = 1; i <= pageCount; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = "page-btn" + (i === currentPage ? " active" : "");
-
-                btn.onclick = () => {
-                    currentPage = i;
-                    displayProducts();
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                };
-
-                wrapper.appendChild(btn);
-            }
+            precoHTML = `
+                <span class="old-price">R$ ${precoAntigo.toFixed(2)}</span>
+                <span class="current-price">R$ ${precoAtual.toFixed(2)}</span>
+            `;
         }
 
-        loadProducts();
-    </script>
+        grid.innerHTML += `
+            <div class="product-card">
+                ${descontoHTML}
+                <img src="${item.imagem}" alt="${item.titulo}">
+                <h4>${item.titulo}</h4>
+
+                ${precoHTML}
+
+                <a href="${item.link}" class="btn-buy" target="_blank">
+                    Ver Oferta
+                </a>
+            </div>
+        `;
+    });
+
+    setupPagination();
+}
+</script>
+
 
 </body>
 </html>

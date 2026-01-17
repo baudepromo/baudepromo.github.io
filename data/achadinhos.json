@@ -16,5 +16,12 @@
     "imagem": "https://via.placeholder.com/200",
     "link": "#",
     "categoria": "audio"
-  }
+  },
+  {
+  "titulo": "Fone Bluetooth Gamer",
+  "imagem": "/img/fone.jpg",
+  "preco": 79.90,
+  "preco_antigo": 129.90,
+  "link": "https://shopee.com.br"
+}
 ]
