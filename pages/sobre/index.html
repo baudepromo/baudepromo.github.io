@@ -8,14 +8,6 @@
     <link rel="stylesheet" href="/css/main.css">
     
     <style>
-        /* Reutilizando as variáveis e estilos que você forneceu */
-        :root {
-            --primary: #ff4d5a;
-            --secondary: #ff9f0a;
-            --dark: #0a0a0a;
-            --light: #f6f6f6;
-        }
-
         /* Estilos específicos para a página Sobre */
         .about-content {
             background: white;
@@ -62,6 +54,7 @@
     </header>
 
     <nav class="menu" id="sideMenu">
+        <div class="overlay" id="overlay"></div>
         <a href="index.html">Início</a>
         <a href="achadinhos.html">Achadinhos</a>
         <a href="cupons.html">Cupons</a>
@@ -119,26 +112,8 @@
         </div>
     </main>
 
-    <footer>
-        <div class="footer-container">
-            <div class="footer-brand">
-                <h2>Baú de Promoções</h2>
-                <p>O melhor lugar para encontrar ofertas reais e produtos que facilitam o seu dia a dia.</p>
-            </div>
-            <div class="footer-links">
-                <h3>Navegação</h3>
-                <ul>
-                    <li><a href="index.html">Início</a></li>
-                    <li><a href="#">Privacidade</a></li>
-                    <li><a href="#">Contato</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Baú de Promoções - Todos os direitos reservados.</p>
-            <p class="disclaimer">O Baú de Promoções participa de programas de afiliados e pode receber comissões por compras feitas através dos nossos links, sem custo adicional para você.</p>
-        </div>
-    </footer>
+    <script src="/js/main-layout.js" defer></script>
+    <div id="footer-placeholder"></div>
 
     <script>
         const menuToggle = document.getElementById('menuToggle');
