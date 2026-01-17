@@ -1,49 +1,121 @@
+Com base na estrutura de arquivos CSS que você forneceu, desenvolvi o HTML completo para o seu site de "Achadinhos".
+
+O layout inclui um header fixo, um banner promocional com gradiente, uma barra de busca, seções para categorias rápidas e uma grade de cards de produtos (achadinhos), finalizando com o footer profissional definido no seu layout.css.
+
+Estrutura HTML (index.html)
+Copie o código abaixo e salve no mesmo diretório onde estão as suas pastas de CSS.
+
+HTML
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Baú de Achadinhos | Ofertas Reais</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achadinhos Imperdíveis - As melhores ofertas</title>
     <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/pages/achadinhos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-
 <body>
 
-<div id="menu-placeholder"></div>
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-shopping-bag"></i> MEU ACHADINHO
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
 
-<section class="banner">
-    <h1>Achadinhos com Desconto Real 🔥</h1>
-    <p>% OFF calculado automaticamente</p>
-</section>
+        <nav class="mobile-nav" id="mobile-nav">
+            <a href="#">Início</a>
+            <a href="#">Promoções</a>
+            <a href="#">Cupons</a>
+            <a href="#">Grupos WhatsApp</a>
+        </nav>
+    </header>
 
-<div class="search-wrapper">
-    <input
-        type="search"
-        id="searchInput"
-        placeholder="Buscar achadinho"
-    >
-</div>
+    <section class="banner">
+        <div class="container">
+            <h1>Os melhores Achadinhos da Internet!</h1>
+            <p>Curadoria diária com descontos reais e produtos incríveis.</p>
+        </div>
+    </section>
 
-<select id="sortDiscount" class="filter">
-    <option value="default">Ordenar</option>
-    <option value="discount">Maior desconto</option>
-</select>
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="O que você está procurando hoje?">
+    </div>
 
-<div class="container">
-    <h2 class="section-title">🔥 Achadinhos do Dia</h2>
-    <div class="products-grid" id="products"></div>
-</div>
+    <main class="container">
+        <h2 class="section-title">Categorias</h2>
+        <div class="categories-list">
+            <a href="#" class="cat-button achados">
+                <span>✨ Novos Achadinhos</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="#" class="cat-button promocoes">
+                <span>🔥 Promoções Relâmpago</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+            <a href="#" class="cat-button cupons">
+                <span>🎟️ Cupons Exclusivos</span>
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </div>
 
-<div style="text-align:center; margin:30px 0;">
-    <button id="loadMore" class="buy-btn">Carregar mais</button>
-</div>
+        <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
 
-<div id="footer-placeholder"></div>
+        <h2 class="section-title">Destaques do Dia</h2>
+        <div class="footer-grid"> <article class="product-card">
+                <img src="https://via.placeholder.com/150" alt="Produto 1">
+                <h4 style="margin: 10px 0; font-size: 0.9rem;">Fone de Ouvido Bluetooth Pro</h4>
+                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 89,90</p>
+                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
+            </article>
+
+            <article class="product-card">
+                <img src="https://via.placeholder.com/150" alt="Produto 2">
+                <h4 style="margin: 10px 0; font-size: 0.9rem;">Smartwatch Serie 9</h4>
+                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 149,00</p>
+                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
+            </article>
+
+            <article class="product-card">
+                <img src="https://via.placeholder.com/150" alt="Produto 3">
+                <h4 style="margin: 10px 0; font-size: 0.9rem;">Luminária RGB Minimalista</h4>
+                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 45,00</p>
+                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
+            </article>
+
+            <article class="product-card">
+                <img src="https://via.placeholder.com/150" alt="Produto 4">
+                <h4 style="margin: 10px 0; font-size: 0.9rem;">Kit de Cozinha 12 Peças</h4>
+                <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem;">R$ 110,00</p>
+                <a href="#" class="footer-cta" style="display: block; margin-top: 10px; text-align: center;">Ver Oferta</a>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <h2>Não perca nenhuma oferta!</h2>
+                <a href="#" class="footer-cta">Entrar no Grupo VIP</a>
+            </div>
+
+            <div id="footer-placeholder"></div>
 
 <script src="/js/footer.js"></script>
-<script src="/js/pages/achadinhos.js"></script>
+
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const nav = document.getElementById('mobile-nav');
+
+        btn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
