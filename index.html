@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
     <title>Baú de Promoção - Os melhores achados</title>
     <style>
         /* Estilos Gerais */
@@ -44,10 +45,257 @@
         /* Logo e Texto Central */
         .brand-intro { text-align: center; padding: 30px 20px 10px; }
         .brand-intro h2 { color: #ff4757; margin-bottom: 5px; }
+=======
+    <title>Minha Loja Premium</title>
+    <style>
+        /* RESET & VARIÁVEIS */
+        :root {
+            --primary: #ff4d5a;
+            --secondary: #ff9f0a;
+            --dark: #0a0a0a;
+            --light: #f6f6f6;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: var(--light);
+            color: #222;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & NAV */
+        .header {
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        /* HAMBURGER ANIMADO */
+        .hamburger {
+            width: 30px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            border: none;
+            background: none;
+            z-index: 1100;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background: #fff;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        /* Transformação para X */
+        .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+        .menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 250px; /* Largura fixa menor, em vez de 80% da tela */
+    height: 100vh;
+    background: #ff4d5a;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinhado à esquerda dentro do menu */
+    justify-content: flex-start;
+    padding: 80px 30px; /* Espaçamento no topo para não bater no ícone */
+    transition: 0.3s ease-in-out;
+    gap: 15px;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+}
+
+.menu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px; /* Fonte menor e mais discreta */
+    font-weight: 500;
+    padding: 10px 0;
+    width: 100%;
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Linha divisória fina */
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    padding-left: 10px;
+    background: rgba(255,255,255,0.1);
+}
+
+.menu.active { 
+    right: 0; 
+}
+
+        /* HERO SECTION */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            text-align: center;
+            padding: 80px 20px;
+            border-radius: 0 0 50px 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero h2 { font-size: 38px; margin-bottom: 15px; }
+
+        /* BOTÕES DE DESTAQUE */
+        .quick-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav {
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .btn-achadinhos { background: #fff; color: var(--primary); }
+        .btn-produtos { background: var(--dark); color: #fff; }
+        .btn-cupons { background: #ffd700; color: #333; }
+
+        .btn-nav:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* CONTAINER & PRODUCTS */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            font-size: 26px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #eee;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 77, 90, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+        }
+
+        .product-card h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* ANIMAÇÕES */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: #fff;
+            padding: 60px 5% 20px;
+            margin-top: 50px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-col h3 { margin-bottom: 20px; color: var(--primary); }
+        .footer-col p, .footer-col li { color: #999; font-size: 14px; margin-bottom: 10px; list-style: none;}
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 28px; }
+            .quick-nav { flex-direction: column; align-items: center; }
+            .btn-nav { width: 100%; justify-content: center; }
+        }
+>>>>>>> 777ff7e (ss)
     </style>
 </head>
 <body>
 
+<<<<<<< HEAD
     <header>
         <div class="menu-toggle" onclick="toggleMenu()">
             <span></span>
@@ -120,6 +368,81 @@
         function toggleMenu() {
             const nav = document.getElementById('main-nav');
             nav.classList.toggle('active');
+=======
+    <header class="header">
+        <div class="logo">OFERTA MEGA</div>
+        
+        <button class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="menu" id="navMenu">
+            <a href="#" onclick="toggleMenu()">Início</a>
+            <a href="#produtos" onclick="toggleMenu()">Produtos</a>
+            <a href="#achadinhos" onclick="toggleMenu()">Achadinhos</a>
+            <a href="#cupons" onclick="toggleMenu()">Cupons</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>As Melhores Ofertas do Dia!</h2>
+        <p>Curadoria exclusiva de produtos com descontos reais.</p>
+        
+        <div class="quick-nav">
+            <a href="#achadinhos" class="btn-nav btn-achadinhos" style="animation-delay: 0.2s;">✨ Achadinhos</a>
+            <a href="#produtos" class="btn-nav btn-produtos" style="animation-delay: 0.4s;">📦 Produtos</a>
+            <a href="#cupons" class="btn-nav btn-cupons" style="animation-delay: 0.6s;">🎟️ Cupons</a>
+        </div>
+    </section>
+
+    <div class="container" id="produtos">
+        <h3 class="section-title">Destaques da Semana</h3>
+        
+        <div class="products-grid">
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Smartwatch Series 9</h4>
+                <p class="price">R$ 199,90</p>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Fone Bluetooth Pro</h4>
+                <p class="price">R$ 87,50</p>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Teclado Mecânico RGB</h4>
+                <p class="price">R$ 156,00</p>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Câmera Inteligente Wi-Fi</h4>
+                <p class="price">R$ 120,00</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+    
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('navMenu');
+            const hamburger = document.querySelector('.hamburger');
+            menu.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            
+            // Impede o scroll quando o menu está aberto
+            if(menu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+>>>>>>> 777ff7e (ss)
         }
     </script>
 </body>
