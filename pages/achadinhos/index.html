@@ -57,7 +57,7 @@ HTML
 <script>
     async function carregarProdutos() {
         try {
-            const response = await fetch('produtos.json');
+            const response = await fetch('/data/achadinhos/achadinhos.json');
             let produtos = await response.json();
 
             // Lógica para embaralhar (Randomizar)
@@ -95,5 +95,13 @@ HTML
 
 <script src="/js/footer.js"></script>
 
+    <script>
+        const btn = document.getElementById('mobile-menu-btn');
+        const nav = document.getElementById('mobile-nav');
+
+        btn.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
