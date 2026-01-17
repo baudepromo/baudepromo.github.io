@@ -173,6 +173,7 @@
             }
 
             grid.innerHTML = products.map(p => {
+                const isFav = favorites.some(f => f.id === p.id);
                 
                 // CORREÇÃO: Definindo a URL de redirecionamento corretamente
                 const encodedLink = encodeLink(p.link);
@@ -195,6 +196,21 @@
                 </div>
                 `;
             }).join('');
+        }
+
+        // Função para Favoritos
+        function toggleFavorite(id, btn) {
+            let favorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
+            const product = allProducts.find(p => p.id === id);
+            
+            const index = favorites.findIndex(f => f.id === id);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(product);
+            }
+            localStorage.setItem('userFavorites', JSON.stringify(favorites));
         }
 
         // 3. Barra de Pesquisa
