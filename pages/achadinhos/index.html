@@ -115,7 +115,10 @@
     <!-- FOOTER -->
     <div id="footer-placeholder"></div>
 
-<script>
+<script src="/js/footer.js"></script>
+
+    <!-- SCRIPT DOS PRODUTOS -->
+    <script>
 function displayProducts() {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = "";
@@ -131,9 +134,12 @@ function displayProducts() {
         const precoAntigo = Number(item.preco_antigo);
 
         let descontoHTML = "";
-        let precoHTML = `<p class="current-price">R$ ${precoAtual.toFixed(2)}</p>`;
+        let precoHTML = `<span class="current-price">R$ ${precoAtual.toFixed(2)}</span>`;
 
-        if (precoAntigo && precoAntigo > precoAtual) {
+        if (
+            !isNaN(precoAntigo) &&
+            precoAntigo > precoAtual
+        ) {
             const desconto = Math.round(
                 ((precoAntigo - precoAtual) / precoAntigo) * 100
             );
@@ -151,9 +157,7 @@ function displayProducts() {
                 ${descontoHTML}
                 <img src="${item.imagem}" alt="${item.titulo}">
                 <h4>${item.titulo}</h4>
-
                 ${precoHTML}
-
                 <a href="${item.link}" class="btn-buy" target="_blank">
                     Ver Oferta
                 </a>
