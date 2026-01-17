@@ -51,6 +51,24 @@
             display: inline-block;
             margin-bottom: 5px;
         }
+        .product-card {
+    /* ... seu código anterior ... */
+    animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Deixa a barra de pesquisa colada no topo ao rolar (opcional) */
+.modern-search {
+    position: sticky;
+    top: 80px; /* Ajuste conforme a altura do seu header */
+    z-index: 900;
+    background: var(--light);
+    padding: 15px 0;
+}
     </style>
 </head>
 <body>
@@ -62,10 +80,19 @@
         </button>
     </header>
 
+    <div class="modern-search">
+    <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="🔍 Buscar por nome ou categoria..."
+        onkeyup="searchProducts()"
+    >
+</div>
+
     <nav class="menu" id="sideMenu">
         <div class="profile-area">
-            <img src="sua-foto.jpg" alt="Perfil" class="profile-img">
-            <p style="color: white; font-weight: bold;">João Silva</p>
+            <img src="/img/perfil.webp" alt="Perfil" class="profile-img">
+            <p style="color: white; font-weight: bold;">Produtos</p>
         </div>
         <a href="index.html">Início</a>
         <a href="#eletronicos">Eletrônicos</a>
@@ -91,7 +118,7 @@
 
     <script src="/js/main-layout.js" defer></script>
     <div id="footer-placeholder"></div>
-    
+
     <script>
         // Lógica do Menu Hamburger
         const btn = document.getElementById('menuToggle');
@@ -102,47 +129,72 @@
         });
 
         // Carregamento de Produtos
-        let allProducts = [];
+        let allProducts = []; // Variável global para armazenar os dados do JSON
 
-        async function loadProducts() {
-            try {
-                const response = await fetch('produtos.json');
-                allProducts = await response.json();
-                displayProducts(allProducts);
-            } catch (error) {
-                console.error("Erro ao carregar JSON:", error);
-            }
-        }
+// 1. Carrega os produtos do arquivo JSON
+async function loadProducts() {
+    try {
+        const response = await fetch('produtos.json');
+        allProducts = await response.json();
+        displayProducts(allProducts);
+    } catch (error) {
+        console.error("Erro ao carregar JSON:", error);
+    }
+}
 
-        function displayProducts(products) {
-            const grid = document.getElementById('productDisplay');
-            grid.innerHTML = products.map(p => `
-                <div class="product-card">
-                    <span class="discount-badge">OFF</span>
-                    <img src="${p.imagem}" alt="${p.nome}">
-                    <span class="category-badge">${p.categoria}</span>
-                    <h4>${p.nome}</h4>
-                    <span class="old-price">R$ ${p.precoAntigo}</span>
-                    <span class="current-price">R$ ${p.precoAtual}</span>
-                    <a href="${p.link}" class="btn-nav btn-produtos" style="margin-top:15px; opacity:1;">Ver Oferta</a>
-                </div>
-            `).join('');
-        }
+// 2. Renderiza os produtos na tela
+function displayProducts(products) {
+    const grid = document.getElementById('productDisplay');
+    
+    if (products.length === 0) {
+        grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 50px;">Nenhum produto encontrado. 😕</p>`;
+        return;
+    }
 
-        function filterProducts(category) {
-            // Atualiza botões
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+    grid.innerHTML = products.map(p => `
+        <div class="product-card">
+            <span class="discount-badge">OFF</span>
+            <img src="${p.imagem}" alt="${p.nome}">
+            <span class="category-badge">${p.categoria}</span>
+            <h4>${p.nome}</h4>
+            <span class="old-price">R$ ${p.precoAntigo}</span>
+            <span class="current-price">R$ ${p.precoAtual}</span>
+            <a href="${p.link}" class="btn-nav btn-produtos" style="margin-top:15px; opacity:1;">Ver Oferta</a>
+        </div>
+    `).join('');
+}
 
-            if(category === 'Todos') {
-                displayProducts(allProducts);
-            } else {
-                const filtered = allProducts.filter(p => p.categoria === category);
-                displayProducts(filtered);
-            }
-        }
+// 3. Função da Barra de Pesquisa
+function searchProducts() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    const filtered = allProducts.filter(p => {
+        return p.nome.toLowerCase().includes(searchTerm) || 
+               p.categoria.toLowerCase().includes(searchTerm);
+    });
+    
+    displayProducts(filtered);
+}
 
-        window.onload = loadProducts;
+// 4. Função de Filtro por Clique (Botões de Categoria)
+function filterProducts(category) {
+    // Resetar a barra de pesquisa ao clicar em uma categoria
+    document.getElementById('searchInput').value = '';
+    
+    // Atualizar visual dos botões
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    if(category === 'Todos') {
+        displayProducts(allProducts);
+    } else {
+        const filtered = allProducts.filter(p => p.categoria === category);
+        displayProducts(filtered);
+    }
+}
+
+// Iniciar
+window.onload = loadProducts;
     </script>
 </body>
 </html>
