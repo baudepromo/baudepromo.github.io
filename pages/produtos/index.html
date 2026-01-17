@@ -6,69 +6,76 @@
     <title>Vitrine de Produtos - Categorias</title>
     <link rel="stylesheet" href="/css/stylebase.css">
     <style>
-        .profile-area {
-            text-align: center;
-            width: 100%;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        .profile-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid #fff;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-        .filter-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 2px solid var(--primary);
-            background: transparent;
-            color: var(--primary);
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--primary);
-            color: #fff;
-        }
-        .category-badge {
-            font-size: 11px;
-            text-transform: uppercase;
-            background: #eee;
-            padding: 3px 8px;
-            border-radius: 5px;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-        .product-card {
-    /* ... seu código anterior ... */
-    animation: fadeIn 0.4s ease forwards;
-}
+    /* PERFIL E MENU */
+    .profile-area {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        object-fit: cover;
+        margin-bottom: 10px;
+    }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+    /* BARRA DE PESQUISA TRANSPARENTE */
+    .modern-search {
+        position: sticky;
+        top: 80px;
+        z-index: 900;
+        background: transparent; /* Removido fundo sólido */
+        padding: 15px 20px;
+    }
+    .modern-search input {
+        background: rgba(255, 255, 255, 0.9); /* Branco levemente transparente */
+        backdrop-filter: blur(5px); /* Efeito de vidro */
+        border: 1px solid rgba(0,0,0,0.1);
+    }
 
-/* Deixa a barra de pesquisa colada no topo ao rolar (opcional) */
-.modern-search {
-    position: sticky;
-    top: 80px; /* Ajuste conforme a altura do seu header */
-    z-index: 900;
-    background: var(--light);
-    padding: 15px 0;
-}
+    /* FILTROS */
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    /* REDES SOCIAIS NO MENU */
+    .social-links-menu {
+        margin-top: auto;
+        display: flex;
+        gap: 15px;
+        padding: 20px 0;
+        justify-content: center;
+        width: 100%;
+    }
+    .social-links-menu .social-link {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 12px;
+        color: white;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    /* ANIMAÇÃO DE ENTRADA */
+    .product-card {
+        animation: fadeIn 0.4s ease forwards;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
     </style>
 </head>
 <body>
@@ -90,18 +97,21 @@
 </div>
 
     <nav class="menu" id="sideMenu">
-        <div class="profile-area">
-            <img src="/img/perfil.webp" alt="Perfil" class="profile-img">
-            <p style="color: white; font-weight: bold;">Produtos</p>
-        </div>
-        <a href="index.html">Início</a>
-        <a href="#eletronicos">Eletrônicos</a>
-        <a href="#moda">Moda</a>
-        <div class="social-links-menu" style="margin-top: auto; display: flex; gap: 10px;">
-            <a href="#" style="border: none;">IG</a>
-            <a href="#" style="border: none;">TK</a>
-        </div>
-    </nav>
+    <div class="profile-area">
+        <img src="/img/perfil.webp" alt="Perfil" class="profile-img">
+        <p style="color: white; font-weight: bold;">Produtos</p>
+    </div>
+    
+    <a href="index.html">Início</a>
+    <a href="#eletronicos">Eletrônicos</a>
+    <a href="#moda">Moda</a>
+
+    <div class="social-links-menu">
+        <a href="#" class="social-link instagram">IG</a>
+        <a href="#" class="social-link tiktok">TK</a>
+        <a href="#" class="social-link whatsapp">WA</a>
+    </div>
+</nav>
 
     <main class="container">
         <h2 class="section-title">Explore por Categorias</h2>
