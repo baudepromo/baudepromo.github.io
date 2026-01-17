@@ -178,7 +178,7 @@
                 
                 // CORREÇÃO: Definindo a URL de redirecionamento corretamente
                 const encodedLink = encodeLink(p.link);
-                const finalRedirectUrl = `/pages/produtos/info/index.html?ref=${encodedLink}`;
+                const finalRedirectUrl = `/pages/produtos/info/index.html?id=${p.id}`;
 
                 return `
                 <div class="product-card">
