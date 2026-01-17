@@ -66,7 +66,7 @@
         function renderDetail(p) {
             // Aqui codificamos o link final em Base64 para a página intermediária
             const encodedLink = btoa(p.link);
-            const finalRedirect = `/pages/ir.html?ref=${encodedLink}`;
+            const finalRedirect = `/pages/produtos/info/index.html?ref=${encodedLink}`;
 
             document.getElementById('productContent').innerHTML = `
                 <div class="product-image">
