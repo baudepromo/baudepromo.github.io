@@ -117,7 +117,6 @@
     margin-bottom: 10px;
 }
     </style>
->>>>>>> parent of 6f3f624 (keo)
 </head>
 <body>
 
@@ -231,7 +230,7 @@ function displayProducts(products) {
         // Cria o link codificado para a página intermediária
         // Exemplo: /pages/ir.html?ref=aHR0cHM6Ly9...
         const encodedLink = encodeLink(p.link);
-        const redirectUrl = `/pages/produtos/info/index.html?ref=${encodedLink}`;
+        const InfoUrl = `/pages/produto/detalhes/index.html?id=${p.id}`;
 
         return `
         <div class="product-card">
