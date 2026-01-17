@@ -177,7 +177,11 @@
 // 1. Carrega os produtos do arquivo JSON
 async function loadProducts() {
     try {
-        const response = await fetch('/data/produtos.json');
+        const req = await fetch('data/produtos.json');
+if (!req.ok) {
+    throw new Error(`Erro ao carregar arquivo: ${req.status}`);
+}
+const products = await req.json();
         allProducts = await response.json();
         displayProducts(allProducts);
     } catch (error) {
@@ -261,7 +265,7 @@ function displayProducts(products) {
         // Cria o link codificado para a página intermediária
         // Exemplo: /pages/ir.html?ref=aHR0cHM6Ly9...
         const encodedLink = encodeLink(p.link);
-        const InfoUrl = `/pages/produto/detalhes/index.html?id=${p.id}`;
+        const InfoUrl = `/pages/produto/info/index.html?id=${p.id}`;
 
         return `
         <div class="product-card">
