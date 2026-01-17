@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/css/stylebase.css">
 
     <!-- JS MENU -->
-    <script src="/js/menu.js" defer></script>
+    <meu-menu></meu-menu>
     <style>
         .modern-search {
     max-width: 650px;
@@ -118,7 +118,30 @@
 <script src="/js/footer.js"></script>
 
     <!-- SCRIPT DOS PRODUTOS -->
-    <script>
+<script>
+let allProducts = [];
+let filteredProducts = [];
+const itemsPerPage = 8;
+let currentPage = 1;
+
+async function loadProducts() {
+    try {
+        const response = await fetch('/data/achadinhos.json');
+
+        if (!response.ok) {
+            throw new Error("JSON não encontrado");
+        }
+
+        allProducts = await response.json();
+        filteredProducts = [...allProducts];
+
+        displayProducts();
+
+    } catch (error) {
+        console.error("Erro ao carregar JSON:", error);
+    }
+}
+
 function displayProducts() {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = "";
@@ -136,10 +159,7 @@ function displayProducts() {
         let descontoHTML = "";
         let precoHTML = `<span class="current-price">R$ ${precoAtual.toFixed(2)}</span>`;
 
-        if (
-            !isNaN(precoAntigo) &&
-            precoAntigo > precoAtual
-        ) {
+        if (!isNaN(precoAntigo) && precoAntigo > precoAtual) {
             const desconto = Math.round(
                 ((precoAntigo - precoAtual) / precoAntigo) * 100
             );
@@ -167,6 +187,37 @@ function displayProducts() {
 
     setupPagination();
 }
+
+function setupPagination() {
+    const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
+    const wrapper = document.getElementById('pagination');
+    wrapper.innerHTML = "";
+
+    for (let i = 1; i <= pageCount; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = "page-btn" + (i === currentPage ? " active" : "");
+
+        btn.onclick = () => {
+            currentPage = i;
+            displayProducts();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+
+        wrapper.appendChild(btn);
+    }
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+    const term = e.target.value.toLowerCase();
+    filteredProducts = allProducts.filter(p =>
+        p.titulo.toLowerCase().includes(term)
+    );
+    currentPage = 1;
+    displayProducts();
+});
+
+loadProducts();
 </script>
 
 
