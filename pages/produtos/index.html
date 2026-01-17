@@ -134,7 +134,7 @@
 // 1. Carrega os produtos do arquivo JSON
 async function loadProducts() {
     try {
-        const response = await fetch('produtos.json');
+        const response = await fetch('/data/produtos.json');
         allProducts = await response.json();
         displayProducts(allProducts);
     } catch (error) {
