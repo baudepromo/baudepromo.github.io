@@ -279,8 +279,8 @@
         }
 /* --- FOOTER PROFISSIONAL --- */
     footer {
-        background: rgba(15, 31, 38, 0.95);
-        border-top: 1px solid rgba(30, 203, 225, 0.2);
+        background: rgb(0, 0, 0);
+        border-top: 1px solid rgb(0, 0, 0);
         padding: 60px 20px 20px;
         margin-top: 50px;
         color: var(--text);
