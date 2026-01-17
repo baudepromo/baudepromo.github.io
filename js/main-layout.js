@@ -117,3 +117,125 @@ class MeuMenu extends HTMLElement {
 }
 
 customElements.define("meu-menu", MeuMenu);
+
+// ==========================================
+// BANNER DE COOKIES (LGPD)
+// ==========================================
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // Verifica se já foi aceito
+    if (!localStorage.getItem("cookiesAceitos")) {
+        criarBannerCookies();
+    }
+
+    function criarBannerCookies() {
+        // 1. Criar o elemento HTML do banner
+        const banner = document.createElement("div");
+        banner.id = "cookie-banner";
+        banner.innerHTML = `
+            <div class="cookie-content">
+                <p>
+                    🍪 <strong>Cookies:</strong> Usamos cookies e tecnologias semelhantes para melhorar sua experiência e analisar nosso tráfego. 
+                    Ao continuar navegando, você concorda com nossa <a href="/pages/privacidade.html" target="_blank">Política de Privacidade</a>.
+                </p>
+                <button id="btn-aceitar-cookies">Aceitar e Continuar</button>
+            </div>
+        `;
+
+        // 2. Adicionar o CSS do banner dinamicamente
+        const style = document.createElement("style");
+        style.innerHTML = `
+            #cookie-banner {
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 90%;
+                max-width: 1100px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 9999; /* Bem alto para ficar por cima de tudo */
+                border: 1px solid rgba(0,0,0,0.05);
+                animation: slideUpFade 0.5s ease-out forwards;
+            }
+
+            .cookie-content {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 20px;
+            }
+
+            .cookie-content p {
+                font-size: 14px;
+                color: #333;
+                margin: 0;
+                line-height: 1.5;
+                flex: 1;
+            }
+
+            .cookie-content a {
+                color: #ff4d5a; /* Sua cor primária */
+                font-weight: bold;
+                text-decoration: underline;
+            }
+
+            #btn-aceitar-cookies {
+                background: #ff4d5a; /* Sua cor primária */
+                color: white;
+                border: none;
+                padding: 12px 25px;
+                border-radius: 50px;
+                font-weight: bold;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: transform 0.2s, background 0.2s;
+                box-shadow: 0 4px 15px rgba(255, 77, 90, 0.3);
+            }
+
+            #btn-aceitar-cookies:hover {
+                transform: scale(1.05);
+                background: #e63e4b;
+            }
+
+            @keyframes slideUpFade {
+                from { opacity: 0; transform: translate(-50%, 50px); }
+                to { opacity: 1; transform: translate(-50%, 0); }
+            }
+
+            /* Responsividade para celular */
+            @media (max-width: 768px) {
+                .cookie-content {
+                    flex-direction: column;
+                    text-align: center;
+                }
+                
+                #btn-aceitar-cookies {
+                    width: 100%;
+                }
+            }
+        `;
+
+        // 3. Inserir no DOM
+        document.head.appendChild(style);
+        document.body.appendChild(banner);
+
+        // 4. Lógica do botão Aceitar
+        document.getElementById("btn-aceitar-cookies").addEventListener("click", function() {
+            // Salva a preferência no navegador do usuário
+            localStorage.setItem("cookiesAceitos", "true");
+            
+            // Remove o banner com uma animaçãozinha de saída
+            banner.style.opacity = "0";
+            banner.style.transform = "translate(-50%, 20px)";
+            banner.style.transition = "all 0.5s ease";
+            
+            setTimeout(() => {
+                banner.remove();
+            }, 500);
+        });
+    }
+});

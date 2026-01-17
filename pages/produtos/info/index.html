@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando...</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f6f6f6;
+            flex-direction: column;
+            text-align: center;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ff4d5a; /* Sua cor primária */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .redirect-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 90%;
+            width: 400px;
+        }
+        h2 { color: #333; margin-bottom: 10px; }
+        p { color: #666; font-size: 14px; }
+        .manual-link { display: none; margin-top: 20px; color: #ff4d5a; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="redirect-box">
+        <div class="loader" style="margin: 0 auto 20px;"></div>
+        <h2>Quase lá!</h2>
+        <p>Estamos te levando para a oferta oficial...</p>
+        <p style="font-size: 12px; margin-top: 10px;">Site 100% Seguro 🔒</p>
+
+        <a id="manualLink" href="#" class="manual-link">Clique aqui se não for redirecionado</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 1. Pega o parâmetro 'ref' da URL
+            const params = new URLSearchParams(window.location.search);
+            const encodedUrl = params.get('ref');
+
+            if (encodedUrl) {
+                try {
+                    // 2. Decodifica o Base64 (atob)
+                    const decodedUrl = atob(encodedUrl);
+
+                    // Configura o link manual caso o JS falhe no redirect automático
+                    const btn = document.getElementById('manualLink');
+                    btn.href = decodedUrl;
+
+                    // 3. Aguarda 2 segundos (para o usuário ver a marca) e redireciona
+                    setTimeout(() => {
+                        window.location.href = decodedUrl;
+                        // Mostra o botão manual caso o navegador bloqueie o redirect
+                        btn.style.display = "block";
+                    }, 1500);
+
+                } catch (e) {
+                    document.querySelector('h2').innerText = "Erro no Link";
+                    document.querySelector('p').innerText = "O link de redirecionamento é inválido.";
+                    document.querySelector('.loader').style.display = "none";
+                }
+            } else {
+                document.querySelector('h2').innerText = "Link não encontrado";
+                document.querySelector('.loader').style.display = "none";
+            }
+        });
+    </script>
+
+</body>
+</html>

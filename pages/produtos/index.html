@@ -187,25 +187,68 @@ async function loadProducts() {
 }
 
 // 2. Renderiza os produtos na tela
+// Função auxiliar para codificar em Base64 (evita problemas com caracteres especiais)
+function encodeLink(url) {
+    return btoa(url);
+}
+
+// Função para Adicionar/Remover Favoritos
+function toggleFavorite(id, btn) {
+    let favorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
+    const product = allProducts.find(p => p.id === id); // Certifique-se que seu JSON tem um 'id' único para cada produto
+    
+    const index = favorites.findIndex(f => f.id === id);
+    
+    if (index > -1) {
+        // Remove
+        favorites.splice(index, 1);
+        btn.classList.remove('active');
+        btn.innerHTML = '🤍'; // Coração vazio
+    } else {
+        // Adiciona
+        favorites.push(product);
+        btn.classList.add('active');
+        btn.innerHTML = '❤️'; // Coração cheio
+    }
+    
+    localStorage.setItem('userFavorites', JSON.stringify(favorites));
+}
+
 function displayProducts(products) {
     const grid = document.getElementById('productDisplay');
+    const favorites = JSON.parse(localStorage.getItem('userFavorites')) || [];
     
     if (products.length === 0) {
         grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; padding: 50px;">Nenhum produto encontrado. 😕</p>`;
         return;
     }
 
-    grid.innerHTML = products.map(p => `
+    grid.innerHTML = products.map(p => {
+        // Verifica se já é favorito
+        const isFav = favorites.some(f => f.id === p.id);
+        const heartIcon = isFav ? '❤️' : '🤍';
+        
+        // Cria o link codificado para a página intermediária
+        // Exemplo: /pages/ir.html?ref=aHR0cHM6Ly9...
+        const encodedLink = encodeLink(p.link);
+        const redirectUrl = `/pages/info/index.html?ref=${encodedLink}`;
+
+        return `
         <div class="product-card">
-            <span class="discount-badge">OFF</span>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <span class="discount-badge">OFF</span>
+                <button onclick="toggleFavorite(${p.id}, this)" style="background:none; border:none; font-size:24px; cursor:pointer;">${heartIcon}</button>
+            </div>
+            
             <img src="${p.imagem}" alt="${p.nome}">
             <span class="category-badge">${p.categoria}</span>
             <h4>${p.nome}</h4>
             <span class="old-price">R$ ${p.precoAntigo}</span>
             <span class="current-price">R$ ${p.precoAtual}</span>
-            <a href="${p.link}" class="btn-nav btn-produtos" style="margin-top:15px; opacity:1;">Ver Oferta</a>
+            
+            <a href="${redirectUrl}" target="_blank" class="btn-nav btn-produtos" style="margin-top:15px; opacity:1;">Ver Oferta</a>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 // 3. Função da Barra de Pesquisa
