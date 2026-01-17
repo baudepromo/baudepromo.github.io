@@ -190,6 +190,37 @@ async function loadProducts() {
 function encodeLink(url) {
     return btoa(url);
 }
+async function loadProductDetail() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+    const container = document.getElementById('productContent');
+
+    if (!productId) {
+        container.innerHTML = "<p>Produto não identificado. <a href='/'>Voltar ao início</a></p>";
+        return;
+    }
+
+    try {
+        // Tente usar o caminho relativo sem a barra inicial se estiver rodando localmente
+        const response = await fetch('/data/produtos.json'); 
+        
+        if (!response.ok) throw new Error("Não foi possível carregar o banco de dados.");
+
+        const products = await response.json();
+        
+        // O segredo está aqui: usamos '==' para comparar string com número sem erro
+        const product = products.find(p => p.id == productId);
+
+        if (product) {
+            renderDetail(product);
+        } else {
+            container.innerHTML = `<p>Produto ID: ${productId} não encontrado no sistema.</p>`;
+        }
+    } catch (error) {
+        console.error("Erro:", error);
+        container.innerHTML = `<p>Erro ao carregar: ${error.message}. Verifique se o arquivo /data/produtos.json existe.</p>`;
+    }
+}
 
 // Função para Adicionar/Remover Favoritos
 function toggleFavorite(id, btn) {
