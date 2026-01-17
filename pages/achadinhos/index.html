@@ -1,120 +1,8 @@
-<<<<<<< HEAD
-Com base na estrutura de arquivos CSS que você forneceu, desenvolvi o HTML completo para o seu site de "Achadinhos".
-
-O layout inclui um header fixo, um banner promocional com gradiente, uma barra de busca, seções para categorias rápidas e uma grade de cards de produtos (achadinhos), finalizando com o footer profissional definido no seu layout.css.
-
-Estrutura HTML (index.html)
-Copie o código abaixo e salve no mesmo diretório onde estão as suas pastas de CSS.
-
-HTML
-=======
->>>>>>> 777ff7e (ss)
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Achadinhos Imperdíveis - As melhores ofertas</title>
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-
-    <header class="header">
-        <div class="logo">
-            <i class="fas fa-shopping-bag"></i> MEU ACHADINHO
-        </div>
-        
-        <div class="menu-toggle" id="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-
-        <nav class="mobile-nav" id="mobile-nav">
-            <a href="#">Início</a>
-            <a href="#">Promoções</a>
-            <a href="#">Cupons</a>
-            <a href="#">Grupos WhatsApp</a>
-        </nav>
-    </header>
-
-    <section class="banner">
-        <div class="container">
-            <h1>Os melhores Achadinhos da Internet!</h1>
-            <p>Curadoria diária com descontos reais e produtos incríveis.</p>
-        </div>
-    </section>
-
-    <div class="search-wrapper">
-        <input type="text" id="searchInput" placeholder="O que você está procurando hoje?">
-    </div>
-
-    <main class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 0;">
-        <h2 class="section-title" style="padding: 0;">🔥 Achadinhos do Dia</h2>
-        <span style="color: var(--text-grey); font-size: 0.9rem;">Mostrando ofertas aleatórias</span>
-    </div>
-    
-    <div id="grid-produtos" class="product-grid">
-        </div>
-</main>
-    
-    <div id="grid-produtos" class="product-grid">
-        </div>
-</main>
-
-<script>
-    async function carregarProdutos() {
-        try {
-            const response = await fetch('/data/achadinhos/achadinhos.json');
-            let produtos = await response.json();
-
-            // Lógica para embaralhar (Randomizar)
-            produtos = produtos.sort(() => Math.random() - 0.5);
-
-            const grid = document.getElementById('grid-produtos');
-            grid.innerHTML = ''; // Limpa o grid
-
-            produtos.forEach((prod, index) => {
-                const card = document.createElement('article');
-                card.className = 'product-card';
-                // Adiciona um delay na animação para cada card aparecer um após o outro
-                card.style.animationDelay = `${index * 0.1}s`;
-
-                card.innerHTML = `
-                    <img src="${prod.imagem}" alt="${prod.nome}" loading="lazy">
-                    <div style="padding: 15px;">
-                        <h4 style="font-size: 0.9rem; margin-bottom: 10px; height: 40px; overflow: hidden;">${prod.nome}</h4>
-                        <p style="color: var(--primary-color); font-weight: bold; font-size: 1.1rem; margin-bottom: 10px;">R$ ${prod.preco}</p>
-                        <a href="${prod.link}" class="footer-cta" style="display: block; text-align: center; font-size: 0.8rem;">Ver Detalhes</a>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        } catch (error) {
-            console.error('Erro ao carregar produtos:', error);
-        }
-    }
-
-    // Inicia a função ao carregar a página
-    window.onload = carregarProdutos;
-</script>
-
-            <div id="footer-placeholder"></div>
-
-<script src="/js/footer.js"></script>
-
-    <script>
-        const btn = document.getElementById('mobile-menu-btn');
-        const nav = document.getElementById('mobile-nav');
-
-        btn.addEventListener('click', () => {
-            nav.classList.toggle('active');
-        });
-    </script>
-=======
     <title>Achadinhos - Oferta Mega</title>
     <script src="menu.js" defer></script>
     <style scr="/css/stylebase.css"></style>
@@ -349,6 +237,5 @@ HTML
         loadProducts();
     </script>
     <div id="footer-placeholder"></div>
->>>>>>> 777ff7e (ss)
 </body>
 </html>

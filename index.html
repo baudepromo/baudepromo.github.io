@@ -3,49 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>Baú de Promoção - Os melhores achados</title>
-    <style>
-        /* Estilos Gerais */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f4f4; color: #333; }
-
-        /* Menu Hambúrguer */
-        header { background: #ff4757; color: white; padding: 1rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
-        .menu-toggle { cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
-        .menu-toggle span { width: 25px; height: 3px; background: white; border-radius: 2px; }
-        
-        nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ff4757; padding: 1rem; }
-        nav.active { display: block; }
-        nav ul { list-style: none; }
-        nav ul li { padding: 10px 0; border-bottom: 1px solid #ff6b81; }
-        nav ul li a { color: white; text-decoration: none; font-weight: bold; }
-
-        /* Banner Principal */
-        .banner { background: linear-gradient(45deg, #ff4757, #ffa502); color: white; padding: 40px 20px; text-align: center; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
-        .banner h1 { font-size: 2rem; margin-bottom: 10px; }
-        .banner p { font-size: 1rem; opacity: 0.9; }
-
-        /* Lista de Produtos Virais (Horizontal/Vertical) */
-        .section-title { padding: 20px; font-size: 1.2rem; font-weight: bold; }
-        .product-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 0 20px 20px; scrollbar-width: none; }
-        .product-scroll::-webkit-scrollbar { display: none; }
-        .product-card { min-width: 150px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
-        .product-card img { width: 100%; border-radius: 10px; margin-bottom: 10px; }
-        .product-card p { font-size: 0.9rem; font-weight: bold; color: #ff4757; }
-
-        /* Categorias de Botões */
-        .categories { display: flex; flex-direction: column; gap: 10px; padding: 20px; }
-        .cat-button { background: white; padding: 20px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: #333; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
-        .cat-button i { font-size: 1.5rem; }
-        .achados { border-left: 5px solid #2ed573; }
-        .promocoes { border-left: 5px solid #ff4757; }
-        .cupons { border-left: 5px solid #1e90ff; }
-
-        /* Logo e Texto Central */
-        .brand-intro { text-align: center; padding: 30px 20px 10px; }
-        .brand-intro h2 { color: #ff4757; margin-bottom: 5px; }
-=======
     <title>Minha Loja Premium</title>
     <style>
         /* RESET & VARIÁVEIS */
@@ -290,85 +247,10 @@
             .quick-nav { flex-direction: column; align-items: center; }
             .btn-nav { width: 100%; justify-content: center; }
         }
->>>>>>> 777ff7e (ss)
     </style>
 </head>
 <body>
 
-<<<<<<< HEAD
-    <header>
-        <div class="menu-toggle" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div style="font-weight: bold; font-size: 1.2rem;">BAÚ DE PROMOÇÃO</div>
-        <div style="width: 25px;"></div> <nav id="main-nav">
-            <ul>
-                <li><a href="#">Início</a></li>
-                <li><a href="#">Eletrônicos</a></li>
-                <li><a href="#">Casa e Cozinha</a></li>
-                <li><a href="#">Beleza</a></li>
-                <li><a href="#">Sobre Nós</a></li>
-                <li><a href="#">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <section class="banner">
-        <h1>Ofertas Imbatíveis! 💎</h1>
-        <p>Garimpamos os melhores preços da internet para você.</p>
-    </section>
-
-    <h2 class="section-title">🔥 Produtos Virais</h2>
-    <div class="product-scroll">
-        <div class="product-card">
-            <img src="https://via.placeholder.com/150" alt="Produto">
-            <p>Mini Processador</p>
-            <span>R$ 29,90</span>
-        </div>
-        <div class="product-card">
-            <img src="https://via.placeholder.com/150" alt="Produto">
-            <p>Luminária LED</p>
-            <span>R$ 45,00</span>
-        </div>
-        <div class="product-card">
-            <img src="https://via.placeholder.com/150" alt="Produto">
-            <p>Fone Bluetooth</p>
-            <span>R$ 89,90</span>
-        </div>
-        <div class="product-card">
-            <img src="https://via.placeholder.com/150" alt="Produto">
-            <p>Smartwatch</p>
-            <span>R$ 120,00</span>
-        </div>
-    </div>
-
-    <div class="brand-intro">
-        <h2>Baú de Promoção</h2>
-        <p>Sua curadoria diária de ofertas, cupons e achados imperdíveis.</p>
-    </div>
-
-    <section class="categories">
-        <a href="pages/achadinhos/index.html" class="cat-button achados">
-            <span>✨ Achados da Semana</span>
-            <span>➔</span>
-        </a>
-        <a href="#" class="cat-button promocoes">
-            <span>🏷️ Promoções Ativas</span>
-            <span>➔</span>
-        </a>
-        <a href="#" class="cat-button cupons">
-            <span>🎟️ Cupons de Desconto</span>
-            <span>➔</span>
-        </a>
-    </section>
-
-    <script>
-        function toggleMenu() {
-            const nav = document.getElementById('main-nav');
-            nav.classList.toggle('active');
-=======
     <header class="header">
         <div class="logo">OFERTA MEGA</div>
         
@@ -442,7 +324,6 @@
             } else {
                 document.body.style.overflow = 'auto';
             }
->>>>>>> 777ff7e (ss)
         }
     </script>
 </body>
