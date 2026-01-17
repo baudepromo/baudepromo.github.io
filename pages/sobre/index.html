@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós - Baú de Promoções</title>
+    
+    <link rel="stylesheet" href="/css/main.css">
+    
+    <style>
+        /* Reutilizando as variáveis e estilos que você forneceu */
+        :root {
+            --primary: #ff4d5a;
+            --secondary: #ff9f0a;
+            --dark: #0a0a0a;
+            --light: #f6f6f6;
+        }
+
+        /* Estilos específicos para a página Sobre */
+        .about-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-top: -50px; /* Sobrepõe levemente o hero */
+            position: relative;
+            z-index: 10;
+            line-height: 1.8;
+        }
+
+        .about-content h3 {
+            color: var(--primary);
+            margin: 25px 0 15px;
+            font-size: 24px;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-item {
+            padding: 20px;
+            background: var(--light);
+            border-radius: 15px;
+            border-left: 5px solid var(--secondary);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">📦 Baú de Promoções</div>
+        <button class="hamburger" id="menuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <nav class="menu" id="sideMenu">
+        <a href="index.html">Início</a>
+        <a href="achadinhos.html">Achadinhos</a>
+        <a href="cupons.html">Cupons</a>
+        <a href="sobre.html">Sobre Nós</a>
+    </nav>
+
+    <section class="hero">
+        <h2>Quem faz o Baú brilhar? ✨</h2>
+        <p>Sua curadoria de ofertas favorita na palma da mão.</p>
+        
+        <div class="quick-nav">
+            <a href="index.html" class="btn-nav btn-achadinhos" style="opacity: 1;">
+                🏠 Voltar ao Início
+            </a>
+            <a href="https://wa.me/seu-numero" class="btn-nav btn-cupons" style="opacity: 1;">
+                📱 Grupo VIP
+            </a>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="about-content">
+            <h2 class="section-title">Nossa Missão</h2>
+            <p>
+                O <strong>Baú de Promoções</strong> nasceu da ideia de que ninguém precisa pagar caro para ter produtos de qualidade. 
+                Nós vasculhamos a internet diariamente em busca de "achadinhos" — aqueles produtos virais, 
+                testados e aprovados — além de cupons exclusivos que realmente funcionam.
+            </p>
+
+            <h3>Por que confiar no Baú?</h3>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <h4>🔍 Curadoria Real</h4>
+                    <p>Não postamos tudo, postamos o que vale a pena. Testamos a veracidade de cada desconto.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>⚡ Rapidez</h4>
+                    <p>Promoções boas duram pouco. Nosso time envia os alertas no momento em que os preços baixam.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🛡️ Segurança</h4>
+                    <p>Indicamos apenas lojas oficiais e marketplaces confiáveis (Amazon, Shopee, Mercado Livre, etc).</p>
+                </div>
+            </div>
+
+            <h3>Siga o Baú nas Redes</h3>
+            <p>Faça parte da nossa comunidade e não perca nenhum erro de preço ou cupom relâmpago!</p>
+            
+            <div class="social-bar" style="margin-left: 0; margin-right: 0; width: 100%;">
+                <span>Conecte-se:</span>
+                <a href="#" class="social-link instagram">Instagram</a>
+                <a href="#" class="social-link tiktok">TikTok</a>
+                <a href="#" class="social-link whatsapp">WhatsApp</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h2>Baú de Promoções</h2>
+                <p>O melhor lugar para encontrar ofertas reais e produtos que facilitam o seu dia a dia.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Navegação</h3>
+                <ul>
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Baú de Promoções - Todos os direitos reservados.</p>
+            <p class="disclaimer">O Baú de Promoções participa de programas de afiliados e pode receber comissões por compras feitas através dos nossos links, sem custo adicional para você.</p>
+        </div>
+    </footer>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            sideMenu.classList.toggle('active');
+        });
+
+        // Fechar menu ao clicar em um link
+        document.querySelectorAll('.menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                sideMenu.classList.remove('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
