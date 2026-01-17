@@ -3,203 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baú de Promoções - As Melhores Ofertas</title>
+    <title>Minha Loja Premium</title>
     <style>
-        /* VARIÁVEIS E RESET */
-        :root {
-            --primary: #ff4d5a;
-            --secondary: #ff9f0a;
-            --dark: #0a0a0a;
-            --light: #f6f6f6;
-            --white: #ffffff;
-            --gray: #66828a;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background: var(--light); color: #222; overflow-x: hidden; line-height: 1.6; }
-
-        /* HEADER & MENU */
-        .header {
-            background: var(--primary);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .logo { font-size: 22px; font-weight: 800; letter-spacing: -1px; }
-
-        .hamburger {
-            width: 30px; height: 20px;
-            display: flex; flex-direction: column; justify-content: space-between;
-            cursor: pointer; border: none; background: none; z-index: 2100;
-        }
-        .hamburger span { display: block; width: 100%; height: 3px; background: #fff; border-radius: 10px; transition: 0.3s; }
-        
-        .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
-
-        .menu {
-            position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
-            background: var(--primary); display: flex; flex-direction: column;
-            padding: 80px 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            gap: 15px; box-shadow: -5px 0 15px rgba(0,0,0,0.2); z-index: 2000;
-        }
-        .menu.active { right: 0; }
-        .menu a { color: #fff; text-decoration: none; font-size: 18px; font-weight: 500; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
-
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: none; z-index: 1500;
-        }
-        .overlay.active { display: block; }
-
-        /* HERO & BUSCA */
+        /* HERO SECTION */
         .hero {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #fff; text-align: center; padding: 60px 20px 80px;
+            color: #fff;
+            text-align: center;
+            padding: 80px 20px;
             border-radius: 0 0 50px 50px;
+            animation: fadeInDown 0.8s ease-out;
         }
-        .hero h2 { font-size: 32px; margin-bottom: 10px; }
 
-        .modern-search { max-width: 600px; margin: -30px auto 30px; padding: 0 20px; }
-        .modern-search input {
-            width: 100%; padding: 16px 25px; border-radius: 50px; border: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); outline: none; transition: 0.3s;
+        .hero h2 { font-size: 38px; margin-bottom: 15px; }
+
+        /* BOTÕES DE DESTAQUE */
+        .quick-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
-        .modern-search input:focus { box-shadow: 0 10px 30px rgba(255,77,90,0.3); }
 
-        /* GRID DE PRODUTOS */
-        .container { max-width: 1100px; margin: auto; padding: 40px 20px; }
+        .btn-nav {
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .btn-achadinhos { background: #fff; color: var(--primary); }
+        .btn-produtos { background: var(--dark); color: #fff; }
+        .btn-cupons { background: #ffd700; color: #333; }
+
+        .btn-nav:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        /* CONTAINER & PRODUCTS */
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            font-size: 26px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
         .products-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
         }
+
         .product-card {
-            background: var(--white); border-radius: 20px; padding: 20px;
-            text-align: center; transition: 0.3s; border: 1px solid #eee;
-            position: relative; display: flex; flex-direction: column;
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid #eee;
         }
-        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-        .product-card img { width: 100%; height: 180px; object-fit: contain; margin-bottom: 15px; }
 
-        /* TEXTO SOBRE O BAÚ & FAQ */
-        .about-section { background: #fff; padding: 60px 20px; margin-top: 40px; border-radius: 50px 50px 0 0; }
-        .about-content { max-width: 800px; margin: 0 auto; text-align: center; }
-        .about-content h3 { font-size: 28px; color: var(--primary); margin-bottom: 20px; }
-        .about-content p { color: #555; margin-bottom: 40px; font-size: 17px; }
-
-        .faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; text-align: left; }
-        .faq-item h4 { color: var(--dark); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        .faq-item p { font-size: 14px; color: var(--gray); }
-
-        /* FOOTER */
-        footer { background: var(--dark); color: #fff; padding: 60px 20px 20px; }
-        .footer-container { 
-            max-width: 1100px; margin: 0 auto; 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 77, 90, 0.15);
         }
-        .footer-bottom { text-align: center; padding-top: 40px; font-size: 13px; color: var(--gray); border-top: 1px solid #222; margin-top: 40px; }
 
-        /* UTILITÁRIOS */
-        .price { font-size: 22px; font-weight: 800; color: var(--primary); }
-        .btn-nav { 
-            padding: 12px 25px; border-radius: 50px; text-decoration: none; 
-            font-weight: bold; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
         }
-        .social-link { padding: 8px 15px; border-radius: 20px; color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; }
-        .instagram { background: linear-gradient(45deg, #f58529, #dd2a7b, #8134af); }
-        .whatsapp { background: #25d366; }
 
+        .product-card h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        /* Responsividade */
         @media (max-width: 768px) {
-            .footer-container { grid-template-columns: 1fr; text-align: center; }
+            .hero h2 { font-size: 28px; }
+            .quick-nav { flex-direction: column; align-items: center; }
+            .btn-nav { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-
     <header class="header">
-        <div class="logo">BAÚ DE PROMOÇÕES</div>
-        <button class="hamburger" id="hamburger" onclick="toggleMenu()">
-            <span></span><span></span><span></span>
+        <div class="logo">OFERTA MEGA</div>
+        
+        <button class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
         </button>
+
         <nav class="menu" id="navMenu">
-            <a href="#">Início</a>
-            <a href="#produtos">Produtos</a>
-            <a href="#sobre">Sobre Nós</a>
-            <a href="#faq">Dúvidas</a>
+            <a href="#" onclick="toggleMenu()">Início</a>
+            <a href="#produtos" onclick="toggleMenu()">Produtos</a>
+            <a href="#achadinhos" onclick="toggleMenu()">Achadinhos</a>
+            <a href="#cupons" onclick="toggleMenu()">Cupons</a>
         </nav>
     </header>
 
     <section class="hero">
-        <h2>O Garimpo das Melhores Ofertas!</h2>
-        <p>Curadoria diária de achadinhos úteis e descontos reais.</p>
+        <h2>As Melhores Ofertas do Dia!</h2>
+        <p>Curadoria exclusiva de produtos com descontos reais.</p>
+        
+        <div class="quick-nav">
+            <a href="#achadinhos" class="btn-nav btn-achadinhos" style="animation-delay: 0.2s;">✨ Achadinhos</a>
+            <a href="#produtos" class="btn-nav btn-produtos" style="animation-delay: 0.4s;">📦 Produtos</a>
+            <a href="#cupons" class="btn-nav btn-cupons" style="animation-delay: 0.6s;">🎟️ Cupons</a>
+        </div>
     </section>
 
-    <div class="modern-search">
-        <input type="text" placeholder="🔍 O que você está procurando hoje?">
-    </div>
-
     <div class="container" id="produtos">
-        <h3 style="text-align: center; margin-bottom: 30px;">🔥 Ofertas em Destaque</h3>
+        <h3 class="section-title">Destaques da Semana</h3>
+        
         <div class="products-grid">
             <div class="product-card">
                 <img src="https://via.placeholder.com/200" alt="Produto">
                 <h4>Smartwatch Series 9</h4>
                 <p class="price">R$ 199,90</p>
             </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Fone Bluetooth Pro</h4>
+                <p class="price">R$ 87,50</p>
             </div>
-    </div>
 
-    <section class="about-section" id="sobre">
-        <div class="about-content">
-            <h3>Sobre o Baú de Promoções</h3>
-            <p>
-                Nascemos com a missão de facilitar sua vida. Em um mar de preços que mudam a todo instante, nossa equipe "garimpa" as maiores lojas do Brasil para encontrar o que realmente vale a pena. Não apenas o menor preço, mas a melhor relação custo-benefício.
-            </p>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Teclado Mecânico RGB</h4>
+                <p class="price">R$ 156,00</p>
+            </div>
 
-            <div class="faq-grid" id="faq">
-                <div class="faq-item">
-                    <h4>❓ O site é uma loja?</h4>
-                    <p>Não. O Baú de Promoções é um buscador e curador. Nós encontramos as ofertas em lojas parceiras como Amazon, Shopee e Magalu e redirecionamos você para comprar com segurança.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>❓ Como ganho desconto?</h4>
-                    <p>Muitas vezes o preço já está reduzido no link. Em outros casos, fornecemos um código de cupom que deve ser digitado na tela de pagamento da loja oficial.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>❓ É seguro clicar nos links?</h4>
-                    <p>Sim! Só postamos links de lojas verificadas e com boa reputação no Reclame Aqui. Sua transação financeira é feita diretamente no site da loja (ex: Amazon.com.br).</p>
-                </div>
-                <div class="faq-item">
-                    <h4>❓ Os preços são atualizados?</h4>
-                    <p>As ofertas na internet voam! Tentamos manter tudo atualizado, mas como os estoques são limitados, o preço pode mudar após algumas horas da postagem.</p>
-                </div>
+            <div class="product-card">
+                <img src="https://via.placeholder.com/200" alt="Produto">
+                <h4>Câmera Inteligente Wi-Fi</h4>
+                <p class="price">R$ 120,00</p>
             </div>
         </div>
-    </section>
-
+    </div>
     <script src="/js/main-layout.js" defer></script>
     <div id="footer-placeholder"></div>
-
+    
     <script>
         function toggleMenu() {
             const menu = document.getElementById('navMenu');
-            const hamburger = document.getElementById('hamburger');
-            const overlay = document.getElementById('overlay');
-            
+            const hamburger = document.querySelector('.hamburger');
             menu.classList.toggle('active');
             hamburger.classList.toggle('active');
-            overlay.classList.toggle('active');
             
-            document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
+            // Impede o scroll quando o menu está aberto
+            if(menu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
         }
     </script>
 </body>
