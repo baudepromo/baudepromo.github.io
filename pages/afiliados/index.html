@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Programa de Afiliados | Baú de Promoções</title>
+  <link rel="icon" href="/assets/img/favicon.webp"/>
+
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4VNJR25033');
+</script>
+
+  <style>
+    :root {
+      --bg: #0f1f26;
+      --card: #243a44;
+      --accent: #1ecbe1;
+      --text: #ffffff;
+      --muted: #b7d0d6;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #2a4d59, var(--bg));
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .construction-container {
+      padding: 40px;
+      max-width: 600px;
+    }
+
+    /* Animação de Pulsação no Ícone */
+    .icon-box {
+      font-size: 80px;
+      margin-bottom: 20px;
+      display: inline-block;
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 0px var(--accent)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--accent)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--accent)); }
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      background: rgba(30, 203, 225, 0.1);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 5px 15px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      margin: 25px 0;
+    }
+
+    .loader-bar {
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      margin: 30px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loader-progress {
+      position: absolute;
+      width: 60%; /* Progresso manual */
+      height: 100%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      border-radius: 10px;
+    }
+
+    .btn-back {
+      display: inline-block;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 12px 25px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .btn-back:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="construction-container">
+    <div class="icon-box">🤝</div>
+    <br>
+    <span class="badge">Em Desenvolvimento</span>
+    <h1>Programa de Afiliados</h1>
+    <p>Estamos preparando uma plataforma incrível para você lucrar indicando os melhores achadinhos da internet. Em breve, você poderá fazer parte do time do Baú!</p>
+    
+    <div class="loader-bar">
+      <div class="loader-progress"></div>
+    </div>
+    
+    <p style="font-size: 0.9rem;">Previsão de lançamento: Julho</p>
+    
+    <a href="https://baudepromo.github.io/" class="btn-back">← Voltar ao Início</a>
+  </div>
+
+</body>
+</html>

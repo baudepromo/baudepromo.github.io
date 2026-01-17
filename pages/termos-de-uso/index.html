@@ -1,110 +1,151 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Termos de Uso - Baú de Promoções</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Termos de Uso | Baú de Promoções</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/img/favicon.webp"/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4VNJR25033');
+</script>
+
+  <style>
+    :root {
+      --bg: #0f1f26;
+      --card: #243a44;
+      --accent: #1ecbe1;
+      --text: #ffffff;
+      --muted: #b7d0d6;
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #2a4d59, var(--bg));
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 40px;
+      background: rgba(46, 74, 85, 0.4);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 { color: var(--accent); font-size: 2.2rem; margin-bottom: 10px; }
+    h2 { color: var(--accent); margin-top: 35px; font-size: 1.4rem; border-left: 4px solid var(--accent); padding-left: 15px; }
+    p, li { color: var(--muted); margin-bottom: 15px; }
+    ul { padding-left: 20px; }
     
-    <style>
-        .terms-container {
-            background: white;
-            padding: 40px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            margin-top: -50px;
-            position: relative;
-            z-index: 10;
-        }
+    .important-box {
+      background: rgba(30, 203, 225, 0.1);
+      border: 1px dashed var(--accent);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 25px 0;
+    }
 
-        .terms-container h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .btn-back {
+      display: inline-block;
+      margin-top: 20px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+    }
 
-        .terms-container h2 {
-            color: var(--dark);
-            font-size: 1.4rem;
-            margin: 25px 0 15px;
-            border-left: 4px solid var(--secondary);
-            padding-left: 15px;
-        }
+    .btn-back:hover { transform: translateX(-5px); }
 
-        .terms-container p, .terms-container ul {
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-        }
+    footer {
+      text-align: center;
+      padding: 40px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
 
-        .terms-container ul {
-            padding-left: 20px;
-        }
-
-        .highlight-box {
-            background: #fff5f5;
-            border: 1px dashed var(--primary);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-        }
-    </style>
+    @media (max-width: 600px) {
+      .container { margin: 20px; padding: 25px; }
+    }
+  </style>
+  <link rel="stylesheet" href="/assets/css/stylebase.css">
 </head>
 <body>
 
-    <section class="hero" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; text-align: center; padding: 100px 20px; border-radius: 0 0 50px 50px;">
-        <h2>Termos de Uso</h2>
-        <p>Leia atentamente as condições de utilização do nosso portal.</p>
-    </section>
+<div class="container">
+  <header>
+    <h1>Termos de Uso</h1>
+    <p>Última atualização: 15 de Janeiro de 2026</p>
+  </header>
 
-    <main class="container" style="max-width: 900px; margin: auto; padding: 0 20px 50px;">
-        <div class="terms-container">
-            
-            <h2>1. Identificação do Site</h2>
-            <p>Este site, denominado <strong>Baú de Promoções</strong>, é uma plataforma dedicada à curadoria e divulgação de ofertas, cupons de desconto e produtos virais encontrados na internet.</p>
+  <section>
+    <p>Bem-vindo ao <strong>Baú de Promoções</strong>. Estes termos regem o uso do nosso site e serviços. Ao navegar, você concorda integralmente com as condições aqui estabelecidas.</p>
 
-            <h2>2. Aceitação dos Termos</h2>
-            <p>Ao acessar e utilizar o Baú de Promoções, você concorda automaticamente com estes Termos de Uso. Caso não concorde com qualquer parte deste documento, recomendamos que interrompa o uso do site imediatamente.</p>
+    <div class="important-box">
+      <strong>Nota Importante:</strong> O Baú de Promoções atua exclusivamente como um serviço de curadoria e divulgação de ofertas. Não somos uma loja, não processamos pagamentos e não realizamos entregas.
+    </div>
 
-            <h2>3. Uso Correto do Site</h2>
-            <p>O usuário se compromete a utilizar o site de forma lícita, sendo proibido:</p>
-            <ul>
-                <li>Utilizar robôs ou scripts para coletar dados em massa.</li>
-                <li>Tentar burlar sistemas de segurança hospedados no <strong>Firebase</strong>.</li>
-                <li>Usar nossos formulários (via <strong>FormSubmit</strong>) para envio de spam ou conteúdo ofensivo.</li>
-            </ul>
+    <h2>1. Aceitação dos Termos</h2>
+    <p>Ao acessar o site, você declara ser maior de idade ou possuir autorização legal e concorda em utilizar a plataforma respeitando as leis vigentes e a boa-fé. O acesso implica na aceitação automática e irrevogável destes termos.</p>
 
-            <h2>4. Isenção de Responsabilidade</h2>
-            <p>O Baú de Promoções apenas indica ofertas. Não vendemos produtos diretamente e não nos responsabilizamos por:</p>
-            <ul>
-                <li>Variações de preço que ocorram após a publicação.</li>
-                <li>Qualidade ou entrega de produtos comprados em lojas parceiras.</li>
-                <li>Disponibilidade de estoque dos itens anunciados.</li>
-            </ul>
+    <h2>2. Uso Permitido</h2>
+    <p>Os serviços do Baú de Promoções destinam-se ao uso pessoal. Você está autorizado a:</p>
+    <ul>
+      <li>Navegar pelas ofertas e "achadinhos" selecionados;</li>
+      <li>Cadastrar seu e-mail para receber notificações e newsletters de promoções;</li>
+      <li>Participar de grupos ou comunidades vinculadas à plataforma, quando disponíveis;</li>
+      <li>Baixar temporariamente os materiais apenas para visualização não comercial.</li>
+    </ul>
 
-            <h2>5. Links de Terceiros e Afiliados</h2>
-            <p>Nosso conteúdo contém links de afiliados. Isso significa que, ao clicar e realizar uma compra, podemos receber uma comissão sem custo adicional para você.</p>
-            <p>Utilizamos o <strong>Google Analytics</strong> para entender o comportamento dos usuários e melhorar sua experiência através de cookies. Ao navegar, você está ciente deste monitoramento anônimo.</p>
+    <h2>3. Proibições e Condutas</h2>
+    <p>É estritamente proibido ao usuário:</p>
+    <ul>
+      <li>Utilizar nossos canais de contato (e-mail, comentários ou formulários) para envio de <strong>SPAM</strong> ou mensagens não solicitadas;</li>
+      <li>Praticar atos ilegais, fraudulentos ou que violem a privacidade de terceiros;</li>
+      <li>Tentar burlar sistemas de segurança ou coletar dados de outros usuários;</li>
+      <li>Usar robôs (crawlers/scrapers) para copiar o conteúdo para fins comerciais sem autorização.</li>
+    </ul>
 
-            <h2>6. Direitos Autorais</h2>
-            <p>Todo o layout, textos e logos do Baú de Promoções são de nossa propriedade. A reprodução de conteúdo sem autorização prévia é proibida.</p>
+    <h2>4. Conteúdo e Direitos Autorais</h2>
+    <p>Todo o conteúdo autoral (textos, logotipos, layout e organização) é de propriedade exclusiva do <strong>Baú de Promoções</strong>. Materiais de terceiros (fotos de produtos e logos de lojas como Amazon, Shopee, etc.) são utilizados para fins informativos de divulgação, permanecendo sob propriedade de seus respectivos detentores.</p>
 
-            <h2>7. Alterações nos Termos</h2>
-            <p>Reservamo-nos o direito de atualizar estes termos a qualquer momento. As mudanças entram em vigor imediatamente após a publicação nesta página.</p>
+    <h2>5. Limitação de Responsabilidade</h2>
+    <p>O Baú de Promoções não se responsabiliza por:</p>
+    <ul>
+      <li><strong>Erros de Preços:</strong> As ofertas são voláteis e podem mudar ou expirar a qualquer momento nas lojas parceiras;</li>
+      <li><strong>Danos Indiretos:</strong> Indisponibilidade temporária do site ou problemas técnicos fora de nosso controle;</li>
+      <li><strong>Transações Comerciais:</strong> Qualquer dano decorrente da compra, entrega ou defeito de produtos adquiridos nas lojas redirecionadas. O suporte pós-venda deve ser tratado diretamente com o vendedor final.</li>
+    </ul>
 
-            <h2>8. Contato</h2>
-            <p>Se tiver dúvidas sobre nossos termos ou sobre como seus dados são processados pelo <strong>Firebase</strong> e <strong>FormSubmit</strong>, entre em contato através do nosso canal oficial.</p>
-            
-            <div class="highlight-box">
-                <strong>E-mail de Suporte:</strong> baudepromocao@gmail.com
-            </div>
+    <h2>6. Alterações e Encerramento</h2>
+    <p>Reservamo-nos o direito de modificar estes Termos de Uso ou suspender qualquer funcionalidade do site a qualquer momento, visando a melhoria do serviço. O uso continuado do site após alterações implica na aceitação da nova versão.</p>
 
-            <p style="text-align: center; font-size: 0.8rem; margin-top: 40px; color: #999;">
-                Última atualização: 17 de Janeiro de 2026
-            </p>
-        </div>
-    </main>
+    <h2>7. Legislação e Foro</h2>
+    <p>Estes termos são regidos pelas leis da <strong>República Federativa do Brasil</strong> (incluindo o Código de Defesa do Consumidor e a LGPD). Fica eleito o foro da comarca de sua residência ou o foro central da sede da plataforma para dirimir quaisquer controvérsias.</p>
 
-    <script src="/js/main-layout.js" defer></script>
-    <div id="footer-placeholder"></div>
+    <a href="/" class="btn-back">← Voltar para o Início</a>
+  </section>
+</div>
 
+<footer id="footer"></footer>
+<script src="/assets/js/main.js" defer></script>
 </body>
 </html>

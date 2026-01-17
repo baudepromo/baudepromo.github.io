@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Cupons de Desconto | Baú de Promoções</title>
+    <meta name="description" content="Códigos promocionais atualizados. Shopee, Amazon, AliExpress e muito mais. Pegue seu cupom agora!">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="/assets/img/favicon.webp"/>
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4VNJR25033');
+</script>
+
+    <style>
+        :root {
+            --bg-body: #0f1f26; /* Mesmo fundo da home */
+            --glass-bg: rgba(36, 58, 68, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #1ecbe1;
+            --accent-hover: #17a2b4;
+            --text-main: #ffffff;
+            --text-muted: #b7d0d6;
+            --success: #4ade80;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            background-image: radial-gradient(circle at top, #2a4d59, var(--bg-body));
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* --- NAVEGAÇÃO --- */
+        header {
+            max-width: 1000px;
+            margin: 0 auto 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .back-btn:hover { color: var(--accent); }
+
+        h1 {
+            font-size: 2rem;
+            margin: 0;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* --- FILTROS --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent);
+            color: #05080f;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 203, 225, 0.3);
+        }
+
+        /* --- GRID DE CUPONS --- */
+        .coupons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* --- CARD DO CUPOM --- */
+        .coupon-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .coupon-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        /* Efeito de rasgo lateral (opcional, visual clássico de cupom) */
+        .coupon-card::before, .coupon-card::after {
+            content: '';
+            position: absolute;
+            top: 70px; /* Altura do rasgo */
+            width: 20px;
+            height: 20px;
+            background-color: var(--bg-body);
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .coupon-card::before { left: -10px; }
+        .coupon-card::after { right: -10px; }
+
+        .coupon-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px dashed rgba(255,255,255,0.1);
+        }
+
+        .store-logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .offer-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+        .offer-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .coupon-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .expiry {
+            font-size: 0.75rem;
+            color: #ff4747;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Botão de Copiar */
+        .copy-container {
+            position: relative;
+            background: rgba(0,0,0,0.3);
+            border: 1px dashed var(--glass-border);
+            border-radius: 8px;
+            padding: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coupon-code {
+            font-family: monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding-left: 15px;
+            letter-spacing: 1px;
+            color: #fff;
+            filter: blur(4px); /* Escondido por padrão */
+            transition: 0.3s;
+            user-select: none;
+        }
+        
+        /* Quando revelado */
+        .coupon-card.revealed .coupon-code {
+            filter: blur(0);
+            color: var(--accent);
+        }
+
+        .btn-copy {
+            background: var(--accent);
+            color: #05080f;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-copy:hover { background: var(--accent-hover); }
+
+        /* Estado de Copiado */
+        .btn-copy.copied {
+            background: var(--success);
+            color: #003300;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #fff; color: #000; padding: 12px 30px;
+            border-radius: 50px; font-weight: 700; z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .toast.show { opacity: 1; bottom: 40px; }
+
+        @media (max-width: 600px) {
+            header { padding: 0 20px; }
+            .back-btn { position: relative; display: block; margin-bottom: 10px; transform: none; top: 0; }
+            h1 { font-size: 1.5rem; }
+        }
+
+    </style>
+    <link rel="stylesheet" href="/assets/css/stylebase.css">
+</head>
+<body>
+
+    <header>
+        <a href="https://baudepromo.github.io/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
+        <h1>Central de Cupons</h1>
+    </header>
+
+    <div class="filter-container">
+        <button class="filter-btn active" onclick="filterCoupons('all')">Todos</button>
+        <button class="filter-btn" onclick="filterCoupons('shopee')">Shopee</button>
+        <button class="filter-btn" onclick="filterCoupons('amazon')">Amazon</button>
+        <button class="filter-btn" onclick="filterCoupons('ali')">AliExpress</button>
+    </div>
+
+    <div class="coupons-grid">
+
+        <div class="coupon-card" data-store="shopee">
+            <div class="coupon-header">
+                <div class="store-logo" style="color: #ea501f;"><i class="fa-solid fa-bag-shopping"></i></div>
+                <div>
+                    <div class="offer-value">R$ 20 OFF</div>
+                    <div class="offer-label">Shopee Oficial</div>
+                </div>
+            </div>
+            <div class="coupon-body">
+                <p class="description">Desconto válido para primeira compra no app acima de R$ 100.</p>
+                <div class="expiry"><i class="fa-regular fa-clock"></i> Expira em 2 dias</div>
+                <div class="copy-container">
+                    <span class="coupon-code">PRIMEIRA20</span>
+                    <button class="btn-copy" onclick="copyCode(this, 'PRIMEIRA20')">PEGAR</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="coupon-card" data-store="amazon">
+            <div class="coupon-header">
+                <div class="store-logo" style="color: #000;"><i class="fa-brands fa-amazon"></i></div>
+                <div>
+                    <div class="offer-value">10% OFF</div>
+                    <div class="offer-label">Eletrônicos</div>
+                </div>
+            </div>
+            <div class="coupon-body">
+                <p class="description">Válido para Echo Dot e Fire TV Stick. Aproveite!</p>
+                <div class="expiry"><i class="fa-regular fa-clock"></i> Válido até 30/06</div>
+                <div class="copy-container">
+                    <span class="coupon-code">ALEXA10</span>
+                    <button class="btn-copy" onclick="copyCode(this, 'ALEXA10')">PEGAR</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="coupon-card" data-store="ali">
+            <div class="coupon-header">
+                <div class="store-logo" style="color: #ff4747;"><i class="fa-solid fa-tags"></i></div>
+                <div>
+                    <div class="offer-value">R$ 50 OFF</div>
+                    <div class="offer-label">AliExpress</div>
+                </div>
+            </div>
+            <div class="coupon-body">
+                <p class="description">Compras internacionais acima de R$ 250 (Choice Days).</p>
+                <div class="expiry"><i class="fa-regular fa-clock"></i> Poucas unidades</div>
+                <div class="copy-container">
+                    <span class="coupon-code">CHOICE50</span>
+                    <button class="btn-copy" onclick="copyCode(this, 'CHOICE50')">PEGAR</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="coupon-card" data-store="shopee">
+            <div class="coupon-header">
+                <div class="store-logo" style="color: #ea501f;"><i class="fa-solid fa-truck-fast"></i></div>
+                <div>
+                    <div class="offer-value">FRETE GRÁTIS</div>
+                    <div class="offer-label">Sem Mínimo</div>
+                </div>
+            </div>
+            <div class="coupon-body">
+                <p class="description">Cupom exclusivo para selo Frete Extra. Confira regras.</p>
+                <div class="expiry"><i class="fa-regular fa-clock"></i> Hoje apenas</div>
+                <div class="copy-container">
+                    <span class="coupon-code">FRETEOFF</span>
+                    <button class="btn-copy" onclick="copyCode(this, 'FRETEOFF')">PEGAR</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast" class="toast"><i class="fa-solid fa-check"></i> Cupom copiado!</div>
+
+    <script>
+        // Função de Copiar
+        function copyCode(btn, code) {
+            // Revela o código (efeito visual)
+            const card = btn.closest('.coupon-card');
+            card.classList.add('revealed');
+
+            // Copia para área de transferência
+            navigator.clipboard.writeText(code).then(() => {
+                // Muda texto do botão
+                const originalText = btn.innerText;
+                btn.innerText = "COPIADO";
+                btn.classList.add('copied');
+
+                // Mostra Toast
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+
+                // Reverte botão após 3 segundos
+                setTimeout(() => {
+                    btn.innerText = "COPIAR";
+                    btn.classList.remove('copied');
+                }, 3000);
+            }).catch(err => {
+                console.error('Erro ao copiar', err);
+                alert("Erro ao copiar. Copie manualmente: " + code);
+            });
+        }
+
+        // Função de Filtro
+        function filterCoupons(category) {
+            const cards = document.querySelectorAll('.coupon-card');
+            const btns = document.querySelectorAll('.filter-btn');
+
+            // Atualiza classe ativa dos botões
+            btns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filtra os cards
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-store') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+
+    <footer id="footer"></footer>
+    <script src="/assets/js/main.js" defer></script>
+
+</body>
+</html>

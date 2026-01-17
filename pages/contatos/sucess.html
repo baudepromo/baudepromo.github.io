@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mensagem Enviada | Baú de Promoções</title>
+  <link rel="icon" href="/assets/img/favicon.webp"/>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-4VNJR25033');
+</script>
+
+  <style>
+    :root {
+      --bg: #0f1f26;
+      --accent: #1ecbe1;
+      --text: #ffffff;
+      --muted: #b7d0d6;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #2a4d59, var(--bg));
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      text-align: center;
+    }
+
+    .success-card {
+      background: rgba(46, 74, 85, 0.4);
+      backdrop-filter: blur(10px);
+      padding: 50px 30px;
+      border-radius: 30px;
+      border: 1px solid var(--accent);
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    }
+
+    .icon-check {
+      width: 80px;
+      height: 80px;
+      background: var(--accent);
+      color: #002a30;
+      font-size: 40px;
+      line-height: 80px;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: block;
+    }
+
+    h1 {
+      color: var(--accent);
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: var(--muted);
+      margin-bottom: 30px;
+    }
+
+    .btn-home {
+      display: inline-block;
+      background: var(--accent);
+      color: #002a30;
+      text-decoration: none;
+      padding: 15px 30px;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: 0.3s;
+    }
+
+    .btn-home:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(30, 203, 225, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="success-card">
+    <span class="icon-check">✓</span>
+    <h1>Sucesso!</h1>
+    <p>Sua mensagem foi enviada para o Baú de Promoções. Responderemos em breve no seu e-mail.</p>
+    <a href="https://baudepromo.github.io/" class="btn-home">Voltar para o Início</a>
+  </div>
+
+</body>
+</html>
