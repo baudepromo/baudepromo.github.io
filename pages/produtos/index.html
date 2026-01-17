@@ -115,18 +115,66 @@
     justify-content: center;
     margin-bottom: 10px;
 }
+
+/* Garante que o container não dependa do volume de texto */
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 50px 20px;
+    min-height: 70vh; /* Ocupa 70% da altura da tela no mínimo */
+}
+
+/* Padronização dos cards de produto */
+.product-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Faz todos os cards da mesma linha terem a mesma altura */
+    animation: fadeIn 0.4s ease forwards;
+}
+
+/* Estilo para garantir que a imagem não quebre o layout */
+.product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain; /* Ou 'cover' se preferir cortar um pouco a imagem */
+    margin-bottom: 15px;
+}
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="logo">BAUDEPROMO</div>
-        <button class="hamburger" id="menuToggle">
-            <span></span><span></span><span></span>
-        </button>
-    </header>
+    <div class="logo">BAUDEPROMO</div>
+    <button class="hamburger" id="menuToggle">
+        <span></span><span></span><span></span>
+    </button>
+</header>
 
-    <div class="modern-search">
+<nav class="menu" id="sideMenu">
+    <div class="profile-area">
+        <img src="/img/perfil.webp" alt="Perfil" class="profile-img">
+        <p style="color: white; font-weight: bold;">Produtos</p>
+    </div>
+    
+    <a href="index.html">Início</a>
+    <a href="#eletronicos">Eletrônicos</a>
+    <a href="#moda">Moda</a>
+
+    <div class="social-links-menu">
+        <a href="#" class="social-link instagram">IG</a>
+        <a href="#" class="social-link tiktok">TK</a>
+        <a href="#" class="social-link whatsapp">WA</a>
+    </div>
+</nav>
+
+<div class="modern-search">
     <input 
         type="text" 
         id="searchInput" 
@@ -135,7 +183,7 @@
     >
 </div>
 
-    <div class="social-bar-container">
+<div class="social-bar-container">
     <div class="social-bar">
         <span>Siga-nos:</span>
         <a href="#" class="social-link instagram">Instagram</a>
