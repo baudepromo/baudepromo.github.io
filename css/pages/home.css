@@ -1,0 +1,370 @@
+:root {
+            --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+            --bg-body: #f5f5f5;
+            --text-dark: #1a1a1a;
+            --white: #ffffff;
+            --accent-yellow: #fdd835;
+            --accent-black: #111111;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-dark);
+        }
+
+        /* --- HEADER SUPERIOR --- */
+        header.top-bar {
+            background: #ff4b4b; /* Cor sólida parecida com o início do gradiente */
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            text-decoration: none;
+        }
+
+        .hamburger-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        /* --- HERO SECTION (O Gradiente Laranja) --- */
+        .hero-section {
+            background: var(--primary-gradient);
+            padding: 60px 20px 100px; /* Padding extra embaixo para a curva */
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            box-shadow: 0 10px 30px rgba(255, 75, 75, 0.2);
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        /* --- BOTÕES CENTRAIS (Achadinhos, Produtos, Cupons) --- */
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .pill-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .pill-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-white {
+            background: white;
+            color: #ff5e3a;
+        }
+
+        .btn-black {
+            background: var(--accent-black);
+            color: white;
+        }
+
+        .btn-yellow {
+            background: var(--accent-yellow);
+            color: var(--accent-black);
+        }
+
+        /* --- CONTEÚDO PRINCIPAL (Cards) --- */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover; /* Ajuste conforme necessário (contain ou cover) */
+            background: #f0f0f0;
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .card span {
+            color: #ff4b4b;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* --- MENU LATERAL & MODAIS (Preservando funcionalidade) --- */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            z-index: 1000;
+            padding: 80px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mobile-menu.active { right: 0; }
+        
+        .mobile-menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        /* User Auth Area no Menu Mobile para simplificar layout */
+        .user-auth-area {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .user-info { display: flex; align-items: center; gap: 10px; }
+        .user-info img { width: 40px; height: 40px; border-radius: 50%; }
+
+        /* Modais */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #ff4b4b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+        .donation-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--accent-yellow);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 900;
+        }
+        
+        /* Inputs do Auth */
+        .auth-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 1.8rem; }
+            .hero-buttons { flex-direction: column; align-items: center; width: 100%; }
+            .pill-btn { width: 100%; justify-content: center; max-width: 300px; }
+        }
+/* --- FOOTER PROFISSIONAL --- */
+    footer {
+        background: rgb(0, 0, 0);
+        border-top: 1px solid rgb(0, 0, 0);
+        padding: 60px 20px 20px;
+        margin-top: 50px;
+        color: var(--text);
+    }
+
+    .footer-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+    }
+
+    .footer-brand h2 {
+        color: var(--accent);
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+    }
+
+    .footer-brand p {
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .footer-links h3 {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: #fff;
+    }
+
+    .footer-links ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    .footer-links li {
+        margin-bottom: 12px;
+    }
+
+    .footer-links a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--accent);
+        padding-left: 5px;
+    }
+
+    .footer-bottom {
+        max-width: 1100px;
+        margin: 40px auto 0;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        text-align: center;
+        font-size: 0.85rem;
+        color: var(--muted);
+    }
+
+    .disclaimer {
+        font-size: 0.75rem;
+        color: #66828a;
+        margin-top: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Responsividade */
+    @media (max-width: 850px) {
+        .footer-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 500px) {
+        .footer-container {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+        .footer-links a:hover {
+            padding-left: 0;
+        }
+    }

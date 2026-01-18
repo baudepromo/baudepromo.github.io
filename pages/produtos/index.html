@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/stylebase.css">
+    <link rel="stylesheet" href="/css/menu.css">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
@@ -182,17 +183,7 @@
 </head>
 <body>
 
-    <div class="mobile-overlay" id="overlay" onclick="toggleMenu()"></div>
-    <div class="mobile-menu" id="mobile-menu">
-        <button class="close-menu" onclick="toggleMenu()"><i class="fa-solid fa-times"></i></button>
-        <div style="text-align: center; margin-bottom: 30px;">
-            <img src="/assets/img/perfil.webp" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px;">
-            <h3>Baú de Promoção</h3>
-        </div>
-        <a href="#" class="mobile-link">Início</a>
-        <a href="favoritos.html" class="mobile-link" style="color: #ff4b4b;">Meus Favoritos</a>
-        <a href="#" class="mobile-link">Sobre nós</a>
-    </div>
+    <div id="menu-menu"></div>
 
     <header class="top-bar">
         <a href="/" class="logo">
