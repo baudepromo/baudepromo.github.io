@@ -140,36 +140,20 @@
         <a href="/contatos">💬 Contato</a>
     </nav>
 
-    <section class="hero-mini">
-        <h1>Ofertas & Achadinhos</h1>
-        <p style="font-size: 0.9rem; opacity: 0.9;">Curadoria diária das melhores promoções.</p>
-        
-        <div class="social-pills">
-            <a href="https://www.instagram.com/baudepromocaos" class="social-link"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@baudepromocoes" class="social-link"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="https://x.com/baudepromocao" class="social-link"><i class="fa-brands fa-twitter"></i></a>
-            <a href="https://whatsapp.com/channel/..." class="social-link"><i class="fa-brands fa-whatsapp"></i></a>
+    <section class="hero-section">
+    <h1>Achadinhos & Ofertas</h1>
+    <div class="hero-buttons">
+        <a href="#" class="pill-btn btn-white">Shopee</a>
         </div>
+</section>
 
-        <div class="search-wrapper">
-            <i class="fa-solid fa-search"></i>
-            <input type="text" id="search" placeholder="O que você procura hoje? (Ex: iPhone, Ventilador...)">
-        </div>
-    </section>
+<div class="search-container">
+    <input type="text" id="search" placeholder="O que você está procurando?">
+</div>
 
-    <main class="grid-container">
-        <div class="grid" id="grid">
-            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">
-                <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando ofertas...
-            </div>
-        </div>
-
-        <nav class="pagination" aria-label="Navegação">
-            <button id="prev" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
-            <span id="page">1</span>
-            <button id="next" aria-label="Próxima"><i class="fa-solid fa-chevron-right"></i></button>
-        </nav>
-    </main>
+<main class="main-content">
+    <div class="cards-grid" id="grid"></div>
+</main>
 
     <script>
         // Toggle Menu
