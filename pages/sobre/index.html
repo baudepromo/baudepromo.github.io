@@ -246,9 +246,52 @@
     </main>
   </div>
 
+  <div id="authModal" class="modal-overlay-auth">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+
+        <h3 id="authTitle" style="color:#ff4b4b;margin-bottom:15px">
+            Fazer Login
+        </h3>
+
+        <div class="auth-form">
+            <input type="email" id="authEmail" placeholder="Seu E-mail" class="auth-input">
+            <input type="password" id="authPassword" placeholder="Sua Senha" class="auth-input">
+
+            <button class="btn-primary" id="mainAuthBtn" onclick="handleEmailAuth()">
+                Entrar
+            </button>
+
+            <div style="margin:15px 0;font-size:.8rem;text-align:center;color:#999">
+                OU
+            </div>
+
+            <button onclick="signInWithGoogle()" class="google-btn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                Entrar com Google
+            </button>
+
+            <p id="authToggle"
+               style="cursor:pointer;color:#ff4b4b;font-size:.85rem;margin-top:15px;text-align:center"
+               onclick="toggleAuthMode()">
+                Não tem conta? Cadastre-se.
+            </p>
+        </div>
+    </div>
+</div>
+
+
   <footer id="footer"></footer>
   <script src="/js/main.js" defer></script>
-  <script src="/js/navbar" defer></script>
+  <script src="/js/menu.js" defer></script>
+  <script>
+    window.openAuthModal = () => {
+    document.getElementById("authModal").classList.add("active");
+  };
 
+    window.closeAuthModal = () => {
+    document.getElementById("authModal").classList.remove("active");
+  };
+  </script>
 </body>
 </html>

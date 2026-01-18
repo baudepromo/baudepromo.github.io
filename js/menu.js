@@ -138,7 +138,7 @@ const menuHTML = `
     <a href="/achadinhos">✨ Achadinhos</a>
     <a href="/produtos">📦 Produtos</a>
     <a href="/cupons">🎟 Cupons</a>
-    <a href="#" onclick="openAuthModal()">🔐 Entrar / Criar conta</a>
+    <a href="/cupons">🎟 Cupons</a>
     <hr>
 
     <a href="#" onclick="openAuthModal()">🔐 Entrar / Criar conta</a>
