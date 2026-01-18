@@ -6,28 +6,30 @@
   <title>Programa de Afiliados | Baú de Promoções</title>
   <link rel="icon" href="/assets/img/favicon.webp"/>
 
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-4VNJR25033');
-</script>
+    gtag('config', 'G-4VNJR25033');
+  </script>
 
   <style>
+    /* --- NOVA IDENTIDADE VISUAL --- */
     :root {
-      --bg: #0f1f26;
-      --card: #243a44;
-      --accent: #1ecbe1;
-      --text: #ffffff;
-      --muted: #b7d0d6;
+      --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+      --bg-body: #f5f5f5;
+      --text-dark: #1a1a1a;
+      --text-muted: #666666;
+      --white: #ffffff;
+      --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --accent-color: #ff4b4b;
     }
 
     body {
-      background: radial-gradient(circle at top, #2a4d59, var(--bg));
-      color: var(--text);
+      background-color: var(--bg-body);
+      color: var(--text-dark);
       font-family: 'Inter', sans-serif;
       height: 100vh;
       margin: 0;
@@ -38,55 +40,73 @@
       overflow: hidden;
     }
 
+    /* --- CARD CENTRAL --- */
     .construction-container {
-      padding: 40px;
-      max-width: 600px;
+      background: var(--white);
+      padding: 50px 40px;
+      max-width: 550px;
+      width: 90%;
+      border-radius: 24px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(0,0,0,0.03);
     }
 
-    /* Animação de Pulsação no Ícone */
+    /* --- ANIMAÇÃO ÍCONE --- */
     .icon-box {
       font-size: 80px;
       margin-bottom: 20px;
       display: inline-block;
       animation: pulse 2s infinite ease-in-out;
+      /* Removemos filtros antigos, o emoji nativo funciona bem, 
+         ou podemos aplicar sombra colorida */
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); filter: drop-shadow(0 0 0px var(--accent)); }
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--accent)); }
-      100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--accent)); }
+      0% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 75, 75, 0)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(255, 75, 75, 0.4)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255, 75, 75, 0)); }
     }
 
-    h1 {
-      font-size: 2.5rem;
-      color: var(--accent);
-      margin-bottom: 10px;
-    }
-
+    /* --- BADGE --- */
     .badge {
-      background: rgba(30, 203, 225, 0.1);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 5px 15px;
+      background: rgba(255, 75, 75, 0.1);
+      color: var(--accent-color);
+      padding: 6px 16px;
       border-radius: 50px;
-      font-size: 0.9rem;
-      font-weight: bold;
+      font-size: 0.85rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+
+    /* --- TIPOGRAFIA --- */
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: var(--accent-color); /* Fallback */
     }
 
     p {
-      color: var(--muted);
+      color: var(--text-muted);
       font-size: 1.1rem;
-      margin: 25px 0;
+      margin: 15px 0 30px;
+      line-height: 1.5;
     }
 
+    /* --- BARRA DE PROGRESSO --- */
     .loader-bar {
       width: 100%;
-      height: 6px;
-      background: rgba(255,255,255,0.1);
+      height: 8px;
+      background: #e0e0e0; /* Fundo cinza claro */
       border-radius: 10px;
-      margin: 30px 0;
+      margin: 30px 0 10px; /* Margem ajustada */
       overflow: hidden;
       position: relative;
     }
@@ -95,25 +115,28 @@
       position: absolute;
       width: 60%; /* Progresso manual */
       height: 100%;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent);
+      background: var(--primary-gradient);
       border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 75, 75, 0.4);
     }
 
+    /* --- BOTÃO VOLTAR --- */
     .btn-back {
       display: inline-block;
-      color: var(--text);
+      background: var(--primary-gradient);
+      color: var(--white);
       text-decoration: none;
-      font-weight: 600;
-      padding: 12px 25px;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px;
+      font-weight: 700;
+      padding: 14px 30px;
+      border-radius: 50px;
       transition: 0.3s;
+      margin-top: 20px;
+      box-shadow: 0 5px 15px rgba(255, 75, 75, 0.2);
     }
 
     .btn-back:hover {
-      background: rgba(255,255,255,0.05);
-      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(255, 75, 75, 0.4);
     }
   </style>
 </head>
@@ -130,7 +153,7 @@
       <div class="loader-progress"></div>
     </div>
     
-    <p style="font-size: 0.9rem;">Previsão de lançamento: Julho</p>
+    <p style="font-size: 0.9rem; color: #999;">Previsão de lançamento: Julho</p>
     
     <a href="https://baudepromo.github.io/" class="btn-back">← Voltar ao Início</a>
   </div>

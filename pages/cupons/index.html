@@ -8,68 +8,64 @@
     <meta name="description" content="Códigos promocionais atualizados. Shopee, Amazon, AliExpress e muito mais. Pegue seu cupom agora!">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" href="/assets/img/favicon.webp"/>
-
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4VNJR25033');
-</script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-body: #0f1f26; /* Mesmo fundo da home */
-            --glass-bg: rgba(36, 58, 68, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --accent: #1ecbe1;
-            --accent-hover: #17a2b4;
-            --text-main: #ffffff;
-            --text-muted: #b7d0d6;
+            --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+            --bg-body: #f5f5f5;
+            --text-dark: #1a1a1a;
+            --white: #ffffff;
+            --accent-yellow: #fdd835;
+            --accent-black: #111111;
             --success: #4ade80;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             background-color: var(--bg-body);
-            background-image: radial-gradient(circle at top, #2a4d59, var(--bg-body));
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
             min-height: 100vh;
-            padding: 20px;
-            margin: 0;
         }
 
-        /* --- NAVEGAÇÃO --- */
-        header {
-            max-width: 1000px;
-            margin: 0 auto 40px;
+        /* --- HEADER / HERO --- */
+        .hero-header {
+            background: var(--primary-gradient);
+            padding: 40px 20px 80px;
             text-align: center;
+            color: white;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
             position: relative;
         }
 
         .back-btn {
             position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
+            left: 20px;
+            top: 20px;
+            color: white;
             text-decoration: none;
             font-weight: 600;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
             transition: 0.3s;
         }
-        .back-btn:hover { color: var(--accent); }
+        .back-btn:hover { background: rgba(0,0,0,0.2); }
 
-        h1 {
-            font-size: 2rem;
-            margin: 0;
-            background: linear-gradient(to right, #fff, var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .hero-header h1 {
+            font-size: 2.2rem;
             font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
         }
 
         /* --- FILTROS --- */
@@ -78,206 +74,188 @@
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 40px;
+            margin: -30px auto 40px;
+            position: relative;
+            z-index: 10;
+            padding: 0 10px;
         }
 
         .filter-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-muted);
-            padding: 10px 20px;
+            background: var(--white);
+            border: none;
+            color: var(--text-dark);
+            padding: 12px 25px;
             border-radius: 100px;
             cursor: pointer;
             transition: 0.3s;
-            font-weight: 600;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .filter-btn:hover, .filter-btn.active {
-            background: var(--accent);
-            color: #05080f;
+            background: var(--accent-black);
+            color: var(--white);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(30, 203, 225, 0.3);
         }
 
         /* --- GRID DE CUPONS --- */
         .coupons-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
             margin: 0 auto;
+            padding: 20px;
         }
 
-        /* --- CARD DO CUPOM --- */
+        /* --- CARD ESTILO "BAÚ" --- */
         .coupon-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            position: relative;
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.3s;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            transition: 0.3s;
+            border: 2px solid transparent;
         }
 
         .coupon-card:hover {
             transform: translateY(-5px);
-            border-color: var(--accent);
+            border-color: #ff4b4b;
         }
-
-        /* Efeito de rasgo lateral (opcional, visual clássico de cupom) */
-        .coupon-card::before, .coupon-card::after {
-            content: '';
-            position: absolute;
-            top: 70px; /* Altura do rasgo */
-            width: 20px;
-            height: 20px;
-            background-color: var(--bg-body);
-            border-radius: 50%;
-            z-index: 2;
-        }
-        .coupon-card::before { left: -10px; }
-        .coupon-card::after { right: -10px; }
 
         .coupon-header {
-            padding: 20px;
+            padding: 25px;
+            background: #fff9f8;
             display: flex;
             align-items: center;
             gap: 15px;
-            border-bottom: 2px dashed rgba(255,255,255,0.1);
+            border-bottom: 2px dashed #eee;
         }
 
         .store-logo {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             background: white;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: #333;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
 
         .offer-value {
             font-size: 1.5rem;
             font-weight: 800;
-            color: var(--accent);
+            color: #ff4b4b;
             line-height: 1;
         }
         .offer-label {
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
         }
 
         .coupon-body {
-            padding: 20px;
+            padding: 25px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
 
         .description {
-            font-size: 0.9rem;
-            color: var(--text-muted);
+            font-size: 0.95rem;
+            color: #444;
             margin-bottom: 15px;
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .expiry {
-            font-size: 0.75rem;
-            color: #ff4747;
-            margin-bottom: 15px;
+            font-size: 0.8rem;
+            color: #ff4b4b;
+            margin-bottom: 20px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 5px;
         }
 
-        /* Botão de Copiar */
+        /* Container do Código */
         .copy-container {
-            position: relative;
-            background: rgba(0,0,0,0.3);
-            border: 1px dashed var(--glass-border);
-            border-radius: 8px;
-            padding: 5px;
+            background: #f8f8f8;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .coupon-code {
-            font-family: monospace;
+            font-family: 'Monaco', monospace;
             font-size: 1.1rem;
-            font-weight: 700;
+            font-weight: 800;
             padding-left: 15px;
-            letter-spacing: 1px;
-            color: #fff;
-            filter: blur(4px); /* Escondido por padrão */
+            color: #111;
+            filter: blur(5px);
             transition: 0.3s;
-            user-select: none;
         }
         
-        /* Quando revelado */
         .coupon-card.revealed .coupon-code {
             filter: blur(0);
-            color: var(--accent);
         }
 
         .btn-copy {
-            background: var(--accent);
-            color: #05080f;
+            background: var(--accent-black);
+            color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
+            padding: 12px 20px;
+            border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
         }
 
-        .btn-copy:hover { background: var(--accent-hover); }
+        .btn-copy:hover { background: #333; }
 
-        /* Estado de Copiado */
         .btn-copy.copied {
             background: var(--success);
-            color: #003300;
         }
 
-        /* Toast Notification */
+        /* Toast */
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #fff; color: #000; padding: 12px 30px;
-            border-radius: 50px; font-weight: 700; z-index: 100;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: var(--accent-black); color: #fff; padding: 15px 35px;
+            border-radius: 50px; font-weight: 700; z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             opacity: 0; pointer-events: none; transition: 0.3s;
         }
         .toast.show { opacity: 1; bottom: 40px; }
 
         @media (max-width: 600px) {
-            header { padding: 0 20px; }
-            .back-btn { position: relative; display: block; margin-bottom: 10px; transform: none; top: 0; }
-            h1 { font-size: 1.5rem; }
+            .hero-header h1 { font-size: 1.8rem; }
+            .coupons-grid { grid-template-columns: 1fr; }
         }
-
     </style>
-    <link rel="stylesheet" href="/assets/css/stylebase.css">
 </head>
 <body>
 
-    <header>
+    <section class="hero-header">
         <a href="https://baudepromo.github.io/" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Voltar</a>
         <h1>Central de Cupons</h1>
-    </header>
+        <p>Os melhores códigos para você economizar hoje</p>
+    </section>
 
     <div class="filter-container">
-        <button class="filter-btn active" onclick="filterCoupons('all')">Todos</button>
-        <button class="filter-btn" onclick="filterCoupons('shopee')">Shopee</button>
-        <button class="filter-btn" onclick="filterCoupons('amazon')">Amazon</button>
-        <button class="filter-btn" onclick="filterCoupons('ali')">AliExpress</button>
+        <button class="filter-btn active" onclick="filterCoupons(event, 'all')">Todos</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'shopee')">Shopee</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'amazon')">Amazon</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'ali')">AliExpress</button>
     </div>
 
     <div class="coupons-grid">
-
         <div class="coupon-card" data-store="shopee">
             <div class="coupon-header">
                 <div class="store-logo" style="color: #ea501f;"><i class="fa-solid fa-bag-shopping"></i></div>
@@ -287,7 +265,7 @@
                 </div>
             </div>
             <div class="coupon-body">
-                <p class="description">Desconto válido para primeira compra no app acima de R$ 100.</p>
+                <p class="description">Válido para primeira compra no app em pedidos acima de R$ 100.</p>
                 <div class="expiry"><i class="fa-regular fa-clock"></i> Expira em 2 dias</div>
                 <div class="copy-container">
                     <span class="coupon-code">PRIMEIRA20</span>
@@ -301,12 +279,12 @@
                 <div class="store-logo" style="color: #000;"><i class="fa-brands fa-amazon"></i></div>
                 <div>
                     <div class="offer-value">10% OFF</div>
-                    <div class="offer-label">Eletrônicos</div>
+                    <div class="offer-label">Amazon Eletrônicos</div>
                 </div>
             </div>
             <div class="coupon-body">
-                <p class="description">Válido para Echo Dot e Fire TV Stick. Aproveite!</p>
-                <div class="expiry"><i class="fa-regular fa-clock"></i> Válido até 30/06</div>
+                <p class="description">Aproveite descontos em Echo Dot, Kindle e Fire TV Stick selecionados.</p>
+                <div class="expiry"><i class="fa-regular fa-clock"></i> Até 30/06</div>
                 <div class="copy-container">
                     <span class="coupon-code">ALEXA10</span>
                     <button class="btn-copy" onclick="copyCode(this, 'ALEXA10')">PEGAR</button>
@@ -319,81 +297,50 @@
                 <div class="store-logo" style="color: #ff4747;"><i class="fa-solid fa-tags"></i></div>
                 <div>
                     <div class="offer-value">R$ 50 OFF</div>
-                    <div class="offer-label">AliExpress</div>
+                    <div class="offer-label">AliExpress Choice</div>
                 </div>
             </div>
             <div class="coupon-body">
-                <p class="description">Compras internacionais acima de R$ 250 (Choice Days).</p>
-                <div class="expiry"><i class="fa-regular fa-clock"></i> Poucas unidades</div>
+                <p class="description">Desconto em compras internacionais acima de R$ 250 durante o Choice Day.</p>
+                <div class="expiry"><i class="fa-regular fa-clock"></i> Poucas unidades!</div>
                 <div class="copy-container">
                     <span class="coupon-code">CHOICE50</span>
                     <button class="btn-copy" onclick="copyCode(this, 'CHOICE50')">PEGAR</button>
                 </div>
             </div>
         </div>
-
-        <div class="coupon-card" data-store="shopee">
-            <div class="coupon-header">
-                <div class="store-logo" style="color: #ea501f;"><i class="fa-solid fa-truck-fast"></i></div>
-                <div>
-                    <div class="offer-value">FRETE GRÁTIS</div>
-                    <div class="offer-label">Sem Mínimo</div>
-                </div>
-            </div>
-            <div class="coupon-body">
-                <p class="description">Cupom exclusivo para selo Frete Extra. Confira regras.</p>
-                <div class="expiry"><i class="fa-regular fa-clock"></i> Hoje apenas</div>
-                <div class="copy-container">
-                    <span class="coupon-code">FRETEOFF</span>
-                    <button class="btn-copy" onclick="copyCode(this, 'FRETEOFF')">PEGAR</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <div id="toast" class="toast"><i class="fa-solid fa-check"></i> Cupom copiado!</div>
+    <div id="toast" class="toast">✓ Cupom copiado com sucesso!</div>
 
     <script>
-        // Função de Copiar
         function copyCode(btn, code) {
-            // Revela o código (efeito visual)
             const card = btn.closest('.coupon-card');
             card.classList.add('revealed');
 
-            // Copia para área de transferência
             navigator.clipboard.writeText(code).then(() => {
-                // Muda texto do botão
                 const originalText = btn.innerText;
                 btn.innerText = "COPIADO";
                 btn.classList.add('copied');
 
-                // Mostra Toast
                 const toast = document.getElementById('toast');
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 2000);
 
-                // Reverte botão após 3 segundos
                 setTimeout(() => {
-                    btn.innerText = "COPIAR";
+                    btn.innerText = "PEGAR";
                     btn.classList.remove('copied');
                 }, 3000);
-            }).catch(err => {
-                console.error('Erro ao copiar', err);
-                alert("Erro ao copiar. Copie manualmente: " + code);
             });
         }
 
-        // Função de Filtro
-        function filterCoupons(category) {
+        function filterCoupons(event, category) {
             const cards = document.querySelectorAll('.coupon-card');
             const btns = document.querySelectorAll('.filter-btn');
 
-            // Atualiza classe ativa dos botões
             btns.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            event.currentTarget.classList.add('active');
 
-            // Filtra os cards
             cards.forEach(card => {
                 if (category === 'all' || card.getAttribute('data-store') === category) {
                     card.style.display = 'flex';
@@ -403,9 +350,5 @@
             });
         }
     </script>
-
-    <footer id="footer"></footer>
-    <script src="/assets/js/main.js" defer></script>
-
 </body>
 </html>

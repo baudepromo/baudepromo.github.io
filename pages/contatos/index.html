@@ -6,54 +6,72 @@
   <title>Contato | Baú de Promoções</title>
   <link rel="icon" href="/assets/img/favicon.webp"/>
 
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-  gtag('config', 'G-4VNJR25033');
-</script>
+    gtag('config', 'G-4VNJR25033');
+  </script>
 
   <style>
+    /* --- VARIÁVEIS DA NOVA IDENTIDADE --- */
     :root {
-      --bg: #0f1f26;
-      --card: #243a44;
-      --accent: #1ecbe1;
-      --text: #ffffff;
-      --muted: #b7d0d6;
+      --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+      --bg-body: #f5f5f5;
+      --text-dark: #1a1a1a;
+      --text-muted: #666666;
+      --white: #ffffff;
+      --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      --accent-yellow: #fdd835;
+      --input-border: #e0e0e0;
+    }
+
+    /* --- RESET & BASE --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      background: radial-gradient(circle at top, #2a4d59, var(--bg));
-      color: var(--text);
+      background-color: var(--bg-body);
+      color: var(--text-dark);
       font-family: 'Inter', sans-serif;
-      margin: 0;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
     }
 
+    /* --- LAYOUT PRINCIPAL --- */
     .container {
-      max-width: 900px;
-      margin: 60px auto;
+      max-width: 1000px;
+      margin: 40px auto;
       padding: 20px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      grid-template-columns: 1fr 1.2fr; /* Lado do formulário um pouco maior */
+      gap: 50px;
+      align-items: start;
     }
 
+    /* --- LADO ESQUERDO: INFOS --- */
     .contact-info h1 {
-      color: var(--accent);
       font-size: 2.5rem;
+      font-weight: 800;
       margin-bottom: 20px;
+      /* Aplica o gradiente no texto */
+      background: var(--primary-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .contact-info p {
-      color: var(--muted);
+      color: var(--text-muted);
       font-size: 1.1rem;
       margin-bottom: 30px;
+      line-height: 1.6;
     }
 
     .social-links {
@@ -66,82 +84,144 @@
       display: flex;
       align-items: center;
       gap: 15px;
-      color: var(--text);
+      color: var(--text-dark);
       text-decoration: none;
-      background: rgba(255,255,255,0.05);
-      padding: 15px;
-      border-radius: 12px;
-      transition: 0.3s;
+      background: var(--white);
+      padding: 18px 25px;
+      border-radius: 50px; /* Estilo Pill Button da nova identidade */
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       border: 1px solid transparent;
     }
 
     .social-item:hover {
-      background: rgba(30, 203, 225, 0.1);
-      border-color: var(--accent);
-      transform: translateX(10px);
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow);
+      border-color: #ff4b4b;
+      color: #ff4b4b;
     }
 
+    /* Link de voltar */
+    .back-link {
+      display: inline-block;
+      margin-top: 30px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .back-link:hover {
+      color: #ff4b4b;
+      transform: translateX(-5px);
+    }
+
+    /* --- LADO DIREITO: FORMULÁRIO --- */
     .contact-form {
-      background: var(--card);
-      padding: 30px;
-      border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      background: var(--white);
+      padding: 40px;
+      border-radius: 20px; /* Borda arredondada suave */
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(0,0,0,0.02);
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 8px;
-      color: var(--accent);
-      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-dark);
+      font-weight: 700;
+      font-size: 0.95rem;
     }
 
-    .form-group input, .form-group textarea {
+    .form-group input, 
+    .form-group textarea {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: #1a2a30;
-      color: white;
-      font-size: 1rem;
-    }
-
-    .btn-send {
-      width: 100%;
-      background: var(--accent);
-      color: #002a30;
-      border: none;
       padding: 15px;
       border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
+      border: 2px solid var(--input-border);
+      background: #fafafa;
+      color: var(--text-dark);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
       transition: 0.3s;
     }
 
-    .btn-send:hover {
-      filter: brightness(1.1);
-      box-shadow: 0 0 20px rgba(30, 203, 225, 0.4);
+    .form-group input:focus, 
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #ff4b4b;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(255, 75, 75, 0.1);
     }
 
+    /* Botão de Enviar */
+    .btn-send {
+      width: 100%;
+      background: var(--primary-gradient);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-send:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(255, 75, 75, 0.3);
+    }
+
+    /* --- RESPONSIVIDADE --- */
     @media (max-width: 768px) {
-      .container { grid-template-columns: 1fr; margin-top: 20px; }
-      .contact-info { text-align: center; }
-      .social-item:hover { transform: none; }
+      .container {
+        grid-template-columns: 1fr;
+        margin-top: 20px;
+        gap: 30px;
+      }
+      
+      .contact-info {
+        text-align: center;
+      }
+
+      .contact-info h1 {
+        font-size: 2rem;
+      }
+
+      .social-links {
+        align-items: center; /* Centraliza botões no mobile */
+      }
+      
+      .social-item {
+        width: 100%;
+        justify-content: center;
+        max-width: 400px;
+      }
+
+      .contact-form {
+        padding: 25px;
+      }
     }
 
   </style>
-  <link rel="stylesheet" href="/assets/css/stylebase.css">
+
+  <link rel="stylesheet" href="/css/stylebase.css">
 </head>
 <body>
+
+<div style="height: 10px; background: var(--primary-gradient); width: 100%;"></div>
 
 <div class="container">
   <div class="contact-info">
     <h1>Fale Conosco 💬</h1>
-    <p>Tem alguma dúvida, sugestão de produto ou proposta de parceria? Escolha o canal de sua preferência.</p>
+    <p>Tem alguma dúvida, sugestão de produto ou proposta de parceria? Escolha o canal de sua preferência ou nos envie uma mensagem.</p>
     
     <div class="social-links">
       <a href="https://www.instagram.com/baudepromocaos" class="social-item" target="_blank">
@@ -151,7 +231,7 @@
         <span>🎵 TikTok</span>
       </a>
       <a href="https://x.com/baudepromocao" class="social-item" target="_blank">
-        <span>🐧 X</span>
+        <span>🐧 X (Twitter)</span>
       </a>
       <a href="https://www.youtube.com/@Ba%C3%BAdePromo%C3%A7%C3%B5es" class="social-item" target="_blank">
         <span>▶️ Youtube</span>
@@ -161,7 +241,7 @@
       </a>
     </div>
     
-    <a href="/" style="display:inline-block; margin-top:30px; color:var(--accent); text-decoration:none;">← Voltar para a vitrine</a>
+    <a href="/" class="back-link">← Voltar para a vitrine</a>
   </div>
 
   <div class="contact-form">
@@ -170,8 +250,8 @@
       <input type="hidden" name="_next" value="https://baudepromo.github.io/contatos/sucesso.html">
 
       <div class="form-group">
-        <label for="name">Nome</label>
-        <input type="text" name="name" id="name" placeholder="Seu nome completo" required>
+        <label for="name">Nome Completo</label>
+        <input type="text" name="name" id="name" placeholder="Digite seu nome" required>
       </div>
 
       <div class="form-group">
@@ -190,8 +270,7 @@
 </div>
 
 <footer id="footer"></footer>
-<script src="/assets/js/main.js" defer></script>
-
+<script src="/js/main.js" defer></script>
 
 </body>
 </html>

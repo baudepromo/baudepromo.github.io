@@ -52,3 +52,41 @@ document.addEventListener("DOMContentLoaded", function() {
         placeholder.innerHTML = footerTemplate;
     }
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const footerTemplate = `
+    <nav class="mobile-menu" id="sideMenu">
+        <button class="close-menu" onclick="toggleMenu()">&times;</button>
+        <a href="/">Início</a>
+        <p></p>
+        <a href="/pages/achadinhos/">🛒 Achadinhos Shopee</a>
+        <p></p>
+        <a href="/pages/cupons/">🎟️ Cupons</a>
+        <p></p>
+        <a href="/pages/produtos/">🔥 Melhores Produtos</a>
+        <p></p>
+        <hr style="opacity: 0.1;">
+        <p></p>
+        <a href="#" onclick="toggleModal()">☕ Apoiar Projeto</a>
+        <p></p>
+        <a href="/contatos">💬 Contato</a>
+
+        <div class="user-auth-area">
+            <button id="loginBtn" class="btn-primary" onclick="openAuthModal()">Entrar / Cadastrar</button>
+            <div id="userInfo" class="user-info" style="display: none;">
+                <img id="userPhoto" src="" alt="Foto">
+                <div style="text-align: left;">
+                    <div id="userName" style="font-weight: bold; font-size: 0.9rem;"></div>
+                    <small onclick="logout()" style="color: #ff4b4b; cursor: pointer;">Sair</small>
+                </div>
+            </div>
+        </div>
+    </nav>
+    `;
+
+    // Injeta o conteúdo no elemento <div id="footer-placeholder"></div>
+    const placeholder = document.getElementById('menu-menu');
+    if (placeholder) {
+        placeholder.innerHTML = footerTemplate;
+    }
+});

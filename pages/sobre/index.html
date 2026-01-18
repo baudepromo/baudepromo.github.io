@@ -6,83 +6,129 @@
   <title>Sobre Nós | Baú de Promoções</title>
   <link rel="icon" href="/assets/img/favicon.webp"/>
 
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  gtag('config', 'G-4VNJR25033');
-</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-4VNJR25033');
+  </script>
 
   <style>
+    /* --- VARIÁVEIS GLOBAIS (Padrão Novo) --- */
     :root {
-      --bg: #0f1f26;
-      --card: #243a44;
-      --accent: #1ecbe1;
-      --text: #ffffff;
-      --muted: #b7d0d6;
+      --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+      --bg-body: #f5f5f5;
+      --text-dark: #1a1a1a;
+      --text-gray: #555;
+      --white: #ffffff;
+      --accent-orange: #ff9000;
+      --accent-red: #ff4b4b;
+      --accent-black: #111111;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
-      background: radial-gradient(circle at top, #2a4d59, var(--bg));
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.8;
-      margin: 0;
+      background-color: var(--bg-body);
+      color: var(--text-dark);
+      line-height: 1.6;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 60px auto;
-      padding: 20px;
+    /* --- HEADER DE NAVEGAÇÃO --- */
+    header.top-bar {
+      background: #ff4b4b;
+      padding: 15px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
     }
 
-    .about-header {
+    .logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: white;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    /* --- HERO SECTION (Topo Curvo) --- */
+    .hero-section {
+      background: var(--primary-gradient);
+      padding: 40px 20px 90px;
       text-align: center;
-      margin-bottom: 60px;
+      color: white;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      box-shadow: 0 10px 30px rgba(255, 75, 75, 0.2);
+      margin-bottom: -60px; /* Sobrepõe os cards */
     }
 
-    .about-header h1 {
-      font-size: 3rem;
-      color: var(--accent);
+    .hero-section h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
       margin-bottom: 10px;
     }
 
-    .about-header p {
-      font-size: 1.2rem;
-      color: var(--muted);
+    .hero-section p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+    }
+
+    /* --- LAYOUT PRINCIPAL --- */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      position: relative;
+      z-index: 10;
     }
 
     .content-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 40px;
+      gap: 30px;
     }
 
+    /* --- CARTÕES BRANCOS --- */
     .about-card {
-      background: rgba(46, 74, 85, 0.4);
-      backdrop-filter: blur(10px);
+      background: white;
       padding: 40px;
       border-radius: 24px;
-      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
       transition: transform 0.3s ease;
     }
 
     .about-card:hover {
       transform: translateY(-5px);
-      border-color: var(--accent);
     }
 
     .about-card h2 {
-      color: var(--accent);
+      color: var(--accent-red);
       margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
+    .about-card p {
+      color: var(--text-gray);
+      margin-bottom: 15px;
+      font-size: 1.05rem;
+    }
+
+    /* --- CAIXAS MISSÃO E VALORES --- */
     .mission-vision {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -91,81 +137,116 @@
     }
 
     .box {
-      background: rgba(15, 31, 38, 0.6);
-      padding: 20px;
-      border-radius: 15px;
-      border-left: 4px solid var(--accent);
+      background: #fff8f0; /* Fundo laranja bem clarinho */
+      padding: 25px;
+      border-radius: 16px;
+      border-left: 5px solid var(--accent-orange);
     }
 
     .box h3 {
       margin-top: 0;
-      font-size: 1.1rem;
-      color: #fff;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .btn-action {
-      display: inline-block;
-      margin-top: 40px;
-      background: var(--accent);
-      color: #002a30;
-      text-decoration: none;
-      padding: 15px 35px;
-      border-radius: 12px;
+    .box p {
+      margin-bottom: 0;
+      font-size: 0.95rem;
+    }
+
+    /* --- BOTÕES --- */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 50px;
       font-weight: 700;
-      transition: 0.3s;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
     }
 
-    .btn-action:hover {
-      box-shadow: 0 0 20px rgba(30, 203, 225, 0.4);
-      transform: scale(1.05);
+    .pill-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
+    .btn-white { background: white; color: #ff5e3a; }
+    
+    .btn-action {
+      background: var(--accent-black);
+      color: white;
+      padding: 14px 40px;
+      font-size: 1rem;
+      margin-top: 20px;
+      display: inline-flex;
+    }
+
+    /* --- RESPONSIVIDADE --- */
     @media (max-width: 768px) {
       .mission-vision { grid-template-columns: 1fr; }
-      .about-header h1 { font-size: 2.2rem; }
+      .hero-section h1 { font-size: 2rem; }
+      .about-card { padding: 25px; }
     }
 
   </style>
-  <link rel="stylesheet" href="/assets/css/stylebase.css">
 </head>
 <body>
 
-<div class="container">
-  <header class="about-header">
-    <h1>O Baú de Promoções 📦</h1>
-    <p>Sua curadoria inteligente de achadinhos em 2026.</p>
+  <header class="top-bar">
+    <a href="/" class="logo">Baú de Promoções</a>
+    <a href="/" class="pill-btn btn-white">
+      <i class="fa-solid fa-house"></i> Início
+    </a>
   </header>
 
-  <main class="content-grid">
-    <section class="about-card">
-      <h2>O que fazemos?</h2>
-      <p>O <strong>Baú de Promoções</strong> nasceu da necessidade de filtrar o caos da internet. Com milhares de produtos sendo lançados diariamente no TikTok, Instagram, Shopee e Amazon, é fácil se perder em ofertas falsas ou produtos de baixa qualidade.</p>
-      <p>Nossa missão é vasculhar as maiores lojas online para encontrar aqueles "tesouros escondidos" que realmente valem o seu dinheiro. Testamos tendências, analisamos avaliações reais e só compartilhamos o que nós mesmos compraríamos.</p>
-      
-      <div class="mission-vision">
-        <div class="box">
-          <h3>Missão</h3>
-          <p>Economizar o seu tempo e dinheiro com indicações honestas.</p>
-        </div>
-        <div class="box">
-          <h3>Valores</h3>
-          <p>Transparência, segurança nos links e curadoria manual.</p>
-        </div>
-      </div>
-    </section>
+  <div class="hero-section">
+    <h1>O Baú de Promoções <i class="fa-solid fa-box-open"></i></h1>
+    <p>Sua curadoria inteligente de achadinhos em 2026.</p>
+  </div>
 
-    <section class="about-card" style="text-align: center;">
-      <h2>Por que confiar em nós?</h2>
-      <p>Diferente de grupos automáticos de ofertas, cada item postado no Baú passa por uma verificação humana. Verificamos a reputação do vendedor, o histórico de preços e a veracidade dos cupons.</p>
-      <p>Apoiamos a nossa comunidade e acreditamos que boas compras podem transformar o seu dia a dia.</p>
+  <div class="container">
+    <main class="content-grid">
       
-      <a href="https://baudepromo.github.io" class="btn-action">Voltar</a>
-    </section>
-  </main>
-</div>
+      <section class="about-card">
+        <h2><i class="fa-solid fa-bolt" style="color: #ff9000;"></i> O que fazemos?</h2>
+        <p>O <strong>Baú de Promoções</strong> nasceu da necessidade de filtrar o caos da internet. Com milhares de produtos sendo lançados diariamente no TikTok, Instagram, Shopee e Amazon, é fácil se perder em ofertas falsas ou produtos de baixa qualidade.</p>
+        <p>Nossa missão é vasculhar as maiores lojas online para encontrar aqueles "tesouros escondidos" que realmente valem o seu dinheiro. Testamos tendências, analisamos avaliações reais e só compartilhamos o que nós mesmos compraríamos.</p>
+        
+        <div class="mission-vision">
+          <div class="box">
+            <h3><i class="fa-solid fa-bullseye"></i> Missão</h3>
+            <p>Economizar o seu tempo e dinheiro com indicações honestas e verificadas.</p>
+          </div>
+          <div class="box">
+            <h3><i class="fa-solid fa-heart"></i> Valores</h3>
+            <p>Transparência total, segurança nos links e curadoria 100% humana.</p>
+          </div>
+        </div>
+      </section>
 
-<footer id="footer"></footer>
-<script src="/assets/js/main.js" defer></script>
+      <section class="about-card" style="text-align: center;">
+        <h2><i class="fa-solid fa-shield-halved"></i> Por que confiar em nós?</h2>
+        <p>Diferente de grupos automáticos de ofertas (robôs), cada item postado no Baú passa por uma verificação humana.</p>
+        <p>Verificamos a reputação do vendedor, o histórico de preços e a veracidade dos cupons. Apoiamos a nossa comunidade e acreditamos que boas compras podem transformar o seu dia a dia.</p>
+        
+        <a href="/" class="pill-btn btn-action">
+          Voltar para as Ofertas <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </section>
+
+    </main>
+  </div>
+
+  <footer id="footer"></footer>
+  <script src="/js/main.js" defer></script>
 
 </body>
 </html>
