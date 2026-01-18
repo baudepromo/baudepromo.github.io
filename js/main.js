@@ -54,22 +54,18 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 document.addEventListener("DOMContentLoaded", function() {
-    const footerTemplate = `
-    <nav class="mobile-menu" id="sideMenu">
+    const menuTemplate = `
+    <div class="mobile-overlay" id="overlay" onclick="toggleMenu()"></div>
+    
+    <nav class="mobile-menu" id="mobile-menu">
         <button class="close-menu" onclick="toggleMenu()">&times;</button>
-        <a href="/">Início</a>
-        <p></p>
-        <a href="/pages/achadinhos/">🛒 Achadinhos Shopee</a>
-        <p></p>
-        <a href="/pages/cupons/">🎟️ Cupons</a>
-        <p></p>
-        <a href="/pages/produtos/">🔥 Melhores Produtos</a>
-        <p></p>
-        <hr style="opacity: 0.1;">
-        <p></p>
-        <a href="#" onclick="toggleModal()">☕ Apoiar Projeto</a>
-        <p></p>
-        <a href="/contatos">💬 Contato</a>
+        <a href="/" class="mobile-link">Início</a>
+        <a href="/pages/achadinhos/" class="mobile-link">🛒 Achadinhos Shopee</a>
+        <a href="/pages/cupons/" class="mobile-link">🎟️ Cupons</a>
+        <a href="/pages/produtos/" class="mobile-link">🔥 Melhores Produtos</a>
+        <hr style="opacity: 0.1; margin: 10px 0;">
+        <a href="#" class="mobile-link" onclick="toggleModal()">☕ Apoiar Projeto</a>
+        <a href="/contatos" class="mobile-link">💬 Contato</a>
 
         <div class="user-auth-area">
             <button id="loginBtn" class="btn-primary" onclick="openAuthModal()">Entrar / Cadastrar</button>
@@ -84,9 +80,19 @@ document.addEventListener("DOMContentLoaded", function() {
     </nav>
     `;
 
-    // Injeta o conteúdo no elemento <div id="footer-placeholder"></div>
     const placeholder = document.getElementById('menu-menu');
     if (placeholder) {
-        placeholder.innerHTML = footerTemplate;
+        placeholder.innerHTML = menuTemplate;
     }
 });
+
+// A função toggleMenu agora encontrará os IDs corretos
+function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('overlay');
+    
+    if (menu && overlay) {
+        menu.classList.toggle('active');
+        overlay.classList.toggle('active');
+    }
+}
