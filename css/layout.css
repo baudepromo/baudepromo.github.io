@@ -1,0 +1,42 @@
+/* HEADER */
+header.top-bar {
+    background: #ff4b4b;
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+}
+
+.logo {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+    text-decoration: none;
+}
+
+.hamburger-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* CONTEÚDO PADRÃO */
+.main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 700;
+}

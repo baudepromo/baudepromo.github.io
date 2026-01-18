@@ -8,99 +8,109 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="/assets/img/favicon.webp"/>
 
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4VNJR25033');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4VNJR25033');
+    </script>
 
     <style>
+        /* --- SEU CSS ORIGINAL (ADAPTADO) --- */
         :root {
-            --bg-body: #05080f;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --primary-accent: #3b82f6;
-            --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --success: #4ade80;
-            --warning: #facc15; /* Cor para o alerta */
+            --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+            --bg-body: #f5f5f5;
+            --text-dark: #1a1a1a;
+            --text-muted: #666666;
+            --white: #ffffff;
+            --accent-yellow: #fdd835;
+            --accent-black: #111111;
+            --success: #00c853; /* Verde para preço */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             background-color: var(--bg-body);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.1) 0px, transparent 50%);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
             min-height: 100vh;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            margin: 0;
+            flex-direction: column;
         }
 
-        /* --- NAVEGAÇÃO --- */
+        /* --- HEADER SUPERIOR --- */
+        header.top-bar {
+            background: #ff4b4b;
+            padding: 15px 5%;
+            display: flex;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
         .back-btn {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            color: var(--text-main);
+            color: white;
             text-decoration: none;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-weight: 600;
-            font-size: 0.9rem;
-            padding: 10px 20px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 100px;
+            font-size: 1rem;
             transition: 0.3s;
-            backdrop-filter: blur(10px);
-            z-index: 100;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50px;
         }
-        .back-btn:hover { background: rgba(255,255,255,0.1); transform: translateX(-5px); }
+        .back-btn:hover { background: rgba(255,255,255,0.3); transform: translateX(-3px); }
 
-        /* --- CARD PRINCIPAL --- */
+        /* --- CONTAINER PRINCIPAL --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* --- CARD DE DETALHES (Novo Design) --- */
         .detail-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--glass-border);
-            border-radius: 40px;
-            max-width: 1000px;
+            background: var(--white);
+            border-radius: 30px;
+            max-width: 1100px;
             width: 100%;
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
             overflow: hidden;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08); /* Sombra suave */
             min-height: 600px;
+            position: relative;
         }
 
         /* Lado da Imagem */
         .img-side {
-            background: #ffffff;
+            background: #fff0f0; /* Um fundo bem clarinho avermelhado ou cinza */
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 60px;
             position: relative;
-            margin: 15px;
-            border-radius: 30px;
         }
+
         .img-side img {
             max-width: 100%;
             height: auto;
             max-height: 450px;
             object-fit: contain;
-            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.1));
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
             transition: 0.5s transform cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            mix-blend-mode: multiply; /* Ajuda a tirar fundo branco da imagem se houver */
         }
         .detail-card:hover .img-side img { transform: scale(1.05); }
 
@@ -109,15 +119,20 @@
             padding: 60px 50px;
             display: flex;
             flex-direction: column;
+            background: white;
         }
 
         .store-tag {
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 800;
-            color: var(--primary-accent);
-            margin-bottom: 15px;
+            color: #ff4b4b; /* Cor primária */
+            margin-bottom: 10px;
+            background: #fff0f0;
+            padding: 5px 12px;
+            border-radius: 6px;
+            align-self: flex-start;
         }
 
         h1 {
@@ -125,16 +140,21 @@
             line-height: 1.2;
             font-weight: 800;
             margin-bottom: 20px;
-            margin-top: 0;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--text-dark);
         }
 
-        .price-wrapper { margin: 30px 0; }
-        .price-label { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 5px; }
-        .price-tag { font-size: 3.5rem; font-weight: 800; color: var(--success); display: flex; align-items: flex-start; gap: 5px; }
-        .price-tag span { font-size: 1.5rem; margin-top: 10px; }
+        .price-wrapper { margin: 20px 0 30px; }
+        .price-label { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 5px; }
+        .price-tag { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            color: var(--success); /* Verde para preço */
+            display: flex; 
+            align-items: flex-start; 
+            gap: 5px; 
+            line-height: 1;
+        }
+        .price-tag span { font-size: 1.5rem; margin-top: 8px; color: var(--text-dark); }
 
         /* Benefícios */
         .benefits-grid {
@@ -147,125 +167,141 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            padding: 10px;
-            background: rgba(255,255,255,0.02);
+            padding: 12px;
+            background: #f9f9f9;
             border-radius: 12px;
+            border: 1px solid #eee;
         }
-        .benefit-item i { color: var(--primary-accent); }
+        .benefit-item i { color: #ff9000; font-size: 1.1rem; }
 
-        /* Botões de Ação */
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: auto;
-        }
+        /* Botão de Ação (Estilo Pill do seu CSS) */
         .cta-button {
             background: var(--primary-gradient);
             color: white;
             text-decoration: none;
-            padding: 22px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 1.1rem;
+            padding: 20px;
+            border-radius: 50px; /* Pill shape */
+            font-weight: 700;
+            font-size: 1.2rem;
             text-align: center;
-            transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(255, 75, 75, 0.3);
             border: none;
             cursor: pointer;
             display: block;
+            margin-top: auto;
         }
-        .cta-button:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6); }
+        .cta-button:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(255, 75, 75, 0.4); 
+        }
 
-        /* Favoritos e Share flutuantes */
+        /* Favoritos e Share flutuantes (Adaptado para fundo claro) */
         .floating-actions {
             position: absolute;
-            top: 30px;
-            left: 30px;
+            top: 25px;
+            left: 25px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             z-index: 10;
         }
         .icon-btn {
-            width: 50px; height: 50px;
+            width: 45px; height: 45px;
             border-radius: 50%;
-            border: 1px solid rgba(0,0,0,0.05);
+            border: none;
             background: white;
-            color: #111;
+            color: #333;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            transition: 0.3s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+            transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .icon-btn:hover { transform: scale(1.1); }
+        .icon-btn:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         
         /* Estados Ativos */
-        .icon-btn.heart-btn.active { color: #ff4747; background: #fff0f0; }
-        .icon-btn.alert-btn.active { color: #eab308; background: #fffbeb; } /* Amarelo para alerta */
+        .icon-btn.heart-btn.active { color: #ff4747; background: #ffebeb; }
+        .icon-btn.alert-btn.active { color: #ffb300; background: #fff8e1; }
+
+        /* Spinner de Carregamento */
+        .loading-container {
+            grid-column: span 2; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100%; 
+            padding: 50px;
+        }
 
         /* Toast Moderno */
         .toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: #fff; color: #000; padding: 15px 30px;
-            border-radius: 100px; font-weight: 700; z-index: 2000;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: #1a1a1a; color: #fff; padding: 15px 30px;
+            border-radius: 100px; font-weight: 600; z-index: 2000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             display: flex; align-items: center; gap: 10px;
-            animation: slideUp 0.4s ease-out;
-            visibility: hidden; /* Oculto por padrão */
+            visibility: hidden; opacity: 0;
+            transition: all 0.3s ease;
         }
-        .toast.show { visibility: visible; }
-        @keyframes slideUp { from { bottom: -50px; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        .toast.show { visibility: visible; bottom: 40px; opacity: 1; }
 
-        /* Modal Login */
+        /* Modal Login (Adaptado) */
         .modal-overlay {
             display: none; 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); 
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); 
             z-index: 9999; align-items: center; justify-content: center;
         }
 
+        /* Responsividade */
         @media (max-width: 900px) {
-            .detail-card { grid-template-columns: 1fr; border-radius: 0; min-height: auto; }
-            .img-side { height: 350px; margin: 10px; }
-            .info-side { padding: 40px 30px; }
-            h1 { font-size: 1.8rem; }
-            .back-btn { top: 15px; left: 15px; }
+            .detail-card { grid-template-columns: 1fr; border-radius: 20px; min-height: auto; margin: 10px; }
+            .img-side { height: 350px; padding: 20px; }
+            .info-side { padding: 30px 25px; }
+            h1 { font-size: 1.6rem; }
+            .price-tag { font-size: 2.8rem; }
+            .benefits-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <a href="/" class="back-btn"><i class="fa-solid fa-chevron-left"></i> Voltar</a>
+    <header class="top-bar">
+        <a href="/" class="back-btn"><i class="fa-solid fa-chevron-left"></i> Voltar</a>
+        <div style="color: white; font-weight: 800; font-size: 1.2rem; margin-left: auto;">BAÚ DE PROMOÇÕES</div>
+    </header>
 
-    <div id="content-area" class="detail-card">
-        <div style="grid-column: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 50px;">
-            <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: var(--primary-accent)"></i>
-            <p style="margin-top: 20px; color: var(--text-muted)">Carregando oferta...</p>
+    <div class="main-container">
+        <div id="content-area" class="detail-card">
+            <div class="loading-container">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: #ff4b4b;"></i>
+                <p style="margin-top: 20px; color: var(--text-muted); font-weight: 600;">Carregando melhor oferta...</p>
+            </div>
         </div>
     </div>
 
     <div id="toast-box" class="toast"></div>
 
     <div id="login-modal" class="modal-overlay">
-        <div style="background: #111827; padding: 40px; border-radius: 32px; border: 1px solid var(--glass-border); text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
-            <div style="width: 80px; height: 80px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-                <i class="fa-solid fa-user-lock" style="color: #3b82f6; font-size: 2.5rem;"></i>
+        <div style="background: white; padding: 40px; border-radius: 25px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+            <div style="width: 70px; height: 70px; background: #fff0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="fa-solid fa-user-lock" style="color: #ff4b4b; font-size: 2rem;"></i>
             </div>
-            <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #fff;">Faça Login</h2>
-            <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px;">Para salvar favoritos e criar alertas, precisamos saber quem é você.</p>
+            <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #1a1a1a;">Faça Login</h2>
+            <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; font-size: 0.95rem;">Para salvar favoritos e criar alertas, precisamos saber quem é você.</p>
             
-            <button id="btn-google-login" style="width: 100%; background: #fff; color: #000; border: none; padding: 16px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s;">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google">
+            <button id="btn-google-login" style="width: 100%; background: #1a1a1a; color: white; border: none; padding: 15px; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
                 Entrar com Google
             </button>
 
-            <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: var(--text-muted); margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+            <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: #666; margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
                 Cancelar
             </button>
         </div>
@@ -298,7 +334,6 @@
                 const result = await signInWithPopup(auth, provider);
                 document.getElementById('login-modal').style.display = 'none';
                 showToast(`Bem-vindo, ${result.user.displayName.split(' ')[0]}!`);
-                // A recarga dos detalhes acontece via onAuthStateChanged
             } catch (error) {
                 console.error("Erro login:", error);
                 showToast("Erro ao fazer login");
@@ -306,7 +341,7 @@
         });
     }
 
-    // --- FUNÇÃO GENÉRICA PARA TOGGLE (FAVORITO OU ALERTA) ---
+    // --- TOGGLE COLLECTIONS ---
     async function toggleCollection(collectionName, productId, elementId, activeClass, successMsg, removedMsg) {
         if (!auth.currentUser) {
             document.getElementById('login-modal').style.display = 'flex';
@@ -318,13 +353,11 @@
         const wasActive = btn.classList.contains('active');
 
         try {
-            btn.classList.toggle('active'); // Feedback instantâneo
+            btn.classList.toggle('active'); 
             
-            // Verifica se o doc existe antes
             const snap = await getDoc(userRef);
             
             if (!wasActive) {
-                // Adicionar
                 if (!snap.exists()) {
                     await setDoc(userRef, { email: auth.currentUser.email, items: [String(productId)], updatedAt: new Date() });
                 } else {
@@ -332,18 +365,16 @@
                 }
                 showToast(successMsg);
             } else {
-                // Remover
                 await updateDoc(userRef, { items: arrayRemove(String(productId)) });
                 showToast(removedMsg);
             }
         } catch (e) {
             console.error(`Erro em ${collectionName}:`, e);
-            btn.classList.toggle('active'); // Reverte visualmente
+            btn.classList.toggle('active');
             showToast("Erro na operação.");
         }
     }
 
-    // Wrappers para usar no HTML
     window.toggleWishlist = (pid, eid) => toggleCollection("wishlists", pid, eid, "active", "Salvo nos favoritos ❤️", "Removido dos favoritos");
     window.toggleAlert = (pid, eid) => toggleCollection("alerts", pid, eid, "active", "Alerta criado! 🔔", "Alerta removido");
 
@@ -356,21 +387,16 @@
                     text: `Olha essa oferta: ${title}`,
                     url: url
                 });
-            } catch (err) {
-                console.log('Share cancelado');
-            }
+            } catch (err) { console.log('Share cancelado'); }
         } else {
-            // Fallback para PC
             try {
                 await navigator.clipboard.writeText(url);
                 showToast("Link copiado! 📋");
-            } catch (err) {
-                showToast("Erro ao copiar link.");
-            }
+            } catch (err) { showToast("Erro ao copiar link."); }
         }
     };
 
-    // --- CARREGAMENTO DE DETALHES ---
+    // --- CARREGAMENTO DO PRODUTO (LAYOUT NOVO) ---
     async function loadProductDetails() {
         const params = new URLSearchParams(window.location.search);
         const encodedId = params.get('id');
@@ -385,15 +411,15 @@
             const product = products.find(p => String(p.id) === productId);
 
             if (!product) {
-                contentArea.innerHTML = "<h2 style='color:white; text-align:center;'>Oferta expirada ou não encontrada!</h2>";
+                contentArea.innerHTML = "<div class='loading-container'><h2>Oferta expirada!</h2></div>";
                 return;
             }
 
-            // IDs únicos para os botões
             const safeId = btoa(unescape(encodeURIComponent(productId))).replace(/[^a-zA-Z0-9]/g, '');
             const heartId = "heart_" + safeId;
             const alertId = "alert_" + safeId;
 
+            // HTML Específico para o NOVO LAYOUT
             contentArea.innerHTML = `
                 <div class="img-side">
                     <div class="floating-actions">
@@ -418,21 +444,24 @@
                     <img src="${product.img}" alt="${product.title}">
                 </div>
                 <div class="info-side">
-                    <span class="store-tag">${product.store}</span>
+                    <span class="store-tag"><i class="fa-solid fa-shop"></i> ${product.store}</span>
                     <h1>${product.title}</h1>
+                    
                     <div class="price-wrapper">
-                        <p class="price-label">Preço exclusivo no Baú:</p>
+                        <p class="price-label">Melhor preço encontrado:</p>
                         <div class="price-tag"><span>R$</span> ${product.price}</div>
                     </div>
+
                     <div class="benefits-grid">
                         <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
                         <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
-                        <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> 10x sem juros</div>
-                        <div class="benefit-item"><i class="fa-solid fa-rotate-left"></i> Devolução Grátis</div>
+                        <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> Parcelamento</div>
+                        <div class="benefit-item"><i class="fa-solid fa-check-circle"></i> Original</div>
                     </div>
-                    <div class="actions">
-                        <a href="${product.link}" target="_blank" class="cta-button">Aproveitar Promoção</a>
-                    </div>
+
+                    <a href="${product.link}" target="_blank" class="cta-button">
+                        Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.9em; margin-left: 8px;"></i>
+                    </a>
                 </div>
             `;
 
@@ -443,11 +472,10 @@
 
         } catch (e) {
             console.error("Erro:", e);
-            contentArea.innerHTML = "<h2 style='color:white; text-align:center;'>Erro ao carregar oferta.</h2>";
+            contentArea.innerHTML = "<div class='loading-container'><h2>Erro ao carregar oferta.</h2></div>";
         }
     }
 
-    // Verifica estado inicial (se já deu like ou ativou alerta)
     async function checkStatus(collectionName, productId, elementId) {
         if(!auth.currentUser) return;
         try {
@@ -458,7 +486,6 @@
         } catch(e) { console.log(e); }
     }
 
-    // --- TOAST FUNCTION ---
     window.showToast = (msg) => {
         const toast = document.getElementById('toast-box');
         toast.innerHTML = `<i class="fa-solid fa-info-circle"></i> ${msg}`;
@@ -467,7 +494,6 @@
     };
 
     onAuthStateChanged(auth, (user) => { 
-        // Recarrega detalhes para atualizar status dos botões se o user logar
         loadProductDetails(); 
     });
 
