@@ -397,90 +397,104 @@
     };
 
     // --- CARREGAMENTO DO PRODUTO (LAYOUT NOVO) ---
-    async function loadProductDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const encodedId = params.get('id');
-        const contentArea = document.getElementById("content-area");
+async function loadProductDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const encodedId = params.get('id');
+    const contentArea = document.getElementById("content-area");
 
-        if (!encodedId) return;
+    if (!encodedId) return;
 
-        try {
-            const productId = function decodeBase64(str) {
-    return decodeURIComponent(
-        Array.prototype.map.call(atob(str), c =>
-            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        ).join('')
-    );
-}
-            const res = await fetch('/data/produtos.json');
-            const products = await res.json();
-            const product = products.find(p => String(p.id) === productId);
-
-            if (!product) {
-                contentArea.innerHTML = "<div class='loading-container'><h2>Oferta expirada!</h2></div>";
-                return;
-            }
-
-            const safeId = btoa(unescape(encodeURIComponent(productId))).replace(/[^a-zA-Z0-9]/g, '');
-            const heartId = "heart_" + safeId;
-            const alertId = "alert_" + safeId;
-
-            // HTML Específico para o NOVO LAYOUT
-            contentArea.innerHTML = `
-                <div class="img-side">
-                    <div class="floating-actions">
-                        <button id="${heartId}" class="icon-btn heart-btn" 
-                                onclick="toggleWishlist('${product.id}', '${heartId}')"
-                                title="Adicionar aos favoritos">
-                            <i class="fa-solid fa-heart"></i>
-                        </button>
-                        
-                        <button id="${alertId}" class="icon-btn alert-btn" 
-                                onclick="toggleAlert('${product.id}', '${alertId}')"
-                                title="Me avise de ofertas">
-                            <i class="fa-solid fa-bell"></i>
-                        </button>
-
-                        <button class="icon-btn" 
-                                onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)"
-                                title="Compartilhar">
-                            <i class="fa-solid fa-share-nodes"></i>
-                        </button>
-                    </div>
-                    <img src="${product.img}" alt="${product.title}">
-                </div>
-                <div class="info-side">
-                    <span class="store-tag"><i class="fa-solid fa-shop"></i> ${product.store}</span>
-                    <h1>${product.title}</h1>
-                    
-                    <div class="price-wrapper">
-                        <p class="price-label">Melhor preço encontrado:</p>
-                        <div class="price-tag"><span>R$</span> ${product.price}</div>
-                    </div>
-
-                    <div class="benefits-grid">
-                        <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
-                        <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
-                        <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> Parcelamento</div>
-                        <div class="benefit-item"><i class="fa-solid fa-check-circle"></i> Original</div>
-                    </div>
-
-                    <a href="${product.link}" target="_blank" class="cta-button">
-                        Ir para a Loja <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.9em; margin-left: 8px;"></i>
-                    </a>
-                </div>
-            `;
-
-            if (auth.currentUser) {
-                checkStatus("wishlists", productId, heartId);
-                checkStatus("alerts", productId, alertId);
-            }
-
-        } catch (e) {
-            console.error("Erro:", e);
-            contentArea.innerHTML = "<div class='loading-container'><h2>Erro ao carregar oferta.</h2></div>";
+    try {
+        function decodeBase64(str) {
+            return decodeURIComponent(
+                Array.prototype.map.call(atob(str), c =>
+                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join('')
+            );
         }
+
+        const productId = decodeBase64(encodedId);
+
+        const res = await fetch('/data/produtos.json');
+        const products = await res.json();
+
+        const product = products.find(p => String(p.id) === productId);
+
+        if (!product) {
+            contentArea.innerHTML =
+                "<div class='loading-container'><h2>Oferta expirada!</h2></div>";
+            return;
+        }
+
+        const safeId = btoa(unescape(encodeURIComponent(productId)))
+            .replace(/[^a-zA-Z0-9]/g, '');
+
+        const heartId = "heart_" + safeId;
+        const alertId = "alert_" + safeId;
+
+        contentArea.innerHTML = `
+            <div class="img-side">
+                <div class="floating-actions">
+                    <button id="${heartId}" class="icon-btn heart-btn"
+                        onclick="toggleWishlist('${product.id}', '${heartId}')">
+                        <i class="fa-solid fa-heart"></i>
+                    </button>
+
+                    <button id="${alertId}" class="icon-btn alert-btn"
+                        onclick="toggleAlert('${product.id}', '${alertId}')">
+                        <i class="fa-solid fa-bell"></i>
+                    </button>
+
+                    <button class="icon-btn"
+                        onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
+                        <i class="fa-solid fa-share-nodes"></i>
+                    </button>
+                </div>
+
+                <img src="${product.img}" alt="${product.title}">
+            </div>
+
+            <div class="info-side">
+                <span class="store-tag">
+                    <i class="fa-solid fa-shop"></i> ${product.store}
+                </span>
+
+                <h1>${product.title}</h1>
+
+                <div class="price-wrapper">
+                    <p class="price-label">Melhor preço encontrado:</p>
+                    <div class="price-tag">
+                        <span>R$</span> ${product.price}
+                    </div>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-item"><i class="fa-solid fa-truck-fast"></i> Frete Grátis</div>
+                    <div class="benefit-item"><i class="fa-solid fa-shield-check"></i> Compra Segura</div>
+                    <div class="benefit-item"><i class="fa-solid fa-credit-card"></i> Parcelamento</div>
+                    <div class="benefit-item"><i class="fa-solid fa-check-circle"></i> Original</div>
+                </div>
+
+                <a href="${product.link}" target="_blank" class="cta-button">
+                    Ir para a Loja
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="margin-left:8px"></i>
+                </a>
+            </div>
+        `;
+
+        if (auth.currentUser) {
+            checkStatus("wishlists", productId, heartId);
+            checkStatus("alerts", productId, alertId);
+        }
+
+    } catch (e) {
+        console.error("Erro:", e);
+        contentArea.innerHTML =
+            "<div class='loading-container'><h2>Erro ao carregar oferta.</h2></div>";
     }
+}
+
+
 
     async function checkStatus(collectionName, productId, elementId) {
         if(!auth.currentUser) return;
