@@ -189,7 +189,7 @@
             const favoriteIds = snap.data().items.map(id => String(id));
 
             // 2. Buscar dados no products.json
-            const response = await fetch('products.json');
+            const response = await fetch('/data/produtos.json');
             const products = await response.json();
 
             // 3. Filtrar produtos

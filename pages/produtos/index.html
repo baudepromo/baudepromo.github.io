@@ -249,7 +249,7 @@
         async function loadAndDisplay() {
             try {
                 // Certifique-se que o arquivo products.json está na mesma pasta
-                const response = await fetch('products.json'); 
+                const response = await fetch('/data/produtos.json'); 
                 const data = await response.json(); 
                 
                 allProducts = data.map((p, index) => ({

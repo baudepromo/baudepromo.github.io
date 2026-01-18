@@ -405,8 +405,14 @@
         if (!encodedId) return;
 
         try {
-            const productId = decodeURIComponent(escape(atob(encodedId)));
-            const res = await fetch('products.json');
+            const productId = function decodeBase64(str) {
+    return decodeURIComponent(
+        Array.prototype.map.call(atob(str), c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join('')
+    );
+}
+            const res = await fetch('/data/produtos.json');
             const products = await res.json();
             const product = products.find(p => String(p.id) === productId);
 
