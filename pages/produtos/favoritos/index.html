@@ -4,96 +4,159 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Favoritos | Baú de Promoções</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" href="/assets/img/favicon.webp"/>
-    <link rel="stylesheet" href="/css/stylebase.css">
 
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-4VNJR25033');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4VNJR25033"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4VNJR25033');
+    </script>
 
     <style>
+        /* --- IMPORTANDO O ESTILO NOVO --- */
         :root {
-            --bg-body: #05080f;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --primary-accent: #3b82f6;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --primary-gradient: linear-gradient(135deg, #ff4b4b 0%, #ff9000 100%);
+            --bg-body: #f5f5f5;
+            --text-dark: #1a1a1a;
+            --white: #ffffff;
+            --accent-yellow: #fdd835;
+            --accent-black: #111111;
+            --danger: #ff4747;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
             background-color: var(--bg-body);
-            background-image: radial-gradient(at 50% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
-            color: var(--text-main);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 40px 20px;
+            color: var(--text-dark);
             min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; }
-
-        header {
+        /* --- HEADER SIMPLIFICADO PARA FAVORITOS --- */
+        header.top-bar {
+            background: #ff4b4b;
+            padding: 15px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            z-index: 100;
         }
 
-        .back-home {
-            color: var(--text-main);
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            text-transform: uppercase;
             text-decoration: none;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 20px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 100px;
         }
 
-        h1 { font-size: 2rem; font-weight: 800; }
+        /* --- HERO SECTION (TOPO LARANJA) --- */
+        .hero-section {
+            background: var(--primary-gradient);
+            padding: 40px 20px 80px; /* Padding extra embaixo para o efeito visual */
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 30px rgba(255, 75, 75, 0.2);
+            margin-bottom: -40px; /* Puxa o conteúdo para cima */
+        }
 
-        /* Grid de Favoritos */
+        .hero-section h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .hero-section p {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* --- BOTÕES --- */
+        .pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-white { background: white; color: #ff5e3a; }
+        .btn-details { 
+            background: var(--accent-black); 
+            color: white; 
+            width: 100%; 
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .btn-details:hover { background: #333; }
+
+        /* --- GRID E CARDS --- */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
         .fav-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 25px;
         }
 
-        .product-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
+        .card {
+            background: white;
+            border-radius: 20px;
             padding: 20px;
             text-align: center;
-            transition: 0.3s;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .product-card:hover { transform: translateY(-5px); border-color: var(--primary-accent); }
+        .card:hover {
+            transform: translateY(-5px);
+        }
 
-        .product-card img {
+        .card img {
             width: 100%;
             height: 180px;
             object-fit: contain;
-            background: white;
-            border-radius: 16px;
+            background: #fff;
             margin-bottom: 15px;
-            padding: 10px;
+            border-radius: 10px;
         }
 
-        .product-card h3 {
+        .card h3 {
             font-size: 1rem;
+            color: #333;
             margin: 10px 0;
             height: 40px;
             overflow: hidden;
@@ -102,37 +165,61 @@
             -webkit-box-orient: vertical;
         }
 
-        .price { color: #4ade80; font-size: 1.4rem; font-weight: 800; margin-bottom: 15px; }
-
-        .btn-details {
+        .price {
+            color: #ff4b4b; /* Cor de destaque do tema */
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
             display: block;
-            background: var(--primary-accent);
-            color: white;
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 700;
         }
 
+        /* --- ESTADOS VAZIOS E LOADING --- */
         .empty-state {
-            text-align: center;
-            padding: 100px 20px;
             grid-column: 1 / -1;
+            background: white;
+            border-radius: 20px;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        
+        .empty-state h2 { color: #333; margin-top: 20px; }
+        .empty-state p { color: #666; margin-bottom: 20px; }
+        .empty-icon { font-size: 4rem; color: #ddd; }
+
+        .loading-spinner {
+            font-size: 3rem;
+            color: #ff9000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section { padding-bottom: 60px; }
+            .fav-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+            .card { padding: 15px; }
+            .card h3 { font-size: 0.9rem; }
+            .price { font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>Meus Favoritos <i class="fa-solid fa-heart" style="color: #ff4747;"></i></h1>
-            <a href="index.html" class="back-home"><i class="fa-solid fa-house"></i> Início</a>
-        </header>
+    <header class="top-bar">
+        <a href="index.html" class="logo">Baú de Promoções</a>
+        <a href="index.html" class="pill-btn btn-white">
+            <i class="fa-solid fa-house"></i> Início
+        </a>
+    </header>
 
+    <div class="hero-section">
+        <h1>Meus Favoritos <i class="fa-solid fa-heart" style="color: #fff;"></i></h1>
+        <p>A lista dos seus produtos mais desejados.</p>
+    </div>
+
+    <div class="main-content">
         <div id="fav-grid" class="fav-grid">
             <div class="empty-state">
-                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary-accent)"></i>
-                <p>Carregando sua lista...</p>
+                <i class="fas fa-circle-notch fa-spin loading-spinner"></i>
+                <p style="margin-top: 15px;">Carregando seus achadinhos...</p>
             </div>
         </div>
     </div>
@@ -159,11 +246,13 @@
         if (user) {
             loadUserFavorites(user.uid);
         } else {
+            // Usuário não logado - Visual atualizado
             document.getElementById("fav-grid").innerHTML = `
                 <div class="empty-state">
-                    <h2>Ops!</h2>
-                    <p>Você precisa estar logado para ver seus favoritos.</p>
-                    <a href="index.html" class="btn-details" style="display:inline-block; margin-top:20px; padding: 12px 30px;">Voltar para o Início</a>
+                    <i class="fa-solid fa-lock empty-icon" style="color: #ff4b4b;"></i>
+                    <h2>Acesso Restrito</h2>
+                    <p>Faça login para ver sua lista de desejos.</p>
+                    <a href="index.html" class="pill-btn btn-details" style="max-width: 200px; margin: 0 auto;">Ir para Login</a>
                 </div>
             `;
         }
@@ -179,9 +268,10 @@
             if (!snap.exists() || !snap.data().items || snap.data().items.length === 0) {
                 grid.innerHTML = `
                     <div class="empty-state">
-                        <i class="fa-regular fa-heart" style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;"></i>
+                        <i class="fa-regular fa-heart empty-icon"></i>
                         <h2>Sua lista está vazia</h2>
                         <p>Favorite alguns produtos e eles aparecerão aqui!</p>
+                        <a href="index.html" class="pill-btn btn-details" style="background: var(--primary-gradient); border:none; max-width: 200px; margin: 0 auto;">Ver Ofertas</a>
                     </div>
                 `;
                 return;
@@ -197,27 +287,39 @@
             const myFavorites = products.filter(p => favoriteIds.includes(String(p.id)));
 
             if (myFavorites.length === 0) {
-                grid.innerHTML = "<div class='empty-state'><h2>Nenhuma oferta encontrada.</h2><p>As ofertas que você salvou podem ter expirado.</p></div>";
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-face-frown empty-icon"></i>
+                        <h2>Nenhuma oferta ativa.</h2>
+                        <p>Os produtos que você salvou podem ter saído de promoção.</p>
+                    </div>`;
                 return;
             }
 
-            // 4. Renderizar
+            // 4. Renderizar (USANDO O NOVO ESTILO VISUAL)
             grid.innerHTML = "";
             myFavorites.forEach(p => {
-                const encodedId = btoa(unescape(encodeURIComponent(p.id))); // Base64 simples
+                const encodedId = btoa(unescape(encodeURIComponent(p.id))); 
+                
                 grid.innerHTML += `
-                    <div class="product-card">
+                    <div class="card">
                         <img src="${p.img}" alt="${p.title}">
                         <h3>${p.title}</h3>
-                        <div class="price">R$ ${p.price}</div>
-                        <a href="detalhes.html?id=${encodedId}" class="btn-details">Ver Detalhes</a>
+                        <span class="price">R$ ${p.price}</span>
+                        <a href="detalhes.html?id=${encodedId}" class="pill-btn btn-details">
+                            Ver Oferta <i class="fa-solid fa-arrow-right"></i>
+                        </a>
                     </div>
                 `;
             });
 
         } catch (error) {
             console.error("Erro:", error);
-            grid.innerHTML = "<p>Erro ao carregar favoritos. Tente novamente mais tarde.</p>";
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-triangle-exclamation empty-icon" style="color: #ff9000;"></i>
+                    <p>Ocorreu um erro ao carregar seus favoritos.</p>
+                </div>`;
         }
     }
 </script>
