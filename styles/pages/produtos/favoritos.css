@@ -1,0 +1,152 @@
+.top-nav {
+    position: absolute; /* Para ficar sobre a hero */
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+}
+
+/* Estilo do botão */
+.btn-back-fixed {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: white;
+    background: rgba(255, 255, 255, 0.2); /* Fundo translúcido */
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    backdrop-filter: blur(5px); /* Efeito de vidro */
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-back-fixed:hover {
+    background: white;
+    color: #ff4b4b; /* Cor do seu tema */
+    transform: translateX(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Ajuste na Hero para não encostar no topo se necessário */
+.hero-section {
+    position: relative;
+    padding-top: 80px; /* Espaço para o botão não ficar colado no texto */
+}
+.pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .pill-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-white { background: white; color: #ff5e3a; }
+        .btn-details { 
+            background: var(--accent-black); 
+            color: white; 
+            width: 100%; 
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .btn-details:hover { background: #333; }
+
+        /* --- GRID E CARDS --- */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .fav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: contain;
+            background: #fff;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            color: #333;
+            margin: 10px 0;
+            height: 40px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .price {
+            color: #ff4b4b; /* Cor de destaque do tema */
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* --- ESTADOS VAZIOS E LOADING --- */
+        .empty-state {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 20px;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        
+        .empty-state h2 { color: #333; margin-top: 20px; }
+        .empty-state p { color: #666; margin-bottom: 20px; }
+        .empty-icon { font-size: 4rem; color: #ddd; }
+
+        .loading-spinner {
+            font-size: 3rem;
+            color: #ff9000;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section { padding-bottom: 60px; }
+            .fav-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+            .card { padding: 15px; }
+            .card h3 { font-size: 0.9rem; }
+            .price { font-size: 1.1rem; }
+        }
+
+        

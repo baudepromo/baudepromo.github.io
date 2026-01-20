@@ -1,0 +1,189 @@
+.hero-header {
+            background: var(--primary-gradient);
+            padding: 40px 20px 80px;
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            position: relative;
+        }
+
+
+        .hero-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+
+        /* --- FILTROS --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: -30px auto 40px;
+            position: relative;
+            z-index: 10;
+            padding: 0 10px;
+        }
+
+        .filter-btn {
+            background: var(--white);
+            border: none;
+            color: var(--text-dark);
+            padding: 12px 25px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-black);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* --- GRID DE CUPONS --- */
+        .coupons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- CARD ESTILO "BAÚ" --- */
+        .coupon-card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid transparent;
+        }
+
+        .coupon-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff4b4b;
+        }
+
+        .coupon-header {
+            padding: 25px;
+            background: #fff9f8;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px dashed #eee;
+        }
+
+        .store-logo {
+            width: 55px;
+            height: 55px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .offer-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #ff4b4b;
+            line-height: 1;
+        }
+        .offer-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .coupon-body {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: #444;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .expiry {
+            font-size: 0.8rem;
+            color: #ff4b4b;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Container do Código */
+        .copy-container {
+            background: #f8f8f8;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coupon-code {
+            font-family: 'Monaco', monospace;
+            font-size: 1.1rem;
+            font-weight: 800;
+            padding-left: 15px;
+            color: #111;
+            filter: blur(5px);
+            transition: 0.3s;
+        }
+        
+        .coupon-card.revealed .coupon-code {
+            filter: blur(0);
+        }
+
+        .btn-copy {
+            background: var(--accent-black);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-copy:hover { background: #333; }
+
+        .btn-copy.copied {
+            background: var(--success);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-black); color: #fff; padding: 15px 35px;
+            border-radius: 50px; font-weight: 700; z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        .toast.show { opacity: 1; bottom: 40px; }
+
+        @media (max-width: 600px) {
+            .hero-header h1 { font-size: 1.8rem; }
+            .coupons-grid { grid-template-columns: 1fr; }
+        }
