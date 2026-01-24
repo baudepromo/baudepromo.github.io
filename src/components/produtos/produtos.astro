@@ -1,0 +1,114 @@
+<script is:inline>
+    const productGrid = document.getElementById("product-grid");
+    const searchInput = document.getElementById("search"); // ID corrigido conforme seu HTML
+    
+    let allProducts = []; 
+    let currentCategory = "eletronicos";
+
+    async function loadAndDisplay() {
+        if (!productGrid) return;
+
+        try {
+            const response = await fetch('/data/produtos.json'); 
+            if (!response.ok) throw new Error("Arquivo JSON não encontrado");
+            
+            const data = await response.json(); 
+            
+            allProducts = data.map((p, index) => ({
+                ...p,
+                id: p.id ?? index,
+                slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+            }));
+
+            // Chama a função de renderização inicial
+            renderizarFiltros();
+
+        } catch (erro) {
+            console.error("Erro crítico:", erro);
+            productGrid.innerHTML = `<p style='grid-column: 1/-1; text-align:center;'>Erro ao carregar ofertas.</p>`;
+        }
+    }
+
+    // Função central que decide o que aparece na tela
+    function renderizarFiltros() {
+        const termo = searchInput?.value.toLowerCase().trim() || "";
+        
+        const filtrados = allProducts.filter(p => {
+            // Se o usuário digitou algo, buscamos em TUDO (ignora categoria)
+            // Se a busca estiver vazia, filtramos pela categoria selecionada
+            if (termo.length > 0) {
+                return p.title.toLowerCase().includes(termo) || 
+                       p.store.toLowerCase().includes(termo);
+            } else {
+                return p.category === currentCategory;
+            }
+        });
+
+        exibirProdutos(filtrados);
+    }
+
+    function exibirProdutos(lista) {
+        productGrid.innerHTML = "";
+        
+        if(lista.length === 0) {
+            productGrid.innerHTML = `
+                <div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>
+                    <p>Nenhum produto encontrado para sua busca.</p>
+                </div>`;
+            return;
+        }
+
+        lista.forEach(p => {
+            const storeClass = `badge-${p.store.toLowerCase().replace(/\s/g, '')}`;
+            const card = document.createElement("article");
+            card.className = "card";
+            card.innerHTML = `
+                <div class="card-img-wrapper">
+                    <span class="store-badge ${storeClass}">${p.store}</span>
+                    <img 
+                     src="${p.img}" 
+                     alt="${p.title}"
+                     onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
+                     loading="lazy"
+                     decoding="async"
+                     width="300"
+                     height="300"
+                     >
+                </div>
+                <div class="card-info">
+                    <h3>${p.title}</h3>
+                    <div class="price-row">
+                        <span class="card-price">R$ ${p.price}</span>
+                        <a href="/produtos/info/?slug=${p.slug}" class="btn-ver">Ver Produto</a>
+                    </div>
+                </div>
+            `;
+            productGrid.appendChild(card);
+        });
+    }
+
+    // --- EVENTOS ---
+
+    // 1. Escuta a barra de pesquisa
+    searchInput?.addEventListener("input", () => {
+        renderizarFiltros();
+    });
+
+    // 2. Escuta os botões de categoria
+    document.querySelectorAll(".pill-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            // Estética dos botões
+            document.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            
+            // Se clicar em categoria, limpa a busca para não confundir o usuário
+            if (searchInput) searchInput.value = "";
+            
+            currentCategory = btn.dataset.tab;
+            renderizarFiltros();
+        });
+    });
+
+    // Inicia o carregamento
+    loadAndDisplay();
+</script>

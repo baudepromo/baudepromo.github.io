@@ -1,0 +1,116 @@
+<script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // CONFIGURAÇÃO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+            authDomain: "baudepromocao-oficial.firebaseapp.com",
+            projectId: "baudepromocao-oficial",
+            storageBucket: "baudepromocao-oficial.firebasestorage.app",
+            messagingSenderId: "743146859125",
+            appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // -----------------------
+        // LÓGICA DO MENU (Adicionada)
+        // -----------------------
+        window.toggleMenu = () => {
+            const menu = document.getElementById('sideMenu');
+            const overlay = document.getElementById('menuOverlay');
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // -----------------------
+        // LÓGICA DO MODAL E AUTH
+        // -----------------------
+        let isSignUpMode = false;
+
+        window.openAuthModal = () => {
+            document.getElementById('authModal').style.display = 'flex';
+            // Fecha o menu se estiver aberto no celular
+            document.getElementById('sideMenu').classList.remove('active');
+            document.getElementById('menuOverlay').classList.remove('active');
+        };
+        
+        window.closeAuthModal = () => document.getElementById('authModal').style.display = 'none';
+
+        window.toggleAuthMode = () => {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('authTitle').innerText = isSignUpMode ? 'Criar Conta' : 'Fazer Login';
+            document.getElementById('mainAuthBtn').innerText = isSignUpMode ? 'Cadastrar' : 'Entrar';
+            document.getElementById('authToggle').innerText = isSignUpMode ? 'Já tem conta? Login.' : 'Não tem conta? Cadastre-se.';
+        };
+
+        window.handleEmailAuth = async () => {
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            try {
+                if (isSignUpMode) await createUserWithEmailAndPassword(auth, email, password);
+                else await signInWithEmailAndPassword(auth, email, password);
+                closeAuthModal();
+            } catch (e) { alert("Erro: " + e.message); }
+        };
+
+        window.signInWithGoogle = () => signInWithPopup(auth, provider).then(closeAuthModal).catch(console.error);
+        window.logout = () => signOut(auth);
+
+        // Monitora o estado do usuário e atualiza o MENU
+        onAuthStateChanged(auth, (user) => {
+            const loginBtn = document.getElementById('loginBtn');
+            const userInfo = document.getElementById('userInfo');
+            
+            if(loginBtn && userInfo) {
+                if (user) {
+                    // Usuário LOGADO: Esconde botão login, mostra perfil
+                    loginBtn.style.display = 'none';
+                    userInfo.style.display = 'flex';
+                    document.getElementById('userName').innerText = user.displayName ? user.displayName.split(' ')[0] : 'Usuário';
+                    document.getElementById('userPhoto').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.email}&background=random`;
+                } else {
+                    // Usuário DESLOGADO: Mostra botão login, esconde perfil
+                    loginBtn.style.display = 'block';
+                    userInfo.style.display = 'none';
+                }
+            }
+        });
+		window.onclick = function(event) {
+            const donationModal = document.getElementById('donationModal');
+            const authModal = document.getElementById('authModal');
+            const sideMenu = document.getElementById('sideMenu');
+            
+            if (event.target == donationModal) toggleModal();
+            if (event.target == authModal) closeAuthModal();
+            // Opcional: fechar menu ao clicar na parte escura se adicionar overlay ao menu
+        }
+        function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('menuOverlay');
+    const btn = document.querySelector('.hamburger-btn');
+    
+    // Abre/Fecha o menu e o overlay
+    menu.classList.toggle('active');
+    overlay.classList.toggle('active');
+
+    // Transforma em X
+    btn.classList.add('active');
+
+    // Se o menu foi aberto, espera 1 segundo e volta o ícone ao normal
+    if (menu.classList.contains('active')) {
+        setTimeout(() => {
+            btn.classList.remove('active');
+        }, 1000); // 1000 milissegundos = 1 segundo
+    } else {
+        // Se estiver fechando o menu, remove a classe imediatamente
+        btn.classList.remove('active');
+    }
+
+    // Trava o scroll da página
+    document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
+}
+    </script>

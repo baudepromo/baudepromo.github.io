@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "store": "shopee",
+        "image": "icons/shopee.svg",
+        "logoColor": "#ea501f",
+        "value": "R$ 20 OFF",
+        "label": "Shopee Oficial",
+        "description": "Válido para primeira compra no app em pedidos acima de R$ 100.",
+        "expiry": "Expira em 2 dias",
+        "code": "PRIMEIRA20"
+    },
+    {
+        "id": 2,
+        "store": "amazon",
+        "image": "icons/amazon.svg",
+        "logoColor": "#000",
+        "value": "10% OFF",
+        "label": "Amazon Eletrônicos",
+        "description": "Aproveite descontos em Echo Dot, Kindle e Fire TV Stick selecionados.",
+        "expiry": "Até 30/06",
+        "code": "ALEXA10"
+    }
+]

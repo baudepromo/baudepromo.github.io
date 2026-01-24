@@ -1,0 +1,98 @@
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            loadUserFavorites(user.uid);
+        } else {
+            // Usuário não logado - Visual atualizado
+            document.getElementById("fav-grid").innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-lock empty-icon" style="color: #ff4b4b;"></i>
+                    <h2>Acesso Restrito</h2>
+                    <p>Faça login para ver sua lista de desejos.</p>
+                    <a href="index.html" class="pill-btn btn-details" style="max-width: 200px; margin: 0 auto;">Ir para Login</a>
+                </div>
+            `;
+        }
+    });
+
+    async function loadUserFavorites(uid) {
+        const grid = document.getElementById("fav-grid");
+        
+        try {
+            // 1. Buscar IDs no Firestore
+            const snap = await getDoc(doc(db, "wishlists", uid));
+            
+            if (!snap.exists() || !snap.data().items || snap.data().items.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-heart empty-icon"></i>
+                        <h2>Sua lista está vazia</h2>
+                        <p>Favorite alguns produtos e eles aparecerão aqui!</p>
+                        <a href="index.html" class="pill-btn btn-details" style="background: var(--primary-gradient); border:none; max-width: 200px; margin: 0 auto;">Ver Ofertas</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const favoriteIds = snap.data().items.map(id => String(id));
+
+            // 2. Buscar dados no products.json
+            const response = await fetch('/data/produtos.json');
+            const products = await response.json();
+
+            // 3. Filtrar produtos
+            const myFavorites = products.filter(p => favoriteIds.includes(String(p.id)));
+
+            if (myFavorites.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-regular fa-face-frown empty-icon"></i>
+                        <h2>Nenhuma oferta ativa.</h2>
+                        <p>Os produtos que você salvou podem ter saído de promoção.</p>
+                    </div>`;
+                return;
+            }
+
+            // 4. Renderizar (USANDO O NOVO ESTILO VISUAL)
+            grid.innerHTML = "";
+            myFavorites.forEach(p => {
+                const slug = p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                
+                grid.innerHTML += `
+                    <div class="card">
+                        <img src="${p.img}" alt="${p.title}">
+                        <h3>${p.title}</h3>
+                        <span class="price">R$ ${p.price}</span>
+                        <a href="/produtos/info/?slug=${slug}" class="pill-btn btn-details">
+                            Ver Oferta <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                `;
+            });
+        } catch (error) {
+            console.error("Erro:", error);
+            grid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-triangle-exclamation empty-icon" style="color: #ff9000;"></i>
+                    <p>Ocorreu um erro ao carregar seus favoritos.</p>
+                </div>`;
+        }
+    }
+</script>

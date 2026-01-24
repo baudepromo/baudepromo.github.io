@@ -1,0 +1,277 @@
+---
+import Global from '../components/global.astro';
+import Layout from '../layouts/MainLayout.astro';
+---
+<Layout>
+    <style is:global>
+    /* O botão precisa ser flex para alinhar ícone e texto */
+    .pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px; /* Espaço entre ícone e texto */
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    /* O pulo do gato: dar tamanho ao SVG */
+    .btn-icon {
+        width: 1.2em;  /* Segue o tamanho do texto */
+        height: 1.2em;
+        display: block;
+    }
+
+    .btn-white {
+        background: white;
+        color: #ff4b4b; /* Cor do seu tema */
+    }
+    .faq-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 25px;
+        color: #e67e22; /* Cor laranja do seu tema */
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .faq-cta:hover {
+        gap: 15px; /* Aumenta o espaço para simular a flecha andando */
+        color: #d35400;
+    }
+
+    .icon-arrow-right {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 3;
+    }
+    .float-support-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #ff4b4b; /* Cor de destaque */
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(255, 75, 75, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .float-support-btn:hover {
+        transform: translateY(-5px);
+        background: #e63946;
+        box-shadow: 0 6px 20px rgba(255, 75, 75, 0.6);
+    }
+
+    .btn-icon-float {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Estilos do Modal Overlay */
+    .support-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        display: none; /* Escondido por padrão */
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .support-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    /* Conteúdo do Modal */
+    .support-modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        position: relative;
+        width: 90%;
+        max-width: 350px;
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .support-modal-overlay.active .support-modal-content {
+        transform: scale(1);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #999;
+    }
+
+    .qr-container {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 20px 0;
+        display: inline-block;
+    }
+
+    .qr-container img {
+        display: block;
+        max-width: 100%;
+    }
+
+    .pix-key-text {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Mobile: Oculta o texto no botão para ficar mais discreto se preferir */
+    @media (max-width: 600px) {
+        .float-support-btn span {
+            display: none;
+        }
+        .float-support-btn {
+            padding: 15px;
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+</style>
+	    <section class="hero-section">
+        <h1>As Melhores Ofertas do Dia!</h1>
+        <p>Curadoria exclusiva de produtos, cupons e achadinhos da internet.</p>
+
+        <div class="hero-buttons">
+    <a href="/achadinhos" class="pill-btn btn-white">
+        <svg class="btn-icon" viewBox="0 -50 576 600">
+            <path fill="currentColor" d="M263.4-27L278.2 9.8 315 24.6c3 1.2 5 4.2 5 7.4s-2 6.2-5 7.4L278.2 54.2 263.4 91c-1.2 3-4.2 5-7.4 5s-6.2-2-7.4-5L233.8 54.2 197 39.4c-3-1.2-5-4.2-5-7.4s2-6.2 5-7.4L233.8 9.8 248.6-27c1.2-3 4.2-5 7.4-5s6.2 2 7.4 5zM110.7 41.7l21.5 50.1 50.1 21.5c5.9 2.5 9.7 8.3 9.7 14.7s-3.8 12.2-9.7 14.7l-50.1 21.5-21.5 50.1c-2.5 5.9-8.3 9.7-14.7 9.7s-12.2-3.8-14.7-9.7L59.8 164.2 9.7 142.7C3.8 140.2 0 134.4 0 128s3.8-12.2 9.7-14.7L59.8 91.8 81.3 41.7C83.8 35.8 89.6 32 96 32s12.2 3.8 14.7 9.7zM464 304c6.4 0 12.2 3.8 14.7 9.7l21.5 50.1 50.1 21.5c5.9 2.5 9.7 8.3 9.7 14.7s-3.8 12.2-9.7 14.7l-50.1 21.5-21.5 50.1c-2.5 5.9-8.3 9.7-14.7 9.7s-12.2-3.8-14.7-9.7l-21.5-50.1-50.1-21.5c-5.9-2.5-9.7-8.3-9.7-14.7s3.8-12.2 9.7-14.7l50.1-21.5 21.5-50.1c2.5-5.9 8.3-9.7 14.7-9.7zM460 0c11 0 21.6 4.4 29.5 12.2l42.3 42.3C539.6 62.4 544 73 544 84s-4.4 21.6-12.2 29.5l-88.2 88.2-101.3-101.3 88.2-88.2C438.4 4.4 449 0 460 0zM44.2 398.5L308.4 134.3 409.7 235.6 145.5 499.8C137.6 507.6 127 512 116 512s-21.6-4.4-29.5-12.2L44.2 457.5C36.4 449.6 32 439 32 428s4.4-21.6 12.2-29.5z"/></path>
+        </svg>
+        Achadinhos
+    </a>
+            <a href="/produtos" class="pill-btn btn-black">
+               <svg class="btn-icon" viewBox="0 0 640 512">
+                <path fill="#ffffff" d="M560.3 237.2c10.4 11.8 28.3 14.4 41.8 5.5 14.7-9.8 18.7-29.7 8.9-44.4l-48-72c-2.8-4.2-6.6-7.7-11.1-10.2L351.4 4.7c-19.3-10.7-42.8-10.7-62.2 0L88.8 116c-5.4 3-9.7 7.4-12.6 12.8L27.7 218.7c-12.6 23.4-3.8 52.5 19.6 65.1l33 17.7 0 53.3c0 23 12.4 44.3 32.4 55.7l176 99.7c19.6 11.1 43.5 11.1 63.1 0l176-99.7c20.1-11.4 32.4-32.6 32.4-55.7l0-117.5zm-240-9.8L170.2 144 320.3 60.6 470.4 144 320.3 227.4zm-41.5 50.2l-21.3 46.2-165.8-88.8 25.4-47.2 161.7 89.8z"/>
+            </svg>
+                Produtos
+            </a>
+            
+            <a href="/cupons" class="pill-btn btn-yellow">
+                <svg class="btn-icon" viewBox="0 0 576 512">
+                    <path d="M64 64C28.7 64 0 92.7 0 128l0 64C0 200.8 7.4 207.7 15.7 210.6 34.5 217.1 48 235 48 256s-13.5 38.9-32.3 45.4C7.4 304.3 0 311.2 0 320l0 64c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-64c0-8.8-7.4-15.7-15.7-18.6-18.8-6.5-32.3-24.4-32.3-45.4s13.5-38.9 32.3-45.4c8.3-2.9 15.7-9.8 15.7-18.6l0-64c0-35.3-28.7-64-64-64L64 64zM416 336l0-160-256 0 0 160 256 0zM112 160c0-17.7 14.3-32 32-32l288 0c17.7 0 32 14.3 32 32l0 192c0 17.7-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32l0-192z"/>
+                </svg>
+                Cupons
+            </a>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <h2 class="section-title">Destaques da Semana</h2>
+        <button id="open-support" class="float-support-btn" aria-label="Apoie o site">
+    <svg viewBox="0 0 24 24" class="btn-icon-float">
+        <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    <span>Apoie</span>
+</button>
+
+<div id="support-modal" class="support-modal-overlay">
+    <div class="support-modal-content">
+        <button id="close-support" class="close-modal">&times;</button>
+        <h3>Apoie o Baú de Promoções 🎁</h3>
+        <p>Gosta do nosso trabalho? <br> Escaneie o QR Code para contribuir via PIX.</p>
+        
+        <div class="qr-container">
+            <img src="/img/qrcode-pix.webp" alt="QR Code PIX" loading="lazy">
+        </div>
+        
+        <span class="pix-key-text">Chave: <strong>baudepromocao@gmail.com</strong></span>
+    </div>
+</div>
+        <div class="cards-grid">
+            <a href="/achadinhos" class="card">
+                <img src="/assets/img/achadinhos.webp" alt="Achadinhos Shopee">
+                <h3>Achadinhos Shopee</h3>
+                <span>Ver Coleção</span>
+            </a>
+
+            <a href="/produtos" class="card">
+                <img src="/assets/img/logistics.webp" alt="Produtos em Alta">
+                <h3>Ofertas Amazon</h3>
+                <span>Ver Ofertas</span>
+            </a>
+
+            <a href="/cupons" class="card">
+                <img src="/assets/img/promo.webp" alt="Cupons de Desconto">
+                <h3>Cupons do Dia</h3>
+                <span>Pegar Cupom</span>
+            </a>
+            
+            <a href="/produtos" class="card">
+                <img src="https://via.placeholder.com/300x200?text=Viral+TikTok" alt="Viral">
+                <h3>Virais do TikTok</h3>
+                <span>Ver Mais</span>
+            </a>
+        </div>
+    </main>
+
+    <section style="background: white; padding: 60px 20px; text-align: center; margin-top: 40px; border-top: 1px solid #f5f5f5;">
+        <h2 style="font-size: 1.8rem; color: #2c3e50; margin-bottom: 15px;">Dúvidas Frequentes</h2>
+        <p style="max-width: 700px; margin: 0 auto; color: #666; line-height: 1.6;">
+            O <strong>Baú de Promoções</strong> seleciona manualmente as melhores ofertas. Todos os links são verificados e direcionam para lojas oficiais como Shopee, Amazon e AliExpress.
+        </p>
+        
+        <a href="/faq" class="faq-cta">
+            Ver todas as perguntas 
+            <svg class="icon-arrow-right" viewBox="0 0 24 24">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </section>
+
+    <script is:inline>
+    const btn = document.getElementById('open-support');
+    const modal = document.getElementById('support-modal');
+    const closeBtn = document.getElementById('close-support');
+
+    btn.addEventListener('click', () => {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Trava o scroll do fundo
+    });
+
+    const closeModal = () => {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    };
+
+    closeBtn.addEventListener('click', closeModal);
+
+    // Fecha ao clicar fora do modal
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+</script>
+	<Global></Global>
+</Layout>

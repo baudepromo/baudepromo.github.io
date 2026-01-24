@@ -1,0 +1,302 @@
+---
+import Layout from "../../../layouts/MainLayout.astro";
+import Global from '../../../components/global.astro';
+import Info from '../../../components/produtos/info.astro';
+---
+<Layout>
+    <style is:inline>
+        /* Container do botão */
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 0;
+}
+
+/* Tamanho dos SVGs */
+.icon-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* --- LÓGICA DE TROCA --- */
+
+/* 1. Esconde o preenchido por padrão */
+.icon-btn .icon-filled { 
+    display: none; 
+}
+
+/* 2. Mostra o de linha por padrão */
+.icon-btn .icon-outline { 
+    display: block; 
+}
+
+/* 3. Quando o botão estiver ATIVO: */
+.icon-btn.active .icon-outline { 
+    display: none; /* Esconde a linha */
+}
+
+.icon-btn.active .icon-filled { 
+    display: block; /* Mostra o preenchido */
+}
+
+/* --- CORES --- */
+
+/* Cor do coração quando ativo (Vermelho) */
+.heart-btn.active .icon-filled {
+    fill: #ff4757;
+}
+
+/* Cor do sino quando ativo (Amarelo/Laranja) */
+.alert-btn.active .icon-filled {
+    fill: #feca57;
+}
+
+        /* --- CONTAINER PRINCIPAL --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* --- CARD DE DETALHES (Novo Design) --- */
+        .detail-card {
+            background: var(--white);
+            border-radius: 30px;
+            max-width: 1100px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08); /* Sombra suave */
+            min-height: 600px;
+            position: relative;
+        }
+
+        /* Lado da Imagem */
+        .img-side {
+            background: #fff0f0; /* Um fundo bem clarinho avermelhado ou cinza */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            position: relative;
+        }
+
+        .img-side img {
+            max-width: 100%;
+            height: auto;
+            max-height: 450px;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.15));
+            transition: 0.5s transform cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            mix-blend-mode: multiply; /* Ajuda a tirar fundo branco da imagem se houver */
+        }
+        .detail-card:hover .img-side img { transform: scale(1.05); }
+
+        /* Lado da Info */
+        .info-side {
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+
+        .store-tag {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: #ff4b4b; /* Cor primária */
+            margin-bottom: 10px;
+            background: #fff0f0;
+            padding: 5px 12px;
+            border-radius: 6px;
+            align-self: flex-start;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            line-height: 1.2;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+
+        .price-wrapper { margin: 20px 0 30px; }
+        .price-label { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 5px; }
+        .price-tag { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            color: var(--success); /* Verde para preço */
+            display: flex; 
+            align-items: flex-start; 
+            gap: 5px; 
+            line-height: 1;
+        }
+        .price-tag span { font-size: 1.5rem; margin-top: 8px; color: var(--text-dark); }
+
+        /* Benefícios */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+        .benefit-item i { color: #ff9000; font-size: 1.1rem; }
+
+        /* Botão de Ação (Estilo Pill do seu CSS) */
+        .cta-button {
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 20px;
+            border-radius: 50px; /* Pill shape */
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 20px rgba(255, 75, 75, 0.3);
+            border: none;
+            cursor: pointer;
+            display: block;
+            margin-top: auto;
+        }
+        .cta-button:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 15px 30px rgba(255, 75, 75, 0.4); 
+        }
+
+        /* Favoritos e Share flutuantes (Adaptado para fundo claro) */
+        .floating-actions {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 10;
+        }
+        .icon-btn {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .icon-btn:hover { transform: scale(1.1); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        
+        /* Estados Ativos */
+        .icon-btn.heart-btn.active { color: #ff4747; background: #ffebeb; }
+        .icon-btn.alert-btn.active { color: #ffb300; background: #fff8e1; }
+
+        /* Spinner de Carregamento */
+        .loading-container {
+            grid-column: span 2; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: center; 
+            height: 100%; 
+            padding: 50px;
+        }
+
+        /* Toast Moderno */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: #1a1a1a; color: #fff; padding: 15px 30px;
+            border-radius: 100px; font-weight: 600; z-index: 2000;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            display: flex; align-items: center; gap: 10px;
+            visibility: hidden; opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .toast.show { visibility: visible; bottom: 40px; opacity: 1; }
+
+        /* Modal Login (Adaptado) */
+        .modal-overlay {
+            display: none; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); 
+            z-index: 9999; align-items: center; justify-content: center;
+        }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .detail-card { grid-template-columns: 1fr; border-radius: 20px; min-height: auto; margin: 10px; }
+            .img-side { height: 350px; padding: 20px; }
+            .info-side { padding: 30px 25px; }
+            h1 { font-size: 1.6rem; }
+            .price-tag { font-size: 2.8rem; }
+            .benefits-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+<section class="hero-section" style="position: relative;">
+<div class="faq-wrapper">
+    <h1>Melhores Produtos do Baú</h1>
+    <p>Apenas produtos selecionados</p>
+    <a href="javascript:history.back()" class="btn-back">
+      <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Voltar
+    </a>
+
+</section> <div class="main-container">
+    <div id="content-area" class="detail-card">
+        <div class="loading-container">
+            <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: #ff4b4b;"></i>
+                <p style="margin-top: 20px; color: var(--text-muted); font-weight: 600;">Carregando melhor oferta...</p>
+        </div>
+    </div>
+</div>
+    <div id="toast-box" class="toast"></div>
+
+    <div id="login-modal" class="modal-overlay">
+        <div style="background: white; padding: 40px; border-radius: 25px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+            <div style="width: 70px; height: 70px; background: #fff0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                <i class="fa-solid fa-user-lock" style="color: #e74bff; font-size: 2rem;"></i>
+            </div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #1a1a1a;">Faça Login</h2>
+            <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; font-size: 0.95rem;">Para salvar favoritos e criar alertas, precisamos saber quem é você.</p>
+            
+            <button id="btn-google-login" style="width: 100%; background: #1a1a1a; color: white; border: none; padding: 15px; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
+                Entrar com Google
+            </button>
+
+            <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: #666; margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                Cancelar
+            </button>
+        </div>
+    </div>
+    <Info></Info>
+    <Global></Global>
+</Layout>

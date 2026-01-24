@@ -1,0 +1,86 @@
+<script is:inline>
+let allCoupons = [];
+
+// 1. Carregar os cupons ao abrir a página
+async function loadCoupons() {
+    const grid = document.querySelector('.coupons-grid');
+    try {
+        const response = await fetch('/data/cupons.json'); // Ajuste o caminho se necessário
+        allCoupons = await response.json();
+        renderCoupons(allCoupons);
+    } catch (error) {
+        console.error("Erro ao carregar cupons:", error);
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center;">Erro ao carregar os cupons. Tente novamente mais tarde.</p>`;
+    }
+}
+
+// 2. Função para renderizar os cards no HTML
+function renderCoupons(couponsList) {
+    const grid = document.querySelector('.coupons-grid');
+    grid.innerHTML = ""; 
+
+    couponsList.forEach(coupon => {
+        const html = `
+            <div class="coupon-card" data-store="${coupon.store}">
+                <div class="coupon-header">
+                    <div class="store-logo">
+                        <img src="${coupon.image}" alt="Logo ${coupon.store}" style="width: 50px; height: 50px; object-fit: contain;">
+                    </div>
+                    <div>
+                        <div class="offer-value">${coupon.value}</div>
+                        <div class="offer-label">${coupon.label}</div>
+                    </div>
+                </div>
+                <div class="coupon-body">
+                    <p class="description">${coupon.description}</p>
+                    <div class="expiry"><i class="fa-regular fa-clock"></i> ${coupon.expiry}</div>
+                    <div class="copy-container">
+                        <span class="coupon-code">${coupon.code}</span>
+                        <button class="btn-copy" onclick="copyCode(this, '${coupon.code}')">PEGAR</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        grid.insertAdjacentHTML('beforeend', html);
+    });
+}
+
+// 3. Função de Filtro (Atualizada para usar a lista do JSON)
+function filterCoupons(event, category) {
+    // Estilo dos botões
+    const btns = document.querySelectorAll('.filter-btn');
+    btns.forEach(btn => btn.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+
+    // Filtragem lógica
+    if (category === 'all') {
+        renderCoupons(allCoupons);
+    } else {
+        const filtered = allCoupons.filter(c => c.store === category);
+        renderCoupons(filtered);
+    }
+}
+
+// 4. Função de Copiar (Mantida a sua lógica original)
+function copyCode(btn, code) {
+    const card = btn.closest('.coupon-card');
+    card.classList.add('revealed');
+
+    navigator.clipboard.writeText(code).then(() => {
+        btn.innerText = "COPIADO";
+        btn.classList.add('copied');
+
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+
+        setTimeout(() => {
+            btn.innerText = "PEGAR";
+            btn.classList.remove('copied');
+        }, 3000);
+    });
+}
+
+// Inicia o carregamento
+loadCoupons();
+</script>

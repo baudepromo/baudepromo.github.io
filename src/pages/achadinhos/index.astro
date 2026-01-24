@@ -1,0 +1,226 @@
+---
+import Global from '../../components/global.astro';
+import Layout from '../../layouts/MainLayout.astro';
+import Achadinhos from '../../components/achadinhos.astro'
+---
+<Layout>
+    <style is:inline>
+        .hero-mini {
+            background: var(--primary-gradient);
+            padding: 30px 20px 80px;
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 20px rgba(255, 75, 75, 0.15);
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        /* --- ESTILOS DO CARD E BUSCA (Mantidos do seu original) --- */
+
+        .search-wrapper input {margin-top: 25px; width: 100%; padding: 16px 20px 16px 50px; border-radius: 50px; border: none; font-size: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); outline: none;}
+        .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #999; }
+
+        .grid-container { max-width: 1200px; margin: -40px auto 0; padding: 0 20px; position: relative; z-index: 2; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        @media(min-width: 768px) { .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; } }
+
+        .card { 
+            background: white; 
+            border-radius: var(--radius-card); 
+            overflow: hidden; 
+            text-decoration: none; 
+            color: inherit; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            transition: transform 0.2s; 
+            display: flex; 
+            flex-direction: column; /* Organiza imagem, info e botão em coluna */
+            position: relative; 
+            height: 100%; /* Fundamental para cards de mesma altura */
+        }
+
+        .card:hover { transform: translateY(-5px); }
+        .badge { position: absolute; top: 10px; left: 10px; background: var(--accent-yellow); color: #000; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
+        .card-img-wrapper { width: 100%; aspect-ratio: 1/1; background: #fff; padding: 15px; display: flex; align-items: center; justify-content: center; }
+        .card-img-wrapper img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .card-info { 
+            padding: 15px; 
+            display: flex; 
+            flex-direction: column; 
+            flex-grow: 1; /* Ocupa todo o espaço vertical disponível abaixo da imagem */
+            border-top: 1px solid #f0f0f0; 
+        }
+
+        .card-title { 
+            font-size: 0.9rem; 
+            font-weight: 700; 
+            color: #333; 
+            margin-bottom: 10px; 
+            /* Removemos a altura fixa para deixar o flexbox trabalhar, 
+               mas mantemos o line-clamp para limitar linhas se quiser */
+            display: -webkit-box; 
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical; 
+            overflow: hidden;
+        }
+
+        .current-price { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: #ff4b4b; 
+            margin-bottom: 10px; /* Adicionado um respiro antes do botão */
+        }
+
+        /* O TRUQUE: margin-top: auto joga o botão para o final do flex container */
+        .btn-view { 
+            margin-top: auto; 
+            background: #111; 
+            color: white; 
+            text-align: center; 
+            padding: 8px; 
+            border-radius: 8px; 
+            font-size: 0.8rem; 
+            font-weight: 700; 
+        }
+        
+        .cards span {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 40px 0;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Estilo dos Botões Circulares */
+.page-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.page-btn svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--text-dark);
+    transition: fill 0.3s;
+}
+
+/* Hover e Clique */
+.page-btn:hover {
+    background: var(--primary-red, #ff4d4d);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 77, 77, 0.3);
+}
+
+.page-btn:hover svg {
+    fill: white;
+}
+
+.page-btn:active {
+    transform: scale(0.9);
+}
+
+/* Indicador de Página Central */
+
+#page {
+    color: var(--primary-red, #ff4d4d);
+}
+
+/* Estado desativado */
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+
+#page {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #111;
+    background: #eee;
+    padding: 8px 16px;
+    border-radius: 10px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.search-wrapper {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    margin-top: 25px;
+    position: absolute;
+    left: 15px;
+    width: 18px;
+    height: 18px;
+    color: #888;
+    transition: color 0.3s ease;
+    pointer-events: none; /* Garante que o clique passe para o input */
+}
+    </style>
+    <section class="hero-mini">
+        <div class="faq-wrapper">
+    <a href="javascript:history.back()" class="btn-back">
+      <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Voltar
+    </a>
+    <h1>Ofertas & Achadinhos</h1>
+    <p>Curadoria diária das melhores promoções.</p>
+    
+    <div class="search-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        
+        <input type="text" id="search" placeholder="O que você está procurando?">
+    </div>
+</section>
+
+    <main class="grid-container">
+        <div class="grid" id="grid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">
+                <i class="fa-solid fa-spinner fa-spin fa-2x"></i><br><br>Carregando ofertas...
+            </div>
+        </div>
+
+        <nav class="pagination">
+    <button id="prev" class="page-btn" aria-label="Anterior">
+        <svg viewBox="0 0 320 512"><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
+    </button>
+    
+        <span id="page">1</span>
+    </div>
+
+    <button id="next" class="page-btn" aria-label="Próximo">
+        <svg viewBox="0 0 320 512"><path d="M311.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L243.2 256 73.9 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
+    </button>
+</nav>
+    </main>
+    <Achadinhos></Achadinhos>
+    <Global></Global>
+</Layout>

@@ -1,0 +1,238 @@
+---
+import Layout from "../../layouts/MainLayout.astro"
+import Global from "../../components/global.astro"
+---
+
+<Layout>
+  <style is:inline>
+    :root {
+      --text-dark: #2c3e50;
+      --text-light: #555;
+      --bg-card: #ffffff;
+      --border-color: #eee;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    /* Hero Section Unificada */
+    .hero-section {
+      background: var(--primary-gradient);
+      padding: 60px 20px 100px;
+      text-align: center;
+      color: white;
+      border-bottom-left-radius: 40px;
+      border-bottom-right-radius: 40px;
+      margin-bottom: -60px;
+    }
+
+    .hero-section h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    /* Container Principal */
+    .content-wrapper {
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Estilo dos Cards (FAQ e Política) */
+    .info-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: var(--text-dark);
+      font-size: 1.8rem;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #fff0f0;
+      display: block;
+    }
+
+    /* --- ESTILO FAQ (Details) --- */
+    .faq-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    details {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    details[open] {
+      border-color: var(--accent-orange);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    summary {
+      padding: 18px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .icon-arrow {
+      width: 18px;
+      transition: transform 0.3s;
+    }
+
+    details[open] .icon-arrow { transform: rotate(180deg); stroke: var(--accent-orange); }
+
+    .faq-content { padding: 0 18px 18px; color: var(--text-light); line-height: 1.6; }
+
+    /* --- ESTILO POLÍTICA --- */
+    .policy-text h2 {
+      font-size: 1.3rem;
+      color: var(--accent-orange);
+      margin: 25px 0 15px;
+    }
+
+    .policy-text ul { list-style: none; padding-left: 5px; }
+    
+    .policy-text li {
+      margin-bottom: 12px;
+      padding-left: 30px;
+      position: relative;
+      color: var(--text-light);
+    }
+
+    .policy-text li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent-orange);
+      font-weight: bold;
+    }
+
+    /* Botão Voltar */
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 600px) {
+      .hero-section h1 { font-size: 1.8rem; }
+      .info-card { padding: 20px; }
+    }
+  </style>
+
+  <div class="hero-section">
+    <div class="content-wrapper" style="padding-bottom: 0;">
+      <a href="javascript:history.back()" class="btn-back">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Voltar
+      </a>
+      <h1>FAQ</h1>
+      <p>Perguntas mais frenquentes sobre o baú de promoções</p>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="info-card">
+      <span class="section-title">Perguntas Frequentes</span>
+      <div class="faq-container">
+
+        <details>
+        <summary>
+          O que é o Baú de Promoções?
+          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="faq-content">
+          <p>O <strong>Baú de Promoções</strong> é uma curadoria especializada em ofertas. Nossa equipe monitora 24 horas por dia os maiores e-commerces do mundo para encontrar "achadinhos", cupons exclusivos e produtos com preços imperdíveis. Nós filtramos o que realmente vale a pena para você economizar tempo e dinheiro.</p>
+        </div>
+      </details>
+
+        <details>
+        <summary>
+          É seguro comprar através dos links?
+          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="faq-content">
+          <p><strong>Sim, é 100% seguro.</strong> Nós não processamos pagamentos nem vendemos produtos diretamente. O Baú funciona como uma vitrine que redireciona você para lojas oficiais e confiáveis, como:</p>
+          <ul>
+            <li>Amazon</li>
+            <li>Mercado Livre</li>
+            <li>Shopee</li>
+            <li>AliExpress</li>
+            <li>Magalu</li>
+          </ul>
+          <p>Toda a transação, pagamento e entrega são realizados diretamente por estas plataformas consagradas.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Eu pago algo para usar o Baú de Promoções?
+          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="faq-content">
+          <p>Não! O acesso ao Baú e a todas as ofertas é <strong>totalmente gratuito</strong>. Nosso modelo de negócio permite que você aproveite os melhores preços sem pagar nenhuma taxa por isso.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          O preço do produto mudou. O que aconteceu?
+          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="faq-content">
+          <p>As promoções na internet são extremamente dinâmicas. Os preços podem mudar rapidamente devido a:</p>
+          <ul>
+            <li>Esgotamento do estoque promocional;</li>
+            <li>Término da validade de cupons limitados;</li>
+            <li>Alterações automáticas de algoritmos das lojas.</li>
+          </ul>
+          <p>Dica de ouro: <strong>viu a oferta no Baú? Garanta logo a sua antes que acabe!</strong></p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Tenho garantias sobre os produtos?
+          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="faq-content">
+          <p>Sim! Você possui todas as garantias oferecidas pela loja onde finalizou a compra. Caso precise de troca, devolução ou suporte técnico, basta entrar em contato direto com a loja oficial (Amazon, Shopee, etc.) através do seu histórico de pedidos.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>
+          Como saber se serei taxado em compras internacionais?
+          <svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </summary>
+        <div class="faq-content">
+          <p>Priorizamos ofertas que participam de programas de conformidade (como o <strong>Remessa Conforme</strong>). Ao clicar no link, verifique no carrinho se os impostos já estão inclusos. Se aparecerem no fechamento do pedido, o produto chegará à sua casa sem cobranças surpresas dos Correios.</p>
+        </div>
+      </details>
+      </div>
+    </div>
+  </div>
+  <Global/>
+</Layout>

@@ -1,0 +1,170 @@
+---
+// Layout.astro ou BaseLayout.astro
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { 
+  title = "Baú de Promoções | Achadinhos e Ofertas", // Título Padrão
+  description = "Sua curadoria de confiança para achadinhos da Shopee, Amazon e AliExpress. Economize com segurança.", // Descrição Padrão
+  image = "/banner-social.jpg" // Imagem padrão para compartilhamento (crie essa imagem na pasta public)
+} = Astro.props;
+
+// Pega a URL atual para a tag canonical
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles/global.css">
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.url)} />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+</head>
+<style>
+    /* Seus estilos originais mantidos */
+    .pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-icon { width: 1.2em; height: 1.2em; display: block; }
+    .btn-white { background: white; color: #ff4b4b; }
+    .btn-white:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    
+    /* Adição para acessibilidade de links de pular conteúdo */
+    .skip-link {
+        position: absolute; top: -40px; left: 0; background: #000; color: white; padding: 8px; z-index: 100;
+        transition: top 0.3s;
+    }
+    .skip-link:focus { top: 0; }
+</style>
+<body>
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
+    <header class="top-bar">
+        <a href="/" class="logo" aria-label="Ir para página inicial">
+            <svg class="logo-icon" viewBox="0 0 640 512" aria-hidden="true">
+                <path fill="currentColor" d="M560.3 237.2c10.4 11.8 28.3 14.4 41.8 5.5 14.7-9.8 18.7-29.7 8.9-44.4l-48-72c-2.8-4.2-6.6-7.7-11.1-10.2L351.4 4.7c-19.3-10.7-42.8-10.7-62.2 0L88.8 116c-5.4 3-9.7 7.4-12.6 12.8L27.7 218.7c-12.6 23.4-3.8 52.5 19.6 65.1l33 17.7 0 53.3c0 23 12.4 44.3 32.4 55.7l176 99.7c19.6 11.1 43.5 11.1 63.1 0l176-99.7c20.1-11.4 32.4-32.6 32.4-55.7l0-117.5zm-240-9.8L170.2 144 320.3 60.6 470.4 144 320.3 227.4zm-41.5 50.2l-21.3 46.2-165.8-88.8 25.4-47.2 161.7 89.8z"/>
+            </svg>
+            <span class="logo-text">Baú de <span class="highlight">Promocões</span></span>
+        </a>
+        <button class="hamburger-btn" onclick="this.classList.toggle('active'); toggleMenu()" aria-label="Abrir menu de navegação">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+    </header>
+
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+
+    <nav id="sideMenu" class="mobile-menu" aria-label="Menu Principal">
+        <button class="close-menu" onclick="toggleMenu()" aria-label="Fechar menu">&times;</button>
+
+        <div class="menu-links">
+            <a href="/"><span>⬅️</span> Início</a>
+            <a href="/achadinhos"><span>🛒</span> Achadinhos</a>
+            <a href="/produtos"><span>📦</span> Produtos</a>
+            <a href="/cupons"><span>🎫</span> Cupons</a>
+        </div>
+
+        <hr class="menu-divider">
+
+        <div class="menu-links-secondary">
+            <a href="/sobre"><span>ℹ️</span> Sobre</a>
+            <a href="/faq"><span>💬</span> FAQ</a>
+            <a href="/afiliados"><span>🤝</span> Afiliados</a>
+            <a href="/politica-de-privacidade"><span>👤</span> Política de Privacidade</a>
+            <a href="/termos-de-uso"><span>⚖️</span> Termos de Uso</a>
+        </div>
+
+        <div id="authContainer">
+            <button id="loginBtn" class="btn-login-menu" onclick="openAuthModal()">
+                🔐 Entrar / Criar conta
+            </button>
+            </div>
+    </nav>
+
+    <main id="main-content">
+        <slot/>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h2>Baú de Promoções</h2>
+                <p>Sua curadoria de confiança para achadinhos da Shopee, Amazon e AliExpress.</p>
+            </div>
+
+            <div class="footer-links">
+                <h3>Navegação</h3>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/sobre">Sobre Nós</a></li>
+                    <li><a href="/achadinhos">Achadinhos</a></li>
+                    <li><a href="/contatos">Contato</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="/politica-de-privacidade">Privacidade</a></li>
+                    <li><a href="/termos-de-uso">Termos de Uso</a></li>
+                    <li><a href="/afiliados">Afiliados</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h3>Siga-nos</h3>
+                <ul>
+                    <li><a href="https://www.instagram.com/baudepromocaos" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                    <li><a href="https://www.tiktok.com/@baudepromocoes" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+                    <li><a href="https://x.com/baudepromocao" target="_blank" rel="noopener noreferrer">X</a></li>
+                    <li><a href="https://www.youtube.com/@Ba%C3%BAdePromo%C3%A7%C3%B5es" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Baú de Promoções • Todos os direitos reservados.</p>
+            <p class="disclaimer">
+                <strong>Aviso:</strong> Participamos de programas de afiliados alguns links podem gerar comissão isso em prol de manter o site ativo.
+            </p>
+        </div>
+    </footer>
+
+    <div id="authModal" class="modal-overlay">
+        <button class="google-btn" onclick="signInWithGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Logo do Google"> 
+            Entrar com Google
+        </button>
+         </div>
+</body>
+</html>

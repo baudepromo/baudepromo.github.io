@@ -1,0 +1,258 @@
+---
+import Global from '../../components/global.astro';
+import Layout from '../../layouts/MainLayout.astro';
+import Cupons from '../../components/cupons.astro';
+---
+<Layout>
+    <style is:inline>
+        .hero-header {
+            background: var(--primary-gradient);
+            padding: 40px 20px 80px;
+            text-align: center;
+            color: white;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            position: relative;
+        }
+
+        /* Estilo para o botão voltar com SVG */
+
+        /* Classe genérica para ícones SVG */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor; /* Pega a cor do texto pai */
+        }
+        
+        /* Se o ícone for de linha (stroke) em vez de preenchimento */
+        .icon-stroke {
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .hero-header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-top: 20px; /* Ajuste para não colar no botão voltar */
+        }
+
+        /* --- FILTROS --- */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: -30px auto 40px;
+            position: relative;
+            z-index: 10;
+            padding: 0 10px;
+        }
+
+        .filter-btn {
+            background: var(--white);
+            border: none;
+            color: var(--text-dark);
+            padding: 12px 25px;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-black);
+            color: var(--white);
+            transform: translateY(-2px);
+        }
+
+        /* --- GRID DE CUPONS --- */
+        .coupons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- CARD ESTILO "BAÚ" --- */
+        .coupon-card {
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 2px solid transparent;
+        }
+
+        .coupon-card:hover {
+            transform: translateY(-5px);
+            border-color: #ff4b4b;
+        }
+
+        .coupon-header {
+            padding: 25px;
+            background: #fff9f8;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px dashed #eee;
+        }
+
+        .store-logo {
+            width: 55px;
+            height: 55px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .offer-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ff4b4b;
+            line-height: 1;
+        }
+        .offer-label {
+            font-size: 0.85rem;
+            color: #666;
+            font-weight: 700;
+        }
+
+        .coupon-body {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .description {
+            font-size: 0.95rem;
+            color: #444;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .expiry {
+            font-size: 0.8rem;
+            color: #ff4b4b;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Container do Código */
+        .copy-container {
+            background: #f8f8f8;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coupon-code {
+            font-family: 'Monaco', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding-left: 15px;
+            color: #111;
+            filter: blur(5px);
+            transition: 0.3s;
+        }
+        
+        .coupon-card.revealed .coupon-code {
+            filter: blur(0);
+        }
+
+        .btn-copy {
+            background: var(--accent-black);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex; /* Para alinhar SVG interno se houver */
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-copy:hover { background: #333; }
+
+        .btn-copy.copied {
+            background: var(--success);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: var(--accent-black); color: #fff; padding: 15px 35px;
+            border-radius: 50px; font-weight: 700; z-index: 2000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0; pointer-events: none; transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.show { opacity: 1; bottom: 40px; }
+
+        @media (max-width: 600px) {
+            .hero-header h1 { font-size: 1.8rem; }
+            .coupons-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+
+    <section class="hero-header">
+        <div class="faq-wrapper">
+    <a href="javascript:history.back()" class="btn-back">
+      <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Voltar
+    </a>
+        
+        <h1>Central de Cupons</h1>
+        <p>Os melhores códigos para você economizar hoje</p>
+    </section>
+
+    <div class="filter-container">
+        <button class="filter-btn active" onclick="filterCoupons(event, 'all')">Todos</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'shopee')">Shopee</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'amazon')">Amazon</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'ali')">AliExpress</button>
+    </div>
+
+    <div class="coupons-grid">
+        <div class="coupon-card" data-store="shopee">
+             </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <svg class="icon icon-stroke" style="width: 18px; height: 18px;" viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        Cupom copiado com sucesso!
+    </div>
+    
+    <Cupons></Cupons>
+    <Global></Global>
+</Layout>

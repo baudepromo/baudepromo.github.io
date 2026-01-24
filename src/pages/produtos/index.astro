@@ -1,0 +1,233 @@
+---
+import Layout from "../../layouts/MainLayout.astro";
+import Global from '../../components/global.astro';
+import Produtos from "../../components/produtos/produtos.astro";
+
+// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
+// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+---
+<Layout>
+    <style is:inline>
+        /* --- ESTILOS DE ÍCONES (Adicionado) --- */
+        .icon {
+            width: 1.1em;
+            height: 1.1em;
+            fill: currentColor; /* Herda a cor do texto */
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px 40px;
+            position: relative; z-index: 2; flex: 1; width: 100%;
+        }
+
+        /* Barra de Busca */
+        .search-container {
+            background: white; padding: 10px 20px; border-radius: 100px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px;
+            max-width: 500px; margin: 0 auto 40px; border: 1px solid #eee;
+        }
+        
+        /* AJUSTE: Mudei de 'i' para '.icon' para pegar o SVG */
+        .search-container .icon { color: #ff4b4b; width: 1.2rem; height: 1.2rem; }
+        
+        .search-container input {
+            border: none; outline: none; font-size: 1rem; width: 100%; color: var(--text-dark);
+        }
+
+        /* Grid de Produtos */
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-top: 60px;
+        }
+
+        /* --- CARDS NOVOS --- */
+        .card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: all 0.3s ease;
+            display: flex; flex-direction: column; position: relative; border: 1px solid transparent;
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: #ffe0e0; }
+
+        .card-img-wrapper {
+            height: 220px; padding: 20px; display: flex; align-items: center; justify-content: center;
+            background: #fff; position: relative; border-bottom: 1px solid #f0f0f0;
+        }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s; }
+        .card:hover img { transform: scale(1.08); }
+
+        .store-badge {
+            position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 700;
+            padding: 4px 10px; border-radius: 8px; text-transform: uppercase; z-index: 10;
+        }
+        .badge-amazon { background: var(--amazon); color: #000; }
+        .badge-shopee { background: var(--shopee); color: #fff; }
+        .badge-aliexpress { background: var(--aliexpress); color: #fff; }
+        .badge-mercadolivre { background: var(--mercado-livre); color: #000; }
+
+        .card-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; text-align: left; }
+        
+        .card h3 {
+            font-size: 0.95rem; font-weight: 600; color: #333; margin-bottom: 10px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;
+        }
+
+        .price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .card-price { color: #ff4b4b; font-weight: 800; font-size: 1.3rem; }
+        
+        .btn-ver {
+            background: var(--text-dark); color: white; text-decoration: none;
+            padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-ver:hover { background: #ff4b4b; }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 1.8rem; }
+            .hero-buttons { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; white-space: nowrap; }
+            .pill-btn { flex: 0 0 auto; }
+            .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .card-img-wrapper { height: 160px; padding: 10px; }
+            .card-info { padding: 15px; }
+            .card-price { font-size: 1.1rem; }
+        }
+        /* --- ESTILO DA BARRA DE PESQUISA (Atualizado) --- */
+    .search-wrapper {
+        margin-top: 25px;
+        position: relative;
+        max-width: 500px;
+        margin: 0 auto;
+        
+        /* Estilo Pílula/Card */
+        background: white;
+        border-radius: 50px; /* Deixa bem redondo */
+        padding: 12px 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px; /* Espaço entre o ícone e o texto */
+        
+        /* Sombra e Borda */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border: 1px solid #eee;
+        transition: all 0.3s ease;
+    }
+
+    /* Efeito ao passar o mouse ou clicar na busca */
+    .search-wrapper:hover, 
+    .search-wrapper:focus-within {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+        border-color: #ff4d4d; /* Borda vermelha sutil */
+    }
+
+    .search-icon {
+        /* Removemos o position absolute para usar o flex gap */
+        position: static; 
+        width: 20px;
+        height: 20px;
+        /* Cor do ícone (vermelho) */
+        stroke: #ff4d4d; 
+        stroke-width: 2.5;
+        transition: transform 0.3s ease;
+    }
+
+    /* Animaçãozinha no ícone quando foca */
+    .search-wrapper:focus-within .search-icon {
+        transform: scale(1.1);
+    }
+
+    #search {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 1rem;
+        color: #333;
+        background: transparent;
+        font-weight: 500;
+    }
+
+    #search::placeholder {
+        color: #999;
+        font-weight: 400;
+    }
+</style>
+
+    <section class="hero-section" style="position: relative;">
+      <div class="faq-wrapper">
+        <a href="/" class="btn-back">
+          <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Voltar
+        </a>
+
+        <h1>Ofertas Imperdíveis 🔥</h1>
+        <p>A curadoria das melhores promoções da internet em um só lugar.</p>
+
+        <div class="hero-buttons">
+            <button class="pill-btn active" data-tab="eletronicos">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                </svg>
+                Eletrônicos
+            </button>
+            
+            <button class="pill-btn" data-tab="casa">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Casa
+            </button>
+            
+            <button class="pill-btn" data-tab="cozinha">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-5 8.66V22H7v-1.34A10 10 0 0 1 2 12 10 10 0 0 1 12 2z"></path><path d="M12 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                </svg>
+                Cozinha
+            </button>
+            
+            <button class="pill-btn" data-tab="moda">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+                </svg>
+                Moda
+            </button>
+            <button class="pill-btn" data-tab="beleza">
+                <svg class="icon" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Beleza
+            </button>
+            
+            <a href="produtos/favoritos/" class="pill-link">
+                <button class="pill-btn" data-tab="Favoritos">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    Favoritos
+                </button>
+            </a>
+        </div>
+
+        <div class="search-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search" placeholder="O que você está procurando?">
+        </div>
+      </div>
+    </section>
+    <main class="main-content">
+    <!-- GRID DE PRODUTOS -->
+    <div id="product-grid" class="cards-grid"></div>
+
+    <Global />
+    <Produtos />
+
+  </main>
+    <Global></Global>
+    <Produtos></Produtos>
+</Layout>
