@@ -9,6 +9,7 @@
             const res = await fetch('/data/achadinhos.json');
             if (!res.ok) throw new Error("Erro ao buscar JSON");
             const data = await res.json();
+            
             // Mantendo sua lógica de embaralhar
             allProducts = data.sort(() => Math.random() - 0.5);
             filteredProducts = [...allProducts];
@@ -18,32 +19,22 @@
         }
     }
 
-    // --- NOVA LÓGICA DE PESQUISA ---
-// Função auxiliar para remover acentos e deixar em minúsculo
-const normalizeText = (text) => 
-    text ? text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+    // --- LÓGICA DE PESQUISA ---
+    const normalizeText = (text) => 
+        text ? text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
 
-document.getElementById('search').addEventListener('input', (e) => {
-    const termoBusca = normalizeText(e.target.value);
-    const palavrasChave = termoBusca.split(' ').filter(p => p.length > 0);
+    document.getElementById('search').addEventListener('input', (e) => {
+        const termoBusca = normalizeText(e.target.value);
+        const palavrasChave = termoBusca.split(' ').filter(p => p.length > 0);
 
-    filteredProducts = allProducts.filter(produto => {
-        // Texto onde vamos procurar (Título + Badge)
-        const conteudoBusca = normalizeText(`${produto.title} ${produto.badge || ''}`);
-        
-        // Verifica se TODAS as palavras digitadas estão no conteúdo do produto
-        return palavrasChave.every(palavra => conteudoBusca.includes(palavra));
-    });
+        filteredProducts = allProducts.filter(produto => {
+            // Texto onde vamos procurar (Título + Badge)
+            const conteudoBusca = normalizeText(`${produto.title} ${produto.badge || ''}`);
+            
+            // Verifica se TODAS as palavras digitadas estão no conteúdo do produto
+            return palavrasChave.every(palavra => conteudoBusca.includes(palavra));
+        });
 
-    currentPage = 1; 
-    render();
-        
-        // Filtra os produtos pelo título
-        filteredProducts = allProducts.filter(produto => 
-            produto.title.toLowerCase().includes(termoBusca)
-        );
-
-        // Reseta para a primeira página ao pesquisar
         currentPage = 1; 
         render();
     });
@@ -62,20 +53,32 @@ document.getElementById('search').addEventListener('input', (e) => {
         const start = (currentPage - 1) * PER_PAGE;
         const end = start + PER_PAGE;
 
-        filteredProducts.slice(start, end).forEach(p => {
+        // Adicionei o 'index' aqui para sabermos a posição do item
+        filteredProducts.slice(start, end).forEach((p, index) => {
             let displayPrice = p.currentPrice || p.price || "0,00";
+            
+            // --- LÓGICA DO LAZY LOADING ---
+            // Se o índice for menor que 6 (0 a 5), carrega imediato (eager).
+            // Caso contrário, usa o lazy load.
+            const loadingAttr = index < 6 ? 'eager' : 'lazy';
+            
+            // Opcional: Adicionar fetchpriority="high" nos 2 primeiros para prioridade máxima
+            const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
+
             grid.insertAdjacentHTML('beforeend', `
                 <a href="${p.link}" class="card" target="_blank">
                     <span class="badge">${p.badge || '🔥 OFERTA'}</span>
                     <div class="card-img-wrapper">
                         <img 
-                     src="${p.image}" 
-                     alt="${p.img}"
-                     onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
-                     decoding="async"
-                     width="300"
-                     height="300"
-                     >
+                            src="${p.image}" 
+                            alt="${p.img}"
+                            loading="${loadingAttr}"
+                            ${fetchPriority}
+                            onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
+                            decoding="async"
+                            width="300"
+                            height="300"
+                        >
                     </div>
                     <div class="card-info">
                         <h3 class="card-title">${p.title}</h3>
