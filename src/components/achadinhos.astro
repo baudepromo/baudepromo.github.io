@@ -60,7 +60,7 @@
             // --- LÓGICA DO LAZY LOADING ---
             // Se o índice for menor que 6 (0 a 5), carrega imediato (eager).
             // Caso contrário, usa o lazy load.
-            const loadingAttr = index < 6 ? 'eager' : 'lazy';
+            const loadingAttr = index < 8 ? 'eager' : 'lazy';
             
             // Opcional: Adicionar fetchpriority="high" nos 2 primeiros para prioridade máxima
             const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
