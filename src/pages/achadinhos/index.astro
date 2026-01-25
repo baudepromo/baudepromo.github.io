@@ -4,21 +4,47 @@ import Layout from '../../layouts/MainLayout.astro';
 import Achadinhos from '../../components/achadinhos.astro'
 ---
 <Layout>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "Fatiador Profissional Multifuncional De Aço Inoxidável 16 Em 1 Para Vegetais/Frutas/Legumes",
+  "image": [
+    "https://down-br.img.susercontent.com/file/cn-11134207-7ras8-mbhvo90jyekt52"
+  ],
+  "description": "Melhor oferta da semana",
+  "brand": {
+    "@type": "Brand",
+    "name": "DeL & Store"
+  },
+  "review": {
+    "@type": "Review",
+    "reviewRating": {
+      "@type": "Rating",
+      "ratingValue": "4.8",
+      "bestRating": "4.9"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Baú de Promoções"
+    }
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": "https://s.shopee.com.br/50Si0ZRjzn",
+    "priceCurrency": "BRL",
+    "price": "R$34,90", 
+    "priceValidUntil": "2026-1-24",
+    "itemCondition": "https://schema.org/NewCondition",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": "Shopee"
+    }
+  }
+}
+</script>
     <style is:inline>
-        .hero-mini {
-            background: var(--primary-gradient);
-            padding: 30px 20px 80px;
-            text-align: center;
-            color: white;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-            box-shadow: 0 10px 20px rgba(255, 75, 75, 0.15);
-            position: relative;
-            margin-bottom: 30px;
-        }
-
-        /* --- ESTILOS DO CARD E BUSCA (Mantidos do seu original) --- */
-
         .search-wrapper input {margin-top: 25px; width: 100%; padding: 16px 20px 16px 50px; border-radius: 50px; border: none; font-size: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); outline: none;}
         .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #999; }
 
@@ -64,14 +90,6 @@ import Achadinhos from '../../components/achadinhos.astro'
             -webkit-box-orient: vertical; 
             overflow: hidden;
         }
-
-        .current-price { 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            color: #ff4b4b; 
-            margin-bottom: 10px; /* Adicionado um respiro antes do botão */
-        }
-
         /* O TRUQUE: margin-top: auto joga o botão para o final do flex container */
         .btn-view { 
             margin-top: auto; 
@@ -83,11 +101,6 @@ import Achadinhos from '../../components/achadinhos.astro'
             font-size: 0.8rem; 
             font-weight: 700; 
         }
-        
-        .cards span {
-    font-weight: 600;
-    font-size: 0.9rem;
-}
 
 .pagination {
     display: flex;
@@ -179,15 +192,15 @@ import Achadinhos from '../../components/achadinhos.astro'
     pointer-events: none; /* Garante que o clique passe para o input */
 }
     </style>
-    <section class="hero-mini">
-        <div class="faq-wrapper">
-    <a href="javascript:history.back()" class="btn-back">
-      <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Voltar
-    </a>
+    <section class="hero-section" style="position: relative;">
+      <div class="faq-wrapper">
+        <a href="/" class="btn-back">
+          <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Voltar
+        </a>
     <h1>Ofertas & Achadinhos</h1>
     <p>Curadoria diária das melhores promoções.</p>
     

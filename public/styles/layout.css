@@ -281,3 +281,143 @@ footer {
       height: 18px;
       stroke: currentColor;
     }
+
+    /*Menu porra*/
+/* --- CONFIGURAÇÃO GERAL DO TOPO --- */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #ffffff; /* Fundo branco */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Sombra leve */
+    position: relative;
+    z-index: 1000;
+}
+
+.logo {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+/* --- 1. ESTILO DO MENU HAMBÚRGUER --- */
+.hamburger-btn {
+    width: 30px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    z-index: 1100; /* Fica acima do menu lateral */
+}
+
+.hamburger-btn span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: #333;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Animação virando X */
+.hamburger-btn.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger-btn.active span:nth-child(2) {
+    opacity: 0;
+}
+.hamburger-btn.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -8px);
+}
+
+/* --- MENU LATERAL (SIDEBAR) --- */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Escondido na esquerda */
+    width: 250px;
+    height: 100vh;
+    background-color: #333;
+    padding-top: 80px;
+    transition: left 0.3s ease;
+    z-index: 1050;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+}
+
+.sidebar.active {
+    left: 0; /* Aparece */
+}
+
+.sidebar nav a {
+    display: block;
+    padding: 15px 20px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #444;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1040;
+}
+.overlay.active { display: block; }
+
+/* --- 2. ESTILO DO BOTÃO DE LOGIN --- */
+.btn-login {
+    width: 240px;
+    background-color: #007bff; /* Azul padrão */
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-login:hover {
+    background-color: #0056b3;
+}
+
+/* --- 3. ESTILO DO PERFIL LOGADO --- */
+.user-profile {
+    display: flex; /* Alinha foto e texto lado a lado */
+    align-items: center;
+    gap: 10px;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Deixa a foto redonda */
+    object-fit: cover;
+    border: 2px solid #007bff;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+#userName {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.logout-link {
+    color: #dc3545; /* Vermelho para sair */
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-decoration: underline;
+}

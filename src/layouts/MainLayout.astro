@@ -9,7 +9,7 @@ interface Props {
 const { 
   title = "Baú de Promoções | Achadinhos e Ofertas", // Título Padrão
   description = "Sua curadoria de confiança para achadinhos da Shopee, Amazon e AliExpress. Economize com segurança.", // Descrição Padrão
-  image = "/banner-social.jpg" // Imagem padrão para compartilhamento (crie essa imagem na pasta public)
+  image = "/favicon.svg" // Imagem padrão para compartilhamento (crie essa imagem na pasta public)
 } = Astro.props;
 
 // Pega a URL atual para a tag canonical
@@ -21,7 +21,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.svg" />
     <link rel="stylesheet" href="/styles/global.css">
 
     <title>{title}</title>
@@ -43,7 +43,70 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="sitemap" href="/sitemap-index.xml" />
 </head>
 <style>
-    /* Seus estilos originais mantidos */
+    .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .user-profile img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #007bff;
+    }
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+        font-size: 0.85rem;
+    }
+    #userName { font-weight: bold; color: #333; }
+    .logout-link { color: #dc3545; cursor: pointer; font-size: 0.75rem; text-decoration: underline; }
+
+    /* --- MODAL DE LOGIN --- */
+    .modal-overlay {
+        display: none;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        align-items: center; justify-content: center;
+        z-index: 2000;
+    }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 350px;
+        text-align: center;
+        position: relative;
+    }
+    .modal-content input {
+        width: 100%; padding: 10px; margin: 10px 0;
+        border: 1px solid #ddd; border-radius: 6px;
+    }
+    .close-modal {
+        position: absolute; top: 10px; right: 15px;
+        font-size: 24px; cursor: pointer;
+    }
+    .google-btn {
+        background: white; border: 1px solid #ccc;
+        color: #333; width: 100%; padding: 10px;
+        border-radius: 6px; cursor: pointer; font-weight: 600;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        margin-top: 10px;
+    }
+    .main-auth-btn {
+        background: #007bff; color: white; border: none;
+        width: 100%; padding: 12px; border-radius: 6px;
+        font-weight: bold; cursor: pointer; margin-top: 10px;
+    }
+    
+    /* Responsividade para esconder Auth no mobile se necessário */
+    @media (max-width: 600px) {
+        .logo-text { display: none; } /* Esconde texto da logo no mobile se faltar espaço */
+    }
+    
     .pill-btn {
         display: inline-flex;
         align-items: center;
@@ -81,7 +144,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             <span class="bar"></span>
         </button>
     </header>
-
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
 
     <nav id="sideMenu" class="mobile-menu" aria-label="Menu Principal">
@@ -99,18 +161,27 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         <div class="menu-links-secondary">
             <a href="/sobre"><span>ℹ️</span> Sobre</a>
             <a href="/faq"><span>💬</span> FAQ</a>
+            <a href="/contatos"><span>✉️</span> Contato</a>
             <a href="/afiliados"><span>🤝</span> Afiliados</a>
             <a href="/politica-de-privacidade"><span>👤</span> Política de Privacidade</a>
             <a href="/termos-de-uso"><span>⚖️</span> Termos de Uso</a>
         </div>
 
-        <div id="authContainer">
-            <button id="loginBtn" class="btn-login-menu" onclick="openAuthModal()">
-                🔐 Entrar / Criar conta
+       <div class="auth-container">
+            <button id="loginBtn" class="btn-login" onclick="openAuthModal()">
+                Entrar
             </button>
-            </div>
-    </nav>
 
+            <div id="userInfo" class="user-profile" style="display: none;">
+                <img id="userPhoto" src="" alt="Foto">
+                <div class="user-details">
+                    <span id="userName">Usuário</span>
+                    <small onclick="logout()" class="logout-link">Sair</small>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
     <main id="main-content">
         <slot/>
     </main>
@@ -159,12 +230,27 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             </p>
         </div>
     </footer>
+    <div id="authModal" class="modal-overlay" onclick="if(event.target === this) closeAuthModal()">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeAuthModal()">&times;</span>
+            <h2 id="authTitle" style="margin-bottom: 20px;">Fazer Login</h2>
+            
+            <input type="email" id="authEmail" placeholder="Seu e-mail">
+            <input type="password" id="authPassword" placeholder="Sua senha">
+            
+            <button id="mainAuthBtn" class="main-auth-btn" onclick="handleEmailAuth()">Entrar</button>
+            
+            <p id="authToggle" onclick="toggleAuthMode()" style="cursor: pointer; color: #007bff; font-size: 0.9em; margin-top: 10px;">
+                Não tem conta? Cadastre-se.
+            </p>
 
-    <div id="authModal" class="modal-overlay">
-        <button class="google-btn" onclick="signInWithGoogle()">
-            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Logo do Google"> 
-            Entrar com Google
-        </button>
-         </div>
+            <hr style="margin: 20px 0; border-top: 1px solid #eee;">
+
+            <button class="google-btn" onclick="signInWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" alt="Google"> 
+                Continuar com Google
+            </button>
+        </div>
+    </div>
 </body>
 </html>

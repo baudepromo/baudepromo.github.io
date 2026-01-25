@@ -1,20 +1,47 @@
 ---
 import Global from '../components/global.astro';
 import Layout from '../layouts/MainLayout.astro';
+import { Image } from "astro:assets";
 ---
-<Layout>
-    <style is:global>
-    /* O botão precisa ser flex para alinhar ícone e texto */
-    .pill-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px; /* Espaço entre ícone e texto */
-        padding: 12px 24px;
-        text-decoration: none;
-        border-radius: 50px;
-        font-weight: 600;
-        transition: all 0.3s ease;
+<Layout 
+  title="Ofertas, Cupons e Achadinhos Online | Baú de Promoções" 
+  description="Economize com os melhores cupons e promoções da Amazon, Shopee e Mercado Livre. Achadinhos exclusivos e ofertas atualizadas hoje no Baú de Promoções!"
+>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Baú de Promoções",
+      "url": "https://baudepromocao.vercel.app",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://baudepromocao.vercel.app/busca?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "Baú de Promoções",
+      "url": "https://baudepromocao.vercel.app",
+      "logo": "https://baudepromocao.vercel.app/favicon.svg",
+      "sameAs": [
+        "https://www.instagram.com/baudepromocaos/",
+        "https://www.tiktok.com/@baudepromocoes1283",
+        "https://x.com/baudepromo"
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "name": "Melhores Ofertas e Cupons de Desconto",
+      "description": "Curadoria diária dos melhores achadinhos da Amazon, Shopee e Mercado Livre."
     }
+  ]
+}
+</script>
+    <style is:inline>
 
     /* O pulo do gato: dar tamanho ao SVG */
     .btn-icon {
@@ -23,10 +50,6 @@ import Layout from '../layouts/MainLayout.astro';
         display: block;
     }
 
-    .btn-white {
-        background: white;
-        color: #ff4b4b; /* Cor do seu tema */
-    }
     .faq-cta {
         display: inline-flex;
         align-items: center;
@@ -204,7 +227,14 @@ import Layout from '../layouts/MainLayout.astro';
         <p>Gosta do nosso trabalho? <br> Escaneie o QR Code para contribuir via PIX.</p>
         
         <div class="qr-container">
-            <img src="/img/qrcode-pix.webp" alt="QR Code PIX" loading="lazy">
+            <Image
+                src={"/images/qrcode-pix.webp"}
+                alt="Cupons de Desconto"
+                width={300}
+                height={260}
+                format="webp"
+                loading="eager"
+                />
         </div>
         
         <span class="pix-key-text">Chave: <strong>baudepromocao@gmail.com</strong></span>
@@ -212,27 +242,40 @@ import Layout from '../layouts/MainLayout.astro';
 </div>
         <div class="cards-grid">
             <a href="/achadinhos" class="card">
-                <img src="/assets/img/achadinhos.webp" alt="Achadinhos Shopee">
+                <img
+                src="https://down-br.img.susercontent.com/file/br-11134207-81z1k-mgp5p065nkef2a"
+                alt="Apple Watch"
+                width=600
+                height=600
+                loading="lazy"
+                />
                 <h3>Achadinhos Shopee</h3>
-                <span>Ver Coleção</span>
+                <span>Ver Coleção ➡️</span>
             </a>
 
-            <a href="/produtos" class="card">
-                <img src="/assets/img/logistics.webp" alt="Produtos em Alta">
+            <a href="http://localhost:4321/produtos/info/?slug=apple-watch-series-11-gps-caixa-em-alum-nio-rosa-dourado-de-42-mm-com-bracelete-desportiva-rosa-leve-m-g" class="card">
+                <img
+                src="https://m.media-amazon.com/images/I/419Qj9Ja7VL._AC_SX679_.jpg"
+                alt="Produtos em Alta"
+                width=600
+                height=600
+                loading="lazy"
+                />
                 <h3>Ofertas Amazon</h3>
-                <span>Ver Ofertas</span>
+                <span>Ver Ofertas ➡️</span>
             </a>
 
             <a href="/cupons" class="card">
-                <img src="/assets/img/promo.webp" alt="Cupons de Desconto">
+                <Image
+                src={"/images/cupons.webp"}
+                alt="Cupons de Desconto"
+                width={600}
+                height={600}
+                format="webp"
+                loading="eager"
+                />
                 <h3>Cupons do Dia</h3>
-                <span>Pegar Cupom</span>
-            </a>
-            
-            <a href="/produtos" class="card">
-                <img src="https://via.placeholder.com/300x200?text=Viral+TikTok" alt="Viral">
-                <h3>Virais do TikTok</h3>
-                <span>Ver Mais</span>
+                <span>Pegar Cupom ➡️</span>
             </a>
         </div>
     </main>
@@ -250,7 +293,7 @@ import Layout from '../layouts/MainLayout.astro';
             </svg>
         </a>
     </section>
-
+    
     <script is:inline>
     const btn = document.getElementById('open-support');
     const modal = document.getElementById('support-modal');

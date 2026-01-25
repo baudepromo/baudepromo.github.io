@@ -5,15 +5,6 @@ import Cupons from '../../components/cupons.astro';
 ---
 <Layout>
     <style is:inline>
-        .hero-header {
-            background: var(--primary-gradient);
-            padding: 40px 20px 80px;
-            text-align: center;
-            color: white;
-            border-bottom-left-radius: 50px;
-            border-bottom-right-radius: 50px;
-            position: relative;
-        }
 
         /* Estilo para o botão voltar com SVG */
 
@@ -31,15 +22,6 @@ import Cupons from '../../components/cupons.astro';
             stroke-width: 2;
             stroke-linecap: round;
             stroke-linejoin: round;
-        }
-
-        .hero-header h1 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            margin-top: 20px; /* Ajuste para não colar no botão voltar */
         }
 
         /* --- FILTROS --- */
@@ -173,7 +155,7 @@ import Cupons from '../../components/cupons.astro';
             font-weight: 700;
             padding-left: 15px;
             color: #111;
-            filter: blur(5px);
+            filter: blur(4px);
             transition: 0.3s;
         }
         
@@ -220,15 +202,15 @@ import Cupons from '../../components/cupons.astro';
         }
     </style>
 
-    <section class="hero-header">
-        <div class="faq-wrapper">
-    <a href="javascript:history.back()" class="btn-back">
-      <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Voltar
-    </a>
+<section class="hero-section" style="position: relative;">
+      <div class="faq-wrapper">
+        <a href="/" class="btn-back">
+          <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Voltar
+        </a>
         
         <h1>Central de Cupons</h1>
         <p>Os melhores códigos para você economizar hoje</p>

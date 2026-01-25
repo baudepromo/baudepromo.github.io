@@ -4,6 +4,27 @@ import Global from "../../components/global.astro"
 ---
 
 <Layout>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "Os cupons do Baú de Promoções são confiáveis?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Sim! Todos os nossos achadinhos e cupons são verificados manualmente antes de serem publicados, garantindo que você seja direcionado para lojas oficiais como Amazon e Shopee."
+    }
+  }, {
+    "@type": "Question",
+    "name": "Como utilizar um cupom de desconto?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Basta clicar no botão da oferta, copiar o código exibido e colá-lo no campo 'Cupom de Desconto' na finalização da compra na loja parceira."
+    }
+  }]
+}
+</script>
   <style is:inline>
     :root {
       --text-dark: #2c3e50;

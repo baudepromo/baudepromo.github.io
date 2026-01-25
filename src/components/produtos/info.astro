@@ -80,7 +80,52 @@
             showToast("Erro na operação.");
         }
     }
+    // --- FUNÇÃO PARA GERAR SCHEMA JSON-LD ---
+function updateSchema(product) {
+    // Remove scripts antigos de schema se houver (para evitar duplicidade ao navegar)
+    const existingScript = document.getElementById('product-schema');
+    if (existingScript) existingScript.remove();
 
+    // Tratamento do preço (BRL costuma usar vírgula, o Schema exige ponto)
+    // Ex: transforma "1.299,00" em "1299.00"
+    let priceFormatted = String(product.price).replace(/\./g, '').replace(',', '.');
+    
+    // Se o preço for apenas número sem formatação, garante duas casas decimais
+    if(!isNaN(priceFormatted)) {
+        priceFormatted = parseFloat(priceFormatted).toFixed(2);
+    }
+
+    const schemaData = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": product.title,
+        "image": [product.img],
+        "description": `Aproveite a oferta de ${product.title} por R$ ${product.price} na loja ${product.store}. ${product.sku || ''}`,
+        "sku": product.id,
+        "brand": {
+            "@type": "Brand",
+            "name": product.store // Ou use uma propriedade product.brand se tiver no JSON
+        },
+        "offers": {
+            "@type": "Offer",
+            "url": window.location.origin + window.location.pathname, // URL da sua página de detalhes
+            "priceCurrency": "BRL",
+            "price": priceFormatted,
+            "itemCondition": "https://schema.org/NewCondition", // Baseado no ícone "Original"
+            "availability": "https://schema.org/InStock",
+            "seller": {
+                "@type": "Organization",
+                "name": product.store
+            }
+        }
+    };
+
+    const script = document.createElement('script');
+    script.id = 'product-schema';
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(schemaData);
+    document.head.appendChild(script);
+}
     window.toggleWishlist = (pid, eid) => toggleCollection("wishlists", pid, eid, "active", "Salvo nos favoritos ❤️", "Removido dos favoritos");
     window.toggleAlert = (pid, eid) => toggleCollection("alerts", pid, eid, "active", "Alerta criado! 🔔", "Alerta removido");
 
@@ -140,18 +185,34 @@ async function loadProductDetails() {
             return;
         }
 
-        // --- ATUALIZAÇÃO DE SEO ---
-        document.title = `${product.title} - Melhor Preço | Baú de Promoções`;
-        
-        const metaDesc = document.querySelector('meta[name="description"]');
-        if (metaDesc) {
-            metaDesc.setAttribute("content", `Confira a oferta de ${product.title} por R$ ${product.price} na ${product.store}. Frete Grátis e Compra Segura.`);
-        }
+        // --- ATUALIZAÇÃO DE SEO EXISTENTE ---
+        // 1. Limpa o título para o link não ficar gigante
+const cleanTitle = product.title.length > 55 
+    ? product.title.substring(0, 52) + "..." 
+    : product.title;
+
+// 2. O TITULO (O que aparece no link azul e na aba do navegador)
+// Estrutura: Produto + Preço + Loja
+document.title = `${cleanTitle} - R$ ${product.price} na ${product.store}`;
+
+// 3. A DESCRIÇÃO (O texto que você criou, que vai embaixo do link)
+const metaDesc = document.querySelector('meta[name="description"]');
+if (metaDesc) {
+    // Aqui sim a sua frase brilha!
+    const descriptionText = `Confira o melhor preço de ${product.title}: apenas R$ ${product.price} na loja ${product.store}. Oferta verificada hoje pelo Baú de Promoções.`;
+    metaDesc.setAttribute("content", descriptionText);
+}
+
+        // >>> ADICIONE ESTA LINHA AQUI <<<
+        updateSchema(product);
+        // --------------------------------
 
         const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
+        
+
         const heartId = "heart_" + safeId;
         const alertId = "alert_" + safeId;
-
+        
         // Renderiza o HTML
         contentArea.innerHTML = `
             <div class="img-side">
@@ -168,7 +229,7 @@ async function loadProductDetails() {
                         ${SVGS.share}
                     </button>
                 </div>
-                <img src="${product.img}" alt="${product.title}">
+                <img src="${product.img}" alt="${product.title}" loading="lazy">
             </div>
             <div class="info-side">
                 <span class="store-tag">${SVGS.shop} ${product.store}</span>
