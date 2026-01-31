@@ -9,7 +9,7 @@ import vercel from '@astrojs/vercel';
 export default defineConfig({
   // Coloque seu domínio real aqui
   site: 'https://baudepromocao.vercel.app',
-
   integrations: [sitemap()],
-  adapter: vercel()
+  adapter: vercel(),
+  output: 'server'
 });
