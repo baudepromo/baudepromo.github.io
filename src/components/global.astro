@@ -1,11 +1,12 @@
 <script type="module">
-    // 1. Defina as variáveis globais, mas deixe-as VAZIAS por enquanto
+    // -----------------------------------------------------------
+    // 1. Definições Globais
+    // -----------------------------------------------------------
     let app, auth, provider;
     let authModule, appModule;
     let isFirebaseLoaded = false;
     let isSignUpMode = false;
 
-    // 2. Configuração (Só será usada depois)
     const firebaseConfig = {
         apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
         authDomain: "baudepromocao-oficial.firebaseapp.com",
@@ -16,39 +17,48 @@
     };
 
     // -----------------------------------------------------------
-    // 3. A MÁGICA: Função que baixa o Firebase só quando chamada
+    // 2. Carregamento Inteligente do Firebase
     // -----------------------------------------------------------
     async function loadFirebase() {
-        if (isFirebaseLoaded) return; // Se já carregou, não faz nada
+        if (isFirebaseLoaded) return;
 
-        console.log("⏳ Iniciando download do Firebase...");
+        console.log("⏳ Baixando Firebase...");
         
         try {
-            // Importa as bibliotecas dinamicamente (Isso é o que salva seu LCP)
+            // Importação Dinâmica
             [appModule, authModule] = await Promise.all([
                 import("https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"),
                 import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js")
             ]);
 
-            // Inicializa apenas agora
+            // Inicialização
             app = appModule.initializeApp(firebaseConfig);
             auth = authModule.getAuth(app);
             provider = new authModule.GoogleAuthProvider();
             isFirebaseLoaded = true;
 
-            // Ativa o monitoramento de usuário (Login persistente)
+            // --- A CORREÇÃO MÁGICA ---
+            // Isso trava o código aqui até o Firebase ler o banco de dados do navegador
+            // e ter 100% de certeza se o usuário está logado ou não.
+            await auth.authStateReady(); 
+
+            // Agora que temos certeza, atualizamos a tela com a verdade
+            updateUIState(auth.currentUser);
+
+            // E deixamos o vigia ligado para mudanças futuras
             authModule.onAuthStateChanged(auth, updateUIState);
 
-            console.log("✅ Firebase carregado e pronto!");
+            console.log("✅ Firebase sincronizado com sucesso!");
 
         } catch (error) {
-            console.error("Erro ao carregar Firebase:", error);
-            alert("Erro de conexão. Verifique sua internet.");
+            console.error("Erro crítico no Firebase:", error);
+            // Se der erro de conexão, garante que a UI não trave em estado estranho
+            updateUIState(null);
         }
     }
 
     // -----------------------------------------------------------
-    // 4. Lógica de UI (Atualiza a tela quando o user loga/desloga)
+    // 3. Atualização da Interface (UI)
     // -----------------------------------------------------------
     function updateUIState(user) {
         const loginBtn = document.getElementById('loginBtn');
@@ -57,75 +67,55 @@
         const userPhoto = document.getElementById('userPhoto');
         
         if (user) {
+            // 1. Garante que o container esteja visível
             if (loginBtn) loginBtn.style.display = 'none';
             if (userInfo) userInfo.style.display = 'flex';
-            if (userName) userName.innerText = user.displayName ? user.displayName.split(' ')[0] : 'Usuário';
-            if (userPhoto) userPhoto.src = user.photoURL || `https://ui-avatars.com/api/?name=${user.email}&background=random`;
+            
+            // 2. Atualiza o Nome (Pega o primeiro nome ou parte do email se não tiver nome)
+            const nameToDisplay = user.displayName ? user.displayName.split(' ')[0] : user.email.split('@')[0];
+            if (userName) userName.innerText = nameToDisplay;
+            
+            // 3. Atualiza a Foto
+            if (userPhoto) {
+                // Se o usuário tem foto (Google), usa ela. Se não, gera um avatar com a inicial.
+                const photoUrl = user.photoURL || `https://ui-avatars.com/api/?name=${nameToDisplay}&background=007bff&color=fff`;
+                
+                // Só atualiza se a foto for diferente para evitar que a imagem "pisque"
+                if (userPhoto.src !== photoUrl) {
+                    userPhoto.src = photoUrl;
+                }
+            }
+            
+            localStorage.setItem('isUserLoggedIn', 'true');
+            console.log("👤 Dados do usuário carregados:", user.email);
         } else {
+            // Se não tem usuário, limpa tudo
             if (loginBtn) loginBtn.style.display = 'block';
             if (userInfo) userInfo.style.display = 'none';
+            localStorage.removeItem('isUserLoggedIn');
         }
     }
 
     // -----------------------------------------------------------
-    // 5. Funções do Usuário (Modificadas para esperar o Firebase)
+    // 4. Funções Exportadas para o HTML (Window)
     // -----------------------------------------------------------
-
-    // Abrir modal: Dispara o carregamento do Firebase
     window.openAuthModal = async () => {
         const modal = document.getElementById('authModal');
         if (modal) modal.style.display = 'flex';
         
-        // Fecha menu
-        const menu = document.getElementById('sideMenu') || document.getElementById('mobileMenu');
+        // Fecha o menu lateral mobile para melhor experiência
+        const menu = document.getElementById('sideMenu');
         if (menu) menu.classList.remove('active');
-        if (document.getElementById('menuOverlay')) document.getElementById('menuOverlay').classList.remove('active');
-        
-        // Carrega o Firebase agora!
+        const overlay = document.getElementById('menuOverlay');
+        if (overlay) overlay.classList.remove('active');
+
         if (!isFirebaseLoaded) {
-            document.body.style.cursor = 'wait'; // Feedback visual
+            document.body.style.cursor = 'wait';
             await loadFirebase();
             document.body.style.cursor = 'default';
         }
     };
 
-    window.signInWithGoogle = async () => {
-        if (!isFirebaseLoaded) await loadFirebase();
-        authModule.signInWithPopup(auth, provider).then(closeAuthModal).catch(console.error);
-    };
-
-    window.handleEmailAuth = async () => {
-        if (!isFirebaseLoaded) await loadFirebase();
-
-        const email = document.getElementById('authEmail').value;
-        const password = document.getElementById('authPassword').value;
-        
-        if (!email || !password) {
-            alert("Preencha todos os campos");
-            return;
-        }
-
-        try {
-            if (isSignUpMode) {
-                await authModule.createUserWithEmailAndPassword(auth, email, password);
-            } else {
-                await authModule.signInWithEmailAndPassword(auth, email, password);
-            }
-            closeAuthModal();
-        } catch (e) { 
-            alert("Erro: " + e.message); 
-        }
-    };
-
-    window.logout = async () => {
-        if (!isFirebaseLoaded) await loadFirebase();
-        authModule.signOut(auth);
-        window.location.reload();
-    };
-
-    // -----------------------------------------------------------
-    // 6. Funções Utilitárias (Não dependem do Firebase)
-    // -----------------------------------------------------------
     window.closeAuthModal = () => {
         const modal = document.getElementById('authModal');
         if (modal) modal.style.display = 'none';
@@ -138,6 +128,44 @@
         document.getElementById('authToggle').innerText = isSignUpMode ? 'Já tem conta? Login.' : 'Não tem conta? Cadastre-se.';
     };
 
+    window.signInWithGoogle = async () => {
+        if (!isFirebaseLoaded) await loadFirebase();
+        try {
+            await authModule.signInWithPopup(auth, provider);
+            window.closeAuthModal();
+        } catch (error) {
+            console.error(error);
+            alert('Erro no login Google: ' + error.message);
+        }
+    };
+
+    window.handleEmailAuth = async () => {
+        if (!isFirebaseLoaded) await loadFirebase();
+        const email = document.getElementById('authEmail').value;
+        const password = document.getElementById('authPassword').value;
+
+        if (!email || !password) return alert("Preencha todos os campos");
+
+        try {
+            if (isSignUpMode) {
+                await authModule.createUserWithEmailAndPassword(auth, email, password);
+            } else {
+                await authModule.signInWithEmailAndPassword(auth, email, password);
+            }
+            window.closeAuthModal();
+        } catch (e) {
+            alert("Erro: " + e.message);
+        }
+    };
+
+    window.logout = async () => {
+        if (!isFirebaseLoaded) await loadFirebase();
+        await authModule.signOut(auth);
+        localStorage.removeItem('isUserLoggedIn'); // Limpa cache manual
+        window.location.reload();
+    };
+
+    // Funcionalidade do Menu Mobile
     window.toggleMenu = () => {
         const menu = document.getElementById('sideMenu') || document.getElementById('mobileMenu');
         const overlay = document.getElementById('menuOverlay');
@@ -159,15 +187,27 @@
         document.body.style.overflow = isActive ? 'hidden' : 'auto';
     };
 
-    window.addEventListener('click', (event) => {
-        const authModal = document.getElementById('authModal');
-        const overlay = document.getElementById('menuOverlay');
+    // -----------------------------------------------------------
+    // 5. Inicialização Imediata (DOMContentLoaded)
+    // -----------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        // Verifica nosso cache manual (mais rápido que esperar o Firebase)
+        // Nota: Mudei a verificação para ser mais simples e direta
+        const hasLocalCache = localStorage.getItem('isUserLoggedIn') === 'true' || 
+                              Object.keys(localStorage).some(key => key.startsWith('firebase:authUser'));
 
-        if (event.target === authModal) closeAuthModal();
-        if (event.target === overlay) window.toggleMenu();
+        if (hasLocalCache) {
+            console.log("⚡ Restaurando sessão visualmente...");
+            
+            // TRUQUE VISUAL: Mostra o menu ANTES do Firebase carregar
+            const loginBtn = document.getElementById('loginBtn');
+            const userInfo = document.getElementById('userInfo');
+            
+            if (loginBtn) loginBtn.style.display = 'none';
+            if (userInfo) userInfo.style.display = 'flex'; 
+            
+            // Inicia o download do Firebase em segundo plano
+            loadFirebase();
+        }
     });
-
-    // Opcional: Carregar Firebase em "segundo plano" após 5 segundos
-    // para que se o usuário já estiver logado, a foto apareça sozinha.
-    // setTimeout(() => loadFirebase(), 5000); 
 </script>

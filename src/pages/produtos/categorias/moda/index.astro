@@ -1,0 +1,13 @@
+---
+import Layout from "../../../../layouts/MainLayout.astro";
+import Global from '../../../../components/global.astro';
+import LayoutCategorias from "../../../../layouts/categorias.astro";
+import FetchPath from "../../../../components/produtos/categorias.astro";
+import Produtos from '../../../../components/produtos/produtos.astro';
+const { ativo, title, subtitle } = Astro.props;
+---
+<Layout title="Moda Casual e Confortável: Ofertas para Todos os Estilos | Baú de Promoções" description="Peças versáteis e confortáveis para o seu dia a dia. Aproveite nossa seleção de moda básica e casual com preços imperdíveis. Qualidade que cabe no seu bolso no Baú de Promoções!">
+<LayoutCategorias title="Moda & Acessórios" subtitle="Explore as últimas tendências e encontre peças essenciais para renovar seu guarda-roupa com estilo, conforto e qualidade." ativo="moda"></LayoutCategorias>
+<FetchPath fetchpath="/data/categorias/moda.json", categoria="moda"></FetchPath>
+<Global></Global>
+</Layout>

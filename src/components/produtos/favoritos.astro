@@ -1,8 +1,9 @@
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // Configuração do Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
         authDomain: "baudepromocao-oficial.firebaseapp.com",
@@ -12,87 +13,166 @@
         appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
     };
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // --- CONFIGURAÇÃO DAS FONTES DE DADOS ---
+    // Liste aqui todos os seus arquivos JSON de produtos
+    const DATA_SOURCES = [
+        '/data/categorias/moda.json',
+        '/data/categorias/eletronicos.json',
+        '/data/categorias/casa.json',
+        '/data/categorias/cozinha.json',
+        '/data/categorias/beleza.json',
+        '/data/categorias/fitness.json'
+    ];
+
+    let currentUser = null;
+
     onAuthStateChanged(auth, async (user) => {
+        const grid = document.getElementById("fav-grid");
+        currentUser = user;
+
         if (user) {
-            loadUserFavorites(user.uid);
+            grid.innerHTML = `
+                <div class="loading-container">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                    <p>Buscando seus favoritos...</p>
+                </div>`;
+            await loadUserFavorites(user.uid);
         } else {
-            // Usuário não logado - Visual atualizado
-            document.getElementById("fav-grid").innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-lock empty-icon" style="color: #ff4b4b;"></i>
-                    <h2>Acesso Restrito</h2>
-                    <p>Faça login para ver sua lista de desejos.</p>
-                    <a href="index.html" class="pill-btn btn-details" style="max-width: 200px; margin: 0 auto;">Ir para Login</a>
-                </div>
-            `;
+            renderLoginState(grid);
         }
     });
 
     async function loadUserFavorites(uid) {
         const grid = document.getElementById("fav-grid");
-        
+
         try {
-            // 1. Buscar IDs no Firestore
-            const snap = await getDoc(doc(db, "wishlists", uid));
-            
-            if (!snap.exists() || !snap.data().items || snap.data().items.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa-regular fa-heart empty-icon"></i>
-                        <h2>Sua lista está vazia</h2>
-                        <p>Favorite alguns produtos e eles aparecerão aqui!</p>
-                        <a href="/produtos" class="pill-btn btn-details" style="background: var(--primary-gradient); border:none; max-width: 200px; margin: 0 auto;">Ver Ofertas</a>
-                    </div>
-                `;
+            // 1. Buscar Lista de IDs no Firestore
+            const userDocRef = doc(db, "wishlists", uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
+                renderEmptyState(grid);
                 return;
             }
 
-            const favoriteIds = snap.data().items.map(id => String(id));
+            const favoriteIds = userSnap.data().items.map(id => String(id));
 
-            // 2. Buscar dados no products.json
-            const response = await fetch('/data/produtos.json');
-            const products = await response.json();
+            // 2. Buscar TODOS os produtos (de todas as categorias configuradas)
+            // Usamos Promise.all para carregar todos os JSONs ao mesmo tempo (mais rápido)
+            const fetchPromises = DATA_SOURCES.map(url => 
+                fetch(url + '?' + new Date().getTime()).then(res => res.json()).catch(() => [])
+            );
+            
+            const results = await Promise.all(fetchPromises);
+            // Junta todos os produtos em um único array (flat)
+            const allProducts = results.flat();
 
-            // 3. Filtrar produtos
-            const myFavorites = products.filter(p => favoriteIds.includes(String(p.id)));
+            // 3. Filtrar: Encontrar os produtos cujos IDs estão na lista do usuário
+            const myFavorites = allProducts.filter(p => favoriteIds.includes(String(p.id)));
 
             if (myFavorites.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa-regular fa-face-frown empty-icon"></i>
-                        <h2>Nenhuma oferta ativa.</h2>
-                        <p>Os produtos que você salvou podem ter saído de promoção.</p>
-                    </div>`;
+                // Caso tenha IDs salvos, mas os produtos não existam mais nos JSONs
+                renderEmptyState(grid);
                 return;
             }
 
-            // 4. Renderizar (USANDO O NOVO ESTILO VISUAL)
-            grid.innerHTML = "";
-            myFavorites.forEach(p => {
-                const slug = p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                
-                grid.innerHTML += `
-                    <div class="card">
-                        <img src="${p.img}" alt="${p.title}">
-                        <h3>${p.title}</h3>
-                        <span class="price">R$ ${p.price}</span>
-                        <a href="/produtos/info/?slug=${slug}" class="pill-btn btn-details">
-                            Ver Oferta <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </div>
-                `;
-            });
+            // 4. Renderizar
+            renderGrid(grid, myFavorites);
+
         } catch (error) {
             console.error("Erro:", error);
             grid.innerHTML = `
                 <div class="empty-state">
                     <i class="fa-solid fa-triangle-exclamation empty-icon" style="color: #ff9000;"></i>
-                    <p>Ocorreu um erro ao carregar seus favoritos.</p>
+                    <p>Erro ao carregar favoritos.</p>
                 </div>`;
         }
+    }
+
+    function renderGrid(grid, products) {
+        grid.innerHTML = "";
+        products.forEach(p => {
+            const slug = p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            
+            grid.innerHTML += `
+                <div class="card" id="card-${p.id}">
+                    <button class="btn-remove-fav" onclick="window.removeFavorite('${p.id}')" title="Remover dos favoritos">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <img src="${p.img}" alt="${p.title}" loading="lazy">
+                    <div class="card-content">
+                        <h3>${p.title}</h3>
+                        <span class="price">R$ ${p.price}</span>
+                        <a href="/produtos/categorias/${p.categoria}/info/?slug=${slug}" class="pill-btn btn-details">
+                            Ver Oferta <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // Função global para ser acessada pelo onclick do HTML
+    window.removeFavorite = async (productId) => {
+        if (!currentUser) return;
+
+        const card = document.getElementById(`card-${productId}`);
+        const confirmBtn = confirm("Deseja remover este item dos favoritos?");
+        
+        if (confirmBtn) {
+            try {
+                // Remove visualmente primeiro (UX rápida)
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+
+                // Remove do Firestore
+                const userDocRef = doc(db, "wishlists", currentUser.uid);
+                await updateDoc(userDocRef, {
+                    items: arrayRemove(productId), // Se o ID for número no JSON, use: arrayRemove(Number(productId))
+                    items: arrayRemove(Number(productId)) // Garante remoção se for numero ou string (previne erros de tipo)
+                });
+
+                // Remove do DOM
+                card.remove();
+
+                // Verifica se sobrou algo
+                const grid = document.getElementById("fav-grid");
+                if (grid.children.length === 0) {
+                    renderEmptyState(grid);
+                }
+
+            } catch (error) {
+                console.error("Erro ao remover:", error);
+                alert("Erro ao remover. Tente novamente.");
+                card.style.opacity = '1';
+                card.style.pointerEvents = 'all';
+            }
+        }
+    };
+
+    function renderEmptyState(grid) {
+        grid.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-regular fa-heart empty-icon"></i>
+                <h2>Sua lista está vazia</h2>
+                <p>Favorite alguns produtos e eles aparecerão aqui!</p>
+                <a href="/produtos" class="pill-btn btn-cta">Ver Ofertas</a>
+            </div>
+        `;
+    }
+
+    function renderLoginState(grid) {
+        grid.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-lock empty-icon" style="color: #ff4b4b;"></i>
+                <h2>Acesso Restrito</h2>
+                <p>Faça login para ver sua lista de desejos.</p>
+                <a href="#" onclick="window.openAuthModal(); return false;" class="pill-btn btn-cta">Fazer Login</a>
+            </div>
+        `;
     }
 </script>

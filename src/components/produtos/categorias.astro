@@ -1,0 +1,215 @@
+---
+interface Props {
+  fetchpath: string;
+  categoria: string;
+}
+
+const { fetchpath, categoria } = Astro.props;
+---
+<script define:vars={{ fetchpath, categoria }} type="module">
+    window.fepath = fetchpath;
+    
+    const productGrid = document.getElementById("product-grid");
+    const searchInput = document.getElementById("search");
+    
+    // Elementos do Slider
+    const rangeMin = document.getElementById("range-min");
+    const rangeMax = document.getElementById("range-max");
+    const labelMin = document.getElementById("min-label");
+    const labelMax = document.getElementById("max-label");
+    const progress = document.getElementById("slider-progress");
+
+    let allProducts = []; 
+    let maxPriceGlobal = 0;
+    
+    // Gap mínimo entre os botões para não sobrepor totalmente
+    const priceGap = 50; 
+
+    // --- FUNÇÃO AUXILIAR: Converter Preço ---
+    // Transforma "1.299,90", "R$ 1200", ou number 1200 em float JS válido
+    function parsePrice(priceRaw) {
+        if (typeof priceRaw === 'number') return priceRaw;
+        if (!priceRaw) return 0;
+        
+        let clean = priceRaw.toString();
+        
+        // Remove "R$", espaços (inclusive espaços invisíveis/nbsp) e traços
+        clean = clean.replace("R$", "").replace(/\s/g, '').trim();
+        
+        // Lógica para detectar formato BR (1.200,50) vs US (1,200.50)
+        // Se a última pontuação for vírgula, é BR.
+        if (clean.includes(',') && (!clean.includes('.') || clean.indexOf(',') > clean.indexOf('.'))) {
+            clean = clean.replace(/\./g, ''); // Remove pontos de milhar
+            clean = clean.replace(',', '.');  // Troca vírgula decimal por ponto
+        } else {
+            // Caso tenha apenas vírgula como milhar (ex: 1,200.00)
+             clean = clean.replace(/,/g, '');
+        }
+        
+        return parseFloat(clean) || 0;
+    }
+
+    async function loadAndDisplay() {
+        if (!productGrid) return;
+
+        try {
+            const response = await fetch(fetchpath);
+            if (!response.ok) throw new Error("Arquivo JSON não encontrado");
+            
+            const data = await response.json(); 
+            
+            // Processa produtos e adiciona propriedade 'priceValue' numérica
+            allProducts = data.map((p, index) => {
+                const numPrice = parsePrice(p.price);
+                return {
+                    ...p,
+                    id: p.id ?? index,
+                    slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+                    priceValue: numPrice // Salva o valor numérico para filtrar fácil
+                };
+            });
+
+            // --- CONFIGURAÇÃO INICIAL DO SLIDER ---
+            setupSliderLimits();
+
+            renderizarFiltros();
+
+        } catch (erro) {
+            console.error("Erro crítico:", erro);
+            productGrid.innerHTML = `<p style='grid-column: 1/-1; text-align:center;'>Erro ao carregar ofertas.</p>`;
+        }
+    }
+
+    function setupSliderLimits() {
+        if (allProducts.length === 0) return;
+
+        const prices = allProducts.map(p => p.priceValue);
+        
+        // --- 2. MARGEM DE SEGURANÇA (BUFFER) ---
+        // Pegamos o maior preço, arredondamos para cima e SOMAMOS 1.
+        // Isso garante que o produto de R$ 4299.90 fique DENTRO do limite de R$ 4300 ou 4301
+        const maxRaw = Math.max(...prices);
+        const max = Math.ceil(maxRaw) + 1; 
+        const min = Math.floor(Math.min(...prices));
+
+        maxPriceGlobal = max;
+
+        // Configura atributos HTML para aceitar centavos e o novo máximo
+        rangeMin.min = 0;
+        rangeMin.max = max;
+        rangeMin.step = "0.01"; // Importante para precisão
+        rangeMin.value = 0;
+
+        rangeMax.min = 0;
+        rangeMax.max = max;
+        rangeMax.step = "0.01"; // Importante para precisão
+        rangeMax.value = max; 
+
+        updateSliderVisuals();
+    }
+
+    function updateSliderVisuals() {
+        // CORREÇÃO 2: Trocar parseInt por Number ou parseFloat
+        let minVal = Number(rangeMin.value);
+        let maxVal = Number(rangeMax.value);
+
+        labelMin.innerText = minVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+        labelMax.innerText = maxVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+        const percentMin = (minVal / maxPriceGlobal) * 100;
+        const percentMax = (maxVal / maxPriceGlobal) * 100;
+
+        progress.style.left = percentMin + "%";
+        progress.style.right = (100 - percentMax) + "%";
+    }
+
+    function renderizarFiltros() {
+        const termo = searchInput?.value.toLowerCase().trim() || "";
+        
+        // Garante que pegamos o valor numérico exato do slider
+        const minPrice = Number(rangeMin.value);
+        const maxPrice = Number(rangeMax.value);
+
+        const filtrados = allProducts.filter(p => {
+            const matchesSearch = termo === "" || 
+                                  p.title.toLowerCase().includes(termo) || 
+                                  p.store.toLowerCase().includes(termo);
+
+            // --- 3. COMPARAÇÃO SEGURA ---
+            // Adicionamos uma pequena tolerância (0.01) para evitar erros de arredondamento
+            const matchesPrice = p.priceValue >= minPrice && p.priceValue <= (maxPrice + 0.01);
+
+            return matchesSearch && matchesPrice;
+        });
+
+        exibirProdutos(filtrados);
+    }
+
+    function exibirProdutos(lista) {
+        productGrid.innerHTML = "";
+        
+        if(lista.length === 0) {
+            productGrid.innerHTML = `
+                <div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>
+                    <p>Nenhum produto encontrado nesta faixa de preço.</p>
+                </div>`;
+            return;
+        }
+
+        lista.forEach(p => {
+            const storeName = p.store || "Loja"; 
+            const storeClass = `badge-${storeName.toLowerCase().replace(/\s/g, '')}`;
+            
+            const card = document.createElement("article");
+            card.className = "card";
+            card.innerHTML = `
+                <div class="card-img-wrapper">
+                    <span class="store-badge ${storeClass}">${storeName}</span>
+                    <img 
+                      src="${p.img}" 
+                      alt="${p.title}"
+                      onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
+                      loading="lazy"
+                      width="300"
+                      height="300"
+                      >
+                </div>
+                <div class="card-info">
+                    <h3>${p.title}</h3>
+                    <div class="price-row">
+                        <span class="card-price">R$ ${p.price}</span>
+                        <a href="/produtos/categorias/${categoria}/info/?slug=${p.slug}" class="btn-ver">Ver Produto</a>
+                    </div>
+                </div>
+            `;
+            productGrid.appendChild(card);
+        });
+    }
+
+    // --- EVENTOS ---
+
+    searchInput?.addEventListener("input", renderizarFiltros);
+
+    // Lógica para impedir que os sliders se cruzem
+    function handleRangeInput(e) {
+        // CORREÇÃO 3: Trocar parseInt por Number aqui também
+        let minVal = Number(rangeMin.value);
+        let maxVal = Number(rangeMax.value);
+
+        if ((maxVal - minVal) < priceGap) {
+            if (e.target.id === "range-min") {
+                rangeMin.value = maxVal - priceGap;
+            } else {
+                rangeMax.value = minVal + priceGap;
+            }
+        } else {
+            updateSliderVisuals();
+            renderizarFiltros();
+        }
+    }
+
+    rangeMin.addEventListener("input", handleRangeInput);
+    rangeMax.addEventListener("input", handleRangeInput);
+
+    loadAndDisplay();
+</script>

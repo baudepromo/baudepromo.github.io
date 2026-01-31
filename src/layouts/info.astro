@@ -1,7 +1,6 @@
 ---
-import Layout from "../../../layouts/MainLayout.astro";
-import Global from '../../../components/global.astro';
-import Info from '../../../components/produtos/info.astro';
+import Layout from "../layouts/MainLayout.astro";
+import Global from '../components/global.astro';
 ---
 <Layout>
 <link rel="stylesheet" href="/styles/pages/produtos.css">
@@ -22,7 +21,6 @@ import Info from '../../../components/produtos/info.astro';
         <div class="loading-container">
             <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: #ff4b4b;"></i>
                 <p style="margin-top: 20px; color: var(--text-muted); font-weight: 600;">Carregando melhor oferta...</p>
-        </div>
     </div>
 </div>
     <div id="toast-box" class="toast"></div>
@@ -46,5 +44,4 @@ import Info from '../../../components/produtos/info.astro';
         </div>
     </div>
     <Global></Global>
-    <Info></Info>
 </Layout>

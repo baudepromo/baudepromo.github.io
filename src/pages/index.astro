@@ -6,54 +6,16 @@ import Applewatch from "../assets/images/applewatch.webp"
 import achadinhos from '../assets/images/achadinhos.webp';
 import cupons from "../assets/images/cupons.webp"
 import qrcode from "../assets/images/qrcode-pix.webp"
+import Seo from "../../public/lib/seo/metadada.astro"
 ---
-<Layout 
-  title="Ofertas, Cupons e Achadinhos Online | Baú de Promoções" 
-  description="Economize com os melhores cupons e promoções da Amazon, Shopee e Mercado Livre. Achadinhos exclusivos e ofertas atualizadas hoje no Baú de Promoções!"
->
+<Layout>
+<Seo 
+    title='Ofertas, Cupons e Achadinhos Online | Baú de Promoções', 
+    description='Economize com os melhores cupons e promoções da Amazon, Shopee e Mercado Livre. Achadinhos exclusivos e ofertas atualizadas hoje no Baú de Promoções!', 
+    image="/favicon.svg",
+    type='website'
+    ></Seo>
 
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "name": "Baú de Promoções",
-      "url": "https://baudepromocao.vercel.app",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://baudepromocao.vercel.app/busca?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    },
-    {
-      "@type": "Organization",
-      "name": "Baú de Promoções",
-      "url": "https://baudepromocao.vercel.app",
-      "logo": "https://baudepromocao.vercel.app/favicon.svg"
-    },
-    {
-      "@type": "ItemList",
-      "name": "Destaques da Semana",
-      "description": "As melhores ofertas de hoje no Baú de Promoções",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Achadinhos Shopee",
-          "url": "https://baudepromocao.vercel.app/achadinhos"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Apple Watch Series 11",
-          "url": "https://baudepromocao.vercel.app/produtos/info/?slug=apple-watch-series-11-gps-caixa-em-alum-nio-rosa-dourado-de-42-mm-com-bracelete-desportiva-rosa-leve-m-g"
-        }
-      ]
-    }
-  ]
-}
-</script>
     <style is:inline>
 
     /* O pulo do gato: dar tamanho ao SVG */
@@ -91,7 +53,7 @@ import qrcode from "../assets/images/qrcode-pix.webp"
         position: fixed;
         bottom: 30px;
         right: 30px;
-        z-index: 1000;
+        z-index: 1;
         display: flex;
         align-items: center;
         gap: 10px;

@@ -1,0 +1,11 @@
+---
+import Layout from "../../../../layouts/MainLayout.astro";
+import Global from '../../../../components/global.astro';
+import LayoutCategorias from "../../../../layouts/categorias.astro";
+import FetchPath from "../../../../components/produtos/categorias.astro";
+---
+<Layout title="Beleza: Ofertas Imperdíveis com Descontos Reais | Baú de Promoções" description="Economize muito na categoria beleza! Encontre cuidados, maquiagem e produtos de higiene com preços de outlet. Promoções por tempo limitado no Baú de Promoções. Confira!">
+<LayoutCategorias ativo="beleza" title="Beleza" subtitle="Beleza produtos de cuidados pessoais vindo de lojas confiaveis como amazon, mercado livre, shopee..."> </LayoutCategorias>
+<FetchPath fetchpath="/data/categorias/beleza.json", categoria="beleza"></FetchPath>
+<Global></Global>
+</Layout>

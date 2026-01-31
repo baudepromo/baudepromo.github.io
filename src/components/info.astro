@@ -1,4 +1,11 @@
-<script type="module">
+---
+interface Props {
+  fetchpath2: string;
+}
+
+const { fetchpath2 } = Astro.props;
+---
+<script define:vars={{ fetchpath2 }} type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -128,7 +135,7 @@
         if (!slug && !fallbackId) return;
 
         try {
-            const res = await fetch('/data/produtos.json');
+            const res = await fetch(fetchpath2);
             let products = await res.json();
             
             // Corrige Slugs

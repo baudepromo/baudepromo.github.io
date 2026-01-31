@@ -1,0 +1,49 @@
+---
+// src/components/SEO.astro
+import { SITE_CONFIG } from "./constants";
+import { getAbsoluteUrl, getPageTitle } from './utils';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+}
+
+const { 
+  title, 
+  description = SITE_CONFIG.description, 
+  image = SITE_CONFIG.defaultImage,
+  canonical,
+  noindex = false,
+  type = 'website'
+} = Astro.props;
+
+const finalTitle = getPageTitle(title);
+const finalImage = getAbsoluteUrl(image);
+const finalCanonical = canonical ? getAbsoluteUrl(canonical) : getAbsoluteUrl(Astro.url.pathname);
+---
+
+<title>{finalTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={finalCanonical} />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8" />
+
+{noindex && <meta name="robots" content="noindex, nofollow" />}
+
+<meta property="og:type" content={type} />
+<meta property="og:url" content={finalCanonical} />
+<meta property="og:title" content={finalTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={finalImage} />
+<meta property="og:site_name" content={SITE_CONFIG.title} />
+
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={finalCanonical} />
+<meta property="twitter:title" content={finalTitle} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={finalImage} />
+<meta property="twitter:creator" content={SITE_CONFIG.twitterHandle} />

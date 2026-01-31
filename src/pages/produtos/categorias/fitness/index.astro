@@ -1,0 +1,11 @@
+---
+import Layout from "../../../../layouts/MainLayout.astro";
+import Global from '../../../../components/global.astro';
+import LayoutCategorias from "../../../../layouts/categorias.astro";
+import FetchPath from "../../../../components/produtos/categorias.astro";
+---
+<Layout title="Equipamentos Fitness para Treinar em Casa em Promoção | Baú de Promoções" description="Monte sua academia em casa gastando pouco! No Baú de Promoções você encontra halteres, elásticos, tapetes de yoga e muito mais com preços de outlet. Confira agora!">
+<LayoutCategorias ativo="fitness" title="Saúde & Fitness" subtitle="Turbine seus treinos com acessórios e equipamentos fitness de alta qualidade. Encontre tudo para sua rotina de exercícios com descontos imbatíveis no Baú de Promoções."> </LayoutCategorias>
+<FetchPath fetchpath="/data/categorias/fitness.json", categoria="fitness"></FetchPath>
+<Global></Global>
+</Layout>

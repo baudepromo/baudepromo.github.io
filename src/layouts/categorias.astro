@@ -1,53 +1,142 @@
 ---
-import Layout from "../../layouts/MainLayout.astro";
-import Global from '../../components/global.astro';
-import Produtos from "../../components/produtos/produtos.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
----
-<Layout title="Produtos em alta | Baú de Promoção" description="Melhores produtos de diversas lojas conhecidas como Amazon, Shopee, Mercado Livre... tem muito mais por vim😉" image="/image/cupons.webp">
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org/",
-  "@type": "Product",
-  "name": "Smartwatch Xiaomi Redmi Watch 5 Active Tela Lcd 2.00 Preto",
-  "image": [
-    "https://http2.mlstatic.com/D_NQ_NP_949046-MLA99507276886_112025-O.webp"
-  ],
-  "description": "Prateado pulseira de Silicone Versão do smartwatch Xiaomi Mercado Livre",
-  "brand": {
-    "@type": "Brand",
-    "name": "Xiaomi"
-  },
-  "review": {
-    "@type": "Review",
-    "reviewRating": {
-      "@type": "Rating",
-      "ratingValue": "4.9",
-      "bestRating": "4.9"
-    },
-    "author": {
-      "@type": "Organization",
-      "name": "Baú de Promoções"
-    }
-  },
-  "offers": {
-    "@type": "Offer",
-    "url": "https://baudepromocao.vercel.app/produtos/info/?slug=smartwatch-xiaomi-redmi-watch-5-active-tela-lcd-2-00-preto",
-    "priceCurrency": "BRL",
-    "price": "229.90",
-    "priceValidUntil": "2026-12-31",
-    "itemCondition": "https://schema.org/NewCondition",
-    "availability": "https://schema.org/InStock",
-    "seller": {
-      "@type": "Organization",
-      "name": "Mercado Livre"
-    }
-  }
+interface Props {
+  ativo?: string; // O "?" significa que não é obrigatório (pode ficar tudo desligado)
+  title: string;
+  subtitle: string;
 }
-</script>
+
+const { ativo, title, subtitle } = Astro.props;
+---
+
     <style is:inline>
+        .filter-control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    max-width: 800px; /* Largura total da barra */
+    margin: 30px auto 50px;
+    padding: 0 10px;
+}
+
+/* Ajuste da Busca para preencher o espaço */
+.search-wrapper {
+    margin-top: 0; /* Remove margem antiga */
+    flex: 1; /* Ocupa o espaço restante */
+    margin: 0; /* Zera margens externas */
+    height: 54px; /* Altura fixa para alinhar com o slider */
+    box-sizing: border-box;
+}
+
+/* --- SLIDER COMPACTO --- */
+.compact-price-container {
+    flex: 0 0 260px; /* Largura fixa do slider */
+    background: white;
+    border-radius: 50px; /* Redondo igual a busca */
+    padding: 10px 20px;
+    height: 54px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    border: 1px solid #eee;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Textos de valor pequenos */
+.price-values-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #555;
+    margin-bottom: 2px;
+}
+
+/* Ajustes finos nas barras para caber no formato mini */
+.slider-wrapper-mini {
+    position: relative;
+    width: 100%;
+    height: 4px;
+}
+
+.slider-track-mini {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #e0e0e0;
+    border-radius: 5px;
+}
+
+.slider-progress-mini {
+    position: absolute;
+    height: 100%;
+    background: #ff4b4b;
+    border-radius: 5px;
+}
+
+.range-input-mini {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: -9px; /* Sobe o input para alinhar a bolinha */
+    pointer-events: none;
+    background: none;
+}
+
+.range-input-mini input {
+    position: absolute;
+    /* Aumenta a largura em 16px (tamanho da bolinha) para cobrir as bordas */
+    width: calc(100% + 16px); 
+    height: 100%;
+    /* Puxa 8px para a esquerda para centralizar o início */
+    margin-left: -120px;
+    top: 8.5px; /* Mantém o alinhamento vertical que já estava */
+    pointer-events: none;
+    background: none;
+    -webkit-appearance: none;
+    appearance: none;
+    z-index: 2;
+}
+/* Bolinha do Slider Menor */
+.range-input-mini input::-webkit-slider-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #ff4b4b;
+    pointer-events: auto;
+    -webkit-appearance: none;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.range-input-mini input::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border: 2px solid #ff4b4b;
+    border-radius: 50%;
+    background: #fff;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* Responsividade: No celular, empilha um em cima do outro */
+@media (max-width: 768px) {
+    .filter-control-bar {
+        flex-direction: column-reverse; /* Busca em cima, preço embaixo ou vice-versa */
+        gap: 15px;
+    }
+    .compact-price-container {
+        width: 100%; /* Ocupa largura total no mobile */
+        flex: none;
+    }
+    .search-wrapper {
+        width: 100%;
+    }
+}
         /* --- ESTILOS DE ÍCONES (Adicionado) --- */
         .icon {
             width: 1.1em;
@@ -193,8 +282,7 @@ import Produtos from "../../components/produtos/produtos.astro";
         font-weight: 400;
     }
 </style>
-
-    <section class="hero-section" style="position: relative;">
+<section class="hero-section" style="position: relative;">
       <div class="faq-wrapper">
         <a href="/" class="btn-back">
           <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
@@ -204,32 +292,35 @@ import Produtos from "../../components/produtos/produtos.astro";
           Voltar
         </a>
 
-        <h1>Ofertas Imperdíveis 🔥</h1>
-        <p>A curadoria das melhores promoções da internet em um só lugar.</p>
+        <h1>{title}</h1>
+        <p>{subtitle}</p>
 
-        <div class="hero-buttons">
-            <button class="pill-btn active">
-                <svg class="icon" viewBox="0 0 24 24">
-                    <svg viewBox="0 0 576 512"> <path d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"/></svg>
-                </svg>
-                Melhores
-            </button>
+        <div class="hero-buttons" style="margin-bottom: 20px; justify-content: center;">
+             <a href="/produtos/" class="pill-link">
+                <button class="pill-btn" data-tab="Favoritos">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <svg viewBox="0 0 576 512"> <path d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"/></svg>
+                    </svg>
+                   Melhores
+                </button>
+            </a>
 
             <a href="/produtos/categorias/eletronicos/" class="pill-link">
                 <button class="pill-btn" data-tab="Favoritos">
                     <svg class="icon" viewBox="0 0 24 24">
                         <svg viewBox="0 0 576 512"> <path d="M348.8 32C340.7 46.1 336 62.5 336 80l0 16-272 0 0 224 272 0 0 64-272 0c-35.3 0-64-28.7-64-64L0 96C0 60.7 28.7 32 64 32l284.8 0zM336 432c0 17.5 4.7 33.9 12.8 48L120 480c-13.3 0-24-10.7-24-24s10.7-24 24-24l216 0zM432 32l96 0c26.5 0 48 21.5 48 48l0 352c0 26.5-21.5 48-48 48l-96 0c-26.5 0-48-21.5-48-48l0-352c0-26.5 21.5-48 48-48zm24 64c-13.3 0-24 10.7-24 24s10.7 24 24 24l48 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-48 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l48 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-48 0zm56 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                     </svg>
-                    Eletrônicos
+                    {ativo === "eletronicos" ? <em>Eletrônicos</em> : "Eletrônicos"}
                 </button>
             </a>
             
             <a href="/produtos/categorias/casa/" class="pill-link">
                 <button class="pill-btn" data-tab="Favoritos">
                     <svg class="icon" viewBox="0 0 24 24">
-                        <svg viewBox="0 0 512 512"> <path d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/></svg>
+                        <svg viewBox="0 0 512 512">
+                             <path d="M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272l16 0 0 176c0 35.3 28.7 64 64 64l288 0c35.3 0 64-28.7 64-64l0-176 16 0c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1l-224-208zM240 320l32 0c26.5 0 48 21.5 48 48l0 96-128 0 0-96c0-26.5 21.5-48 48-48z"/></svg>
                     </svg>
-                    Casa
+                    {ativo === "casa" ? <em>Casa</em> : "Casa"}
                 </button>
             </a>
             
@@ -238,34 +329,34 @@ import Produtos from "../../components/produtos/produtos.astro";
                     <svg class="icon" viewBox="0 0 24 24">
                         <svg viewBox="0 0 512 512"> <path d="M247.2 17c-22.1-3.1-44.6 .9-64.4 11.4l-74 39.5C89.1 78.4 73.2 94.9 63.4 115L26.7 190.6c-9.8 20.1-13 42.9-9.1 64.9l14.5 82.8c3.9 22.1 14.6 42.3 30.7 57.9l60.3 58.4c16.1 15.6 36.6 25.6 58.7 28.7l83 11.7c22.1 3.1 44.6-.9 64.4-11.4l74-39.5c19.7-10.5 35.6-27 45.4-47.2l36.7-75.5c9.8-20.1 13-42.9 9.1-64.9l-14.6-82.8c-3.9-22.1-14.6-42.3-30.7-57.9L388.9 57.5c-16.1-15.6-36.6-25.6-58.7-28.7L247.2 17zM208 144a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM144 336a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-64a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>
                     </svg>
-                    Cozinha
+                    {ativo === "cozinha" ? <em>Cozinha</em> : "Cozinha"}
                 </button>
             </a>
             
             <a href="/produtos/categorias/moda/" class="pill-link">
                 <button class="pill-btn" data-tab="Favoritos">
                     <svg class="icon" viewBox="0 0 24 24">
-                        <path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"></path>
+                        <svg viewBox="0 0 640 512"> <path d="M320.2 112c44.2 0 80-35.8 80-80l53.5 0c17 0 33.3 6.7 45.3 18.7L617.6 169.4c12.5 12.5 12.5 32.8 0 45.3l-50.7 50.7c-12.5 12.5-32.8 12.5-45.3 0l-41.4-41.4 0 224c0 35.3-28.7 64-64 64l-192 0c-35.3 0-64-28.7-64-64l0-224-41.4 41.4c-12.5 12.5-32.8 12.5-45.3 0L22.9 214.6c-12.5-12.5-12.5-32.8 0-45.3L141.5 50.7c12-12 28.3-18.7 45.3-18.7l53.5 0c0 44.2 35.8 80 80 80z"/></svg>
                     </svg>
-                    Moda
+                    {ativo === "moda" ? <em>Moda</em> : "Moda"}
                 </button>
             </a>
 
             <a href="/produtos/categorias/beleza/" class="pill-link">
                 <button class="pill-btn" data-tab="Favoritos">
-                    <svg class="icon" viewBox="0 0 24 24">
+                    <svg class="icon" viewBox="0 0 25 24">
                         <svg viewBox="0 0 576 512"> <path d="M160 32l0 80 128 0 0-80c0-17.7-14.3-32-32-32L192 0c-17.7 0-32 14.3-32 32zm0 128c-53 0-96 43-96 96l0 208c0 26.5 21.5 48 48 48l224 0c26.5 0 48-21.5 48-48l0-208c0-53-43-96-96-96l-128 0zm64 96a80 80 0 1 1 0 160 80 80 0 1 1 0-160zM448 48c0-1.4-1-3-2.2-3.6L416 32 403.6 2.2C403 1 401.4 0 400 0s-3 1-3.6 2.2L384 32 354.2 44.4c-1.2 .6-2.2 2.2-2.2 3.6 0 1.4 1 3 2.2 3.6L384 64 396.4 93.8C397 95 398.6 96 400 96s3-1 3.6-2.2L416 64 445.8 51.6C447 51 448 49.4 448 48zm76.4 45.8C525 95 526.6 96 528 96s3-1 3.6-2.2L544 64 573.8 51.6c1.2-.6 2.2-2.2 2.2-3.6 0-1.4-1-3-2.2-3.6L544 32 531.6 2.2C531 1 529.4 0 528 0s-3 1-3.6 2.2L512 32 482.2 44.4c-1.2 .6-2.2 2.2-2.2 3.6 0 1.4 1 3 2.2 3.6L512 64 524.4 93.8zm7.2 100.4c-.6-1.2-2.2-2.2-3.6-2.2s-3 1-3.6 2.2L512 224 482.2 236.4c-1.2 .6-2.2 2.2-2.2 3.6 0 1.4 1 3 2.2 3.6L512 256 524.4 285.8c.6 1.2 2.2 2.2 3.6 2.2s3-1 3.6-2.2L544 256 573.8 243.6c1.2-.6 2.2-2.2 2.2-3.6 0-1.4-1-3-2.2-3.6L544 224 531.6 194.2zM512 144c0-1.4-1-3-2.2-3.6L480 128 467.6 98.2C467 97 465.4 96 464 96s-3 1-3.6 2.2L448 128 418.2 140.4c-1.2 .6-2.2 2.2-2.2 3.6 0 1.4 1 3 2.2 3.6L448 160 460.4 189.8c.6 1.2 2.2 2.2 3.6 2.2s3-1 3.6-2.2L480 160 509.8 147.6c1.2-.6 2.2-2.2 2.2-3.6z"/></svg>
                     </svg>
-                    Beleza
+                    {ativo === "beleza" ? <em>Beleza</em> : "Beleza"}
                 </button>
             </a>
 
             <a href="/produtos/categorias/fitness/" class="pill-link">
-                <button class="pill-btn" data-tab="Favoritos">
-                    <svg class="icon" viewBox="0 0 24 24">
+                <button class="pill-btn">
+                    <svg class="icon" viewBox="0 0 25 24">
                         <svg viewBox="0 0 640 512"> <path d="M96 112c0-26.5 21.5-48 48-48s48 21.5 48 48l0 112 256 0 0-112c0-26.5 21.5-48 48-48s48 21.5 48 48l0 16 16 0c26.5 0 48 21.5 48 48l0 48c17.7 0 32 14.3 32 32s-14.3 32-32 32l0 48c0 26.5-21.5 48-48 48l-16 0 0 16c0 26.5-21.5 48-48 48s-48-21.5-48-48l0-112-256 0 0 112c0 26.5-21.5 48-48 48s-48-21.5-48-48l0-16-16 0c-26.5 0-48-21.5-48-48l0-48c-17.7 0-32-14.3-32-32s14.3-32 32-32l0-48c0-26.5 21.5-48 48-48l16 0 0-16z"/></svg>
                     </svg>
-                    Fitness
+                    {ativo === "fitness" ? <em>Fitness</em> : "Fitness"}
                 </button>
             </a>
             
@@ -277,14 +368,35 @@ import Produtos from "../../components/produtos/produtos.astro";
                     Favoritos
                 </button>
             </a>
-        </div>
+             </div>
 
-        <div class="search-wrapper">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="search" placeholder="O que você está procurando?">
+        <div class="filter-control-bar">
+            
+            <div class="search-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="search" placeholder="Buscar produto...">
+            </div>
+
+            <div class="compact-price-container">
+                <div class="price-values-display">
+                    <span id="min-label">R$ 0</span>
+                    <span style="font-size: 0.65rem; color:#999; text-transform:uppercase; letter-spacing:1px;">Preço</span>
+                    <span id="max-label">R$ 10k</span>
+                </div>
+                
+                <div class="slider-wrapper-mini">
+                    <div class="slider-track-mini"></div>
+                    <div class="slider-progress-mini" id="slider-progress"></div>
+                    <div class="range-input-mini">
+                        <input type="range" id="range-min" min="0" max="10000" value="0" step="10">
+                        <input type="range" id="range-max" min="0" max="10000" value="10000" step="10">
+                    </div>
+                </div>
+            </div>
+
         </div>
       </div>
     </section>
@@ -292,8 +404,4 @@ import Produtos from "../../components/produtos/produtos.astro";
     <!-- GRID DE PRODUTOS -->
     <div id="product-grid" class="cards-grid"></div>
 
-    <Global />
   </main>
-    <Global></Global>
-    <Produtos></Produtos>
-</Layout>

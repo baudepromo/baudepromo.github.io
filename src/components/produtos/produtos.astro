@@ -3,7 +3,7 @@
     const searchInput = document.getElementById("search"); // ID corrigido conforme seu HTML
     
     let allProducts = []; 
-    let currentCategory = "eletronicos";
+    let currentCategory = "melhor";
 
     async function loadAndDisplay() {
         if (!productGrid) return;
@@ -36,13 +36,14 @@
         const filtrados = allProducts.filter(p => {
             // Se o usuário digitou algo, buscamos em TUDO (ignora categoria)
             // Se a busca estiver vazia, filtramos pela categoria selecionada
-            if (termo.length > 0) {
-                return p.title.toLowerCase().includes(termo) || 
-                       p.store.toLowerCase().includes(termo);
-            } else {
-                return p.category === currentCategory;
-            }
-        });
+            // ... dentro de renderizarFiltros ...
+if (termo.length > 0) {
+    return p.title.toLowerCase().includes(termo) || 
+           p.store.toLowerCase().includes(termo);
+} else {
+    // CORREÇÃO: Se for 'melhores', retorna true (mostra tudo), senão filtra pela categoria
+    return currentCategory === "melhor" ? true : p.category === currentCategory;
+}});
 
         exibirProdutos(filtrados);
     }

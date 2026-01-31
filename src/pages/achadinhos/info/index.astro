@@ -1,21 +1,21 @@
 ---
 import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
-import Info from '../../../components/produtos/info.astro';
+import Info from '../../../components/achadinhos/info.astro'
 ---
 <Layout>
-<link rel="stylesheet" href="/styles/pages/produtos.css">
+    <link rel="stylesheet" href="/styles/pages/produtos.css">
 <section class="hero-section" style="position: relative;">
 <div class="faq-wrapper">
-    <h1>Melhores Produtos do Baú</h1>
-    <p>Apenas produtos selecionados</p>
-    <a href="javascript:history.back()" class="btn-back">
+    <a href="/achadinhos" class="btn-back">
       <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"></line>
         <polyline points="12 19 5 12 12 5"></polyline>
       </svg>
       Voltar
     </a>
+    <h1>Melhores Produtos do Baú</h1>
+    <p>Apenas produtos selecionados</p>
 
 </section> <div class="main-container">
     <div id="content-area" class="detail-card">
@@ -45,6 +45,6 @@ import Info from '../../../components/produtos/info.astro';
             </button>
         </div>
     </div>
-    <Global></Global>
+    <Global ></Global>
     <Info></Info>
 </Layout>

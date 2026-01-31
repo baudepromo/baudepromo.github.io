@@ -1,0 +1,220 @@
+<script is:inline>
+    
+    let allProducts = [];
+    let filteredProducts = [];
+    let currentPage = 1;
+    const PER_PAGE = 12;
+
+    // ... (Suas variáveis iniciais: allProducts, filteredProducts, etc) ...
+
+    // 1. NOVA FUNÇÃO: Limpa o preço para o formato numérico do Google (ex: 29.90)
+    function parsePriceToNumber(priceStr) {
+        if (!priceStr) return 0;
+        // Remove "R$", espaços e pontos de milhar, troca vírgula por ponto
+        let clean = priceStr.toString().replace(/[^\d,]/g, '').replace(',', '.');
+        return parseFloat(clean) || 0;
+    }
+
+    // 2. NOVA FUNÇÃO: Gera/Atualiza o JSON-LD no <head>
+    function updateSchema(products) {
+        // Remove schema antigo se existir
+        const oldSchema = document.getElementById('dynamic-schema');
+        if (oldSchema) oldSchema.remove();
+
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "itemListElement": products.map((p, index) => {
+                const priceNumber = parsePriceToNumber(p.currentPrice || p.price);
+                const productUrl = window.location.origin + `/achadinhos/info?slug=${p.slug || ''}`; // URL Absoluta
+
+                return {
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "item": {
+                        "@type": "Product",
+                        "name": p.title,
+                        "image": p.img,
+                        "description": `Oferta de: ${p.title} - ${p.badge || 'Achadinho'}`,
+                        "offers": {
+                            "@type": "Offer",
+                            "priceCurrency": "BRL",
+                            "price": priceNumber,
+                            "availability": "https://schema.org/InStock",
+                            "url": productUrl
+                        }
+                    }
+                };
+            })
+        };
+
+        const script = document.createElement('script');
+        script.id = 'dynamic-schema';
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schemaData);
+        document.head.appendChild(script);
+    }
+
+    // ... (Sua função loadProducts e lógica de pesquisa permanecem iguais) ...
+
+    function render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        
+        if (filteredProducts.length === 0) {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding: 50px; color: #666;">Nenhum produto encontrado. 🔍</p>';
+            document.getElementById('page').innerText = "0";
+            return;
+        }
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const end = start + PER_PAGE;
+        
+        // Pega apenas os produtos da página atual
+        const visibleProducts = filteredProducts.slice(start, end);
+
+        // 3. CHAMADA: Atualiza o Schema com os produtos visíveis nesta página
+        updateSchema(visibleProducts);
+
+        visibleProducts.forEach((p, index) => {
+            // ... (O resto do seu código de renderização dos cards permanece igual) ...
+            let displayPrice = p.currentPrice || p.price || "0,00";
+            const loadingAttr = index < 8 ? 'eager' : 'lazy';
+            const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
+            const productSlug = p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const detailUrl = `/achadinhos/info?slug=${productSlug}`;
+
+            grid.insertAdjacentHTML('beforeend', `
+                <a href="${detailUrl}" class="card" target="_blank">
+                    <span class="badge">${p.badge || '🔥 OFERTA'}</span>
+                    <div class="card-img-wrapper">
+                        <img 
+                            src="${p.img}" 
+                            alt="${p.title}" 
+                            loading="${loadingAttr}"
+                            ${fetchPriority}
+                            onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
+                            decoding="async"
+                            width="300"
+                            height="300"
+                        >
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">${p.title}</h3>
+                        <div class="price-box">
+                            <span class="price">${displayPrice}</span>
+                        </div>
+                        <span class="btn-view">VER OFERTA</span>
+                    </div>
+                </a>
+            `);
+        });
+
+        document.getElementById('page').innerText = currentPage;
+        document.getElementById('prev').disabled = currentPage === 1;
+        document.getElementById('next').disabled = end >= filteredProducts.length;
+    }
+
+    async function loadProducts() {
+        try {
+            const res = await fetch('/data/achadinhos.json');
+            if (!res.ok) throw new Error("Erro ao buscar JSON");
+            const data = await res.json();
+            
+            // Mantendo sua lógica de embaralhar
+            allProducts = data.sort(() => Math.random() - 0.5);
+            filteredProducts = [...allProducts];
+            render();
+        } catch (err) {
+            document.getElementById('grid').innerHTML = '<p style="grid-column:1/-1; text-align:center;">Erro ao carregar ofertas.</p>';
+        }
+    }
+
+    // --- LÓGICA DE PESQUISA ---
+    const normalizeText = (text) => 
+        text ? text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
+
+    document.getElementById('search').addEventListener('input', (e) => {
+        const termoBusca = normalizeText(e.target.value);
+        const palavrasChave = termoBusca.split(' ').filter(p => p.length > 0);
+
+        filteredProducts = allProducts.filter(produto => {
+            // Texto onde vamos procurar (Título + Badge)
+            const conteudoBusca = normalizeText(`${produto.title} ${produto.badge || ''}`);
+            
+            // Verifica se TODAS as palavras digitadas estão no conteúdo do produto
+            return palavrasChave.every(palavra => conteudoBusca.includes(palavra));
+        });
+
+        currentPage = 1; 
+        render();
+    });
+
+    function render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        
+        // Se não houver resultados
+        if (filteredProducts.length === 0) {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding: 50px; color: #666;">Nenhum produto encontrado. 🔍</p>';
+            document.getElementById('page').innerText = "0";
+            return;
+        }
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const end = start + PER_PAGE;
+
+        // Adicionei o 'index' aqui para sabermos a posição do item
+        filteredProducts.slice(start, end).forEach((p, index) => {
+            let displayPrice = p.currentPrice || p.price || "0,00";
+            
+            // --- LÓGICA DO LAZY LOADING ---
+            // Se o índice for menor que 6 (0 a 5), carrega imediato (eager).
+            // Caso contrário, usa o lazy load.
+            const loadingAttr = index < 8 ? 'eager' : 'lazy';
+            
+            // Opcional: Adicionar fetchpriority="high" nos 2 primeiros para prioridade máxima
+            const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
+
+            const productSlug = p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const detailUrl = `/achadinhos/info?slug=${productSlug}`;
+            
+
+            grid.insertAdjacentHTML('beforeend', `
+                <a href="${detailUrl}" class="card" target="_blank">
+                    <span class="badge">${p.badge || '🔥 OFERTA'}</span>
+                    <div class="card-img-wrapper">
+                        <img 
+                            src="${p.img}" 
+                            alt="${p.img}"
+                            loading="${loadingAttr}"
+                            ${fetchPriority}
+                            onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
+                            decoding="async"
+                            width="300"
+                            height="300"
+                        >
+                    </div>
+                    <div class="card-info">
+                        <h3 class="card-title">${p.title}</h3>
+                        <div class="price-box">
+                            <span class="price">${displayPrice}</span>
+                        </div>
+                        <span class="btn-view">VER OFERTA</span>
+                    </div>
+                </a>
+            `);
+        });
+
+        // Atualiza paginação
+        document.getElementById('page').innerText = currentPage;
+        document.getElementById('prev').disabled = currentPage === 1;
+        document.getElementById('next').disabled = end >= filteredProducts.length;
+    }
+
+    // Eventos de clique dos botões
+    document.getElementById('prev').onclick = () => { if(currentPage > 1) { currentPage--; render(); window.scrollTo(0,0); } };
+    document.getElementById('next').onclick = () => { if((currentPage * PER_PAGE) < filteredProducts.length) { currentPage++; render(); window.scrollTo(0,0); } };
+
+    loadProducts();
+</script>
