@@ -2,12 +2,16 @@
 import Layout from "../../layouts/MainLayout.astro";
 import Global from '../../components/global.astro';
 import Produtos from "../../components/produtos/produtos.astro";
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Seo from "../../../public/lib/seo/metadada.astro"
 ---
-<Layout title="Produtos em alta | Baú de Promoção" description="Melhores produtos de diversas lojas conhecidas como Amazon, Shopee, Mercado Livre... tem muito mais por vim😉" image="/image/cupons.webp">
-    <script type="application/ld+json">
+<Layout>
+    <Seo
+    title="Produtos em alta | Baú de Promoção"
+    description="Melhores produtos de diversas lojas conhecidas como Amazon, Shopee, Mercado Livre... tem muito mais por vim😉"
+    image="https://down-br.img.susercontent.com/file/br-11134207-7r98o-m9wqmwhq375u6c"
+    ></Seo>
+
+<script type="application/ld+json">
 {
   "@context": "https://schema.org/",
   "@type": "Product",

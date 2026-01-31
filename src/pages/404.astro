@@ -1,3 +1,6 @@
+---
+import Seo from "../../public/lib/seo/metadada.astro"
+---
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -5,16 +8,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>404 - Baú não encontrado | Baú de Promoções</title>
   <link rel="icon" href="/favicon.webp"/>
-
-  <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Página não encontrada | Baú de Promoções",
-  "description": "Desculpe, esta oferta não foi encontrada ou já expirou. Confira nossos últimos achadinhos na página inicial."
-}
-</script>
-
+  <Seo 
+    title='404 - Baú não encontrado | Baú de Promoções',  
+    noindex,
+    image="/favicon.svg",
+    type='website'
+    ></Seo>
   <style>
     /* --- NOVA IDENTIDADE VISUAL --- */
     :root {

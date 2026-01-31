@@ -15,6 +15,48 @@ import Seo from "../../public/lib/seo/metadada.astro"
     image="/favicon.svg",
     type='website'
     ></Seo>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Baú de Promoções",
+      "url": "https://baudepromocao.vercel.app",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://baudepromocao.vercel.app/busca?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "name": "Baú de Promoções",
+      "url": "https://baudepromocao.vercel.app",
+      "logo": "https://baudepromocao.vercel.app/favicon.svg"
+    },
+    {
+      "@type": "ItemList",
+      "name": "Destaques da Semana",
+      "description": "As melhores ofertas de hoje no Baú de Promoções",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Achadinhos Shopee",
+          "url": "https://baudepromocao.vercel.app/achadinhos"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Apple Watch Series 11",
+          "url": "https://baudepromocao.vercel.app/produtos/info/?slug=apple-watch-series-11-gps-caixa-em-alum-nio-rosa-dourado-de-42-mm-com-bracelete-desportiva-rosa-leve-m-g"
+        }
+      ]
+    }
+  ]
+}
+</script>
     <style is:inline>
 
     /* O pulo do gato: dar tamanho ao SVG */

@@ -3,10 +3,13 @@ import { defineConfig } from 'astro/config';
 
 import sitemap from '@astrojs/sitemap';
 
+import vercel from '@astrojs/vercel';
+
 // https://astro.build/config
 export default defineConfig({
   // Coloque seu domínio real aqui
   site: 'https://baudepromocao.vercel.app',
 
-  integrations: [sitemap()]
+  integrations: [sitemap()],
+  adapter: vercel()
 });
