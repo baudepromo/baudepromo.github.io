@@ -10,6 +10,6 @@ export default defineConfig({
   // Coloque seu domínio real aqui
   site: 'https://baudepromocao.vercel.app',
   integrations: [sitemap()],
-  adapter: vercel(),
-  output: 'server'
+  output: 'server',
+  adapter: vercel()
 });
