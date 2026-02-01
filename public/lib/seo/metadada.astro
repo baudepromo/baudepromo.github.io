@@ -46,7 +46,10 @@ if (image) {
 } else {
   // 2. Geração da URL Dinâmica
   const ogUrl = new URL('/og-image.png', siteBase);
-  
+  if (image) {
+  // Se a imagem for externa, passamos ela como parâmetro codificado
+  ogUrl.searchParams.set('externalImage', image); 
+}
   // 3. Adicionar parâmetros
   if (title) ogUrl.searchParams.set('title', title.toString());
   if (description) ogUrl.searchParams.set('description', description.toString());
