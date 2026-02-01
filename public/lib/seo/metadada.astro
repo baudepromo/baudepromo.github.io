@@ -28,19 +28,17 @@ const finalCanonical = canonical ? getAbsoluteUrl(canonical) : new URL(Astro.url
 let finalImage: string;
 
 if (image) {
-  // Se tem imagem manual (ex: capa do post), usa ela
   finalImage = getAbsoluteUrl(image);
 } else {
-  // Se não, gera a dinâmica
+  // O primeiro parâmetro DEVE ser o caminho do arquivo da imagem
+  // O segundo parâmetro (Astro.url.origin) garante que o link seja absoluto
   const ogUrl = new URL('/og-image.png', Astro.url.origin); 
   
-  // Passa os parâmetros com segurança
   if (title) ogUrl.searchParams.set('title', title);
   if (description) ogUrl.searchParams.set('description', description);
   
   finalImage = ogUrl.toString();
 }
-// ---------------------------
 ---
 
 <title>{finalTitle}</title>
