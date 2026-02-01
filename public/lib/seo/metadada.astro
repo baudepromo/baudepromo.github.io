@@ -5,6 +5,7 @@ import { getAbsoluteUrl, getPageTitle } from './utils';
 
 interface Props {
   title?: string;
+  ogTitle?: string; // NOVO: Título específico para redes sociais
   description?: string;
   image?: string;
   canonical?: string;
@@ -14,6 +15,7 @@ interface Props {
 
 const {
   title,
+  ogTitle, // Desestruturando a nova prop
   description = SITE_CONFIG.description,
   image,
   canonical,
@@ -21,7 +23,13 @@ const {
   type = 'website'
 } = Astro.props;
 
+// 1. Título do Navegador (Aba)
 const finalTitle = getPageTitle(title);
+
+// 2. Título das Redes Sociais (Card)
+// Se 'ogTitle' for passado, usa ele. Caso contrário, usa o 'finalTitle' padrão.
+const socialTitle = ogTitle || finalTitle;
+
 // Garante que a URL canônica seja absoluta
 const finalCanonical = canonical 
   ? getAbsoluteUrl(canonical) 
@@ -29,60 +37,61 @@ const finalCanonical = canonical
 
 // --- Lógica do Vercel OG ---
 
-// 1. Determinar a Base URL (Domínio)
-// Se Astro.site estiver configurado no astro.config, usa ele. Se não, tenta pegar da request atual (útil em dev).
 const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
-
 let finalImage: string;
 
 if (image) {
-  // Se uma imagem específica foi passada, resolve ela para URL absoluta
-  // Verifica se já é uma URL completa (começa com http), senão concatena
+  // Se uma imagem manual foi passada
   if (image.startsWith('http')) {
     finalImage = image;
   } else {
     finalImage = new URL(image, siteBase).href;
   }
 } else {
-  // 2. Geração da URL Dinâmica
+  // Geração da URL Dinâmica
   const ogUrl = new URL('/og-image.png', siteBase);
-  if (image) {
-  // Se a imagem for externa, passamos ela como parâmetro codificado
-  ogUrl.searchParams.set('externalImage', image); 
-}
-  // 3. Adicionar parâmetros
-  if (title) ogUrl.searchParams.set('title', title.toString());
-  if (description) ogUrl.searchParams.set('description', description.toString());
   
-  // 4. Converter para string completa (href)
+  // Aqui usamos o socialTitle para que o texto na imagem gerada 
+  // combine com o texto do card social
+  if (socialTitle) ogUrl.searchParams.set('title', socialTitle);
+  
+  if (description) ogUrl.searchParams.set('description', description);
+  
   finalImage = ogUrl.href;
 }
 ---
+
 <head>
-<title>{finalTitle}</title>
-<meta name="description" content={description} />
-<link rel="canonical" href={finalCanonical} />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta charset="UTF-8" />
-<link rel="icon" href="/favicon.svg" />
-<link rel="stylesheet" href="/styles/global.css">
+  {/* Título da Aba do Navegador */}
+  <title>{finalTitle}</title>
+  
+  <meta name="description" content={description} />
+  <link rel="canonical" href={finalCanonical} />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <link rel="icon" href="/favicon.svg" />
+  <link rel="stylesheet" href="/styles/global.css">
 
-{noindex && <meta name="robots" content="noindex, nofollow" />}
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-<meta property="og:type" content={type} />
-<meta property="og:url" content={finalCanonical} />
-<meta property="og:title" content={finalTitle} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={finalImage} />
-<meta property="og:image:alt" content={finalTitle}>
-<meta property="og:image:type" content="image/jpeg" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:site_name" content={SITE_CONFIG.title} />
+  {/* Open Graph / Facebook / WhatsApp */}
+  <meta property="og:type" content={type} />
+  <meta property="og:url" content={finalCanonical} />
+  
+  {/* AQUI ESTÁ A MUDANÇA: Usamos socialTitle */}
+  <meta property="og:title" content={socialTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={finalImage} />
+  <meta property="og:image:alt" content={socialTitle}>
+  <meta property="og:image:type" content="image/svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content={SITE_CONFIG.title} />
 
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={finalCanonical} />
-<meta property="twitter:title" content={finalTitle} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={finalImage} />
+  {/* Twitter */}
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={finalCanonical} />
+  <meta property="twitter:title" content={socialTitle} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content={finalImage} />
 </head>
