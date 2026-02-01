@@ -58,12 +58,14 @@ if (image) {
   finalImage = ogUrl.href;
 }
 ---
-
+<head>
 <title>{finalTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={finalCanonical} />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta charset="UTF-8" />
+<link rel="icon" href="/favicon.svg" />
+<link rel="stylesheet" href="/styles/global.css">
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
@@ -83,3 +85,4 @@ if (image) {
 <meta property="twitter:title" content={finalTitle} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={finalImage} />
+</head>
