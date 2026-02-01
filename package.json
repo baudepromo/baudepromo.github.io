@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.0",
-    "@astrojs/vercel": "^9.0.4",
+    "@astrojs/vercel": "^8.0.4",
+    "@vercel/og": "^0.8.6",
     "astro": "^5.16.15"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.10"
   }
 }

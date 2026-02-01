@@ -12,11 +12,10 @@ interface Props {
   type?: 'website' | 'article';
 }
 
-const { 
-  title, 
-  description = SITE_CONFIG.description, 
-  // Removemos o defaultImage aqui para tratar na lógica abaixo
-  image,
+const {
+  title,
+  description = SITE_CONFIG.description,
+  image, // Removemos o defaultImage aqui para tratar na lógica abaixo
   canonical,
   noindex = false,
   type = 'website'
@@ -25,26 +24,24 @@ const {
 const finalTitle = getPageTitle(title);
 const finalCanonical = canonical ? getAbsoluteUrl(canonical) : getAbsoluteUrl(Astro.url.pathname);
 
-// LÓGICA DO VERCEL OG:
-// 1. Se uma imagem manual foi passada via props, use-a.
-// 2. Se não, construa a URL dinâmica para a API /api/og
-let finalImageUrl = '';
+// --- Lógica do Vercel OG ---
+let finalImage: string;
 
 if (image) {
-  finalImageUrl = getAbsoluteUrl(image);
+  // Se uma imagem foi passada explicitamente, usa ela
+  finalImage = getAbsoluteUrl(image);
 } else {
-  // Pega a URL base do site (localhost ou produção)
-  const baseUrl = Astro.site ? Astro.site.toString() : Astro.url.origin;
+  // Se não, constrói a URL dinâmica para o endpoint que criamos
+  const ogUrl = new URL('/og-image.png', Astro.url.origin); // Usa a origem atual
   
-  // Cria a URL da API: ex: https://meusite.com/api/og?title=Titulo+da+Pagina
-  const ogSearchParams = new URLSearchParams();
-  ogSearchParams.set('title', title || SITE_CONFIG.title);
+  // Adiciona o título como parametro
+  if (title) ogUrl.searchParams.set('title', title);
+  // Opcional: Adiciona descrição ou nome do site
+  if (description) ogUrl.searchParams.set('description', description);
   
-  // Opcional: Adicionar descrição se quiser usar no design da imagem
-  // ogSearchParams.set('desc', description); 
-
-  finalImageUrl = new URL(`/api/og?${ogSearchParams.toString()}`, baseUrl).toString();
+  finalImage = ogUrl.toString();
 }
+// ---------------------------
 ---
 
 <title>{finalTitle}</title>
@@ -59,12 +56,16 @@ if (image) {
 <meta property="og:url" content={finalCanonical} />
 <meta property="og:title" content={finalTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={finalImageUrl} />
+<meta property="og:image" content={finalImage} />
 <meta property="og:site_name" content={SITE_CONFIG.title} />
+
+{/* Adiciona dimensões para ajudar as redes sociais a renderizarem mais rápido */}
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
 
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={finalCanonical} />
 <meta property="twitter:title" content={finalTitle} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={finalImageUrl} />
+<meta property="twitter:image" content={finalImage} />
 <meta property="twitter:creator" content={SITE_CONFIG.twitterHandle} />
