@@ -30,10 +30,13 @@ let finalImage: string;
 if (image) {
   finalImage = getAbsoluteUrl(image);
 } else {
-  // O primeiro parâmetro DEVE ser o caminho do arquivo da imagem
-  // O segundo parâmetro (Astro.url.origin) garante que o link seja absoluto
-  const ogUrl = new URL('/og-image.png', Astro.url.origin); 
+  // 1. Pegamos a base (prioridade para o site definido no config)
+  const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
   
+  // 2. Criamos a URL apontando para o endpoint
+  const ogUrl = new URL('/og-image.png', siteBase);
+  
+  // 3. Adicionamos os parâmetros de forma explícita
   if (title) ogUrl.searchParams.set('title', title);
   if (description) ogUrl.searchParams.set('description', description);
   
