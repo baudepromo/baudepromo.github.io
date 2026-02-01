@@ -8,13 +8,13 @@ import cupons from "../assets/images/cupons.webp"
 import qrcode from "../assets/images/qrcode-pix.webp"
 import Seo from "../../public/lib/seo/metadada.astro"
 ---
-<Layout>
-    <Seo 
+<Seo 
     title='Ofertas, Cupons e Achadinhos Online | Baú de Promoções', 
     description='Economize com os melhores cupons e promoções da Amazon, Shopee e Mercado Livre. Achadinhos exclusivos e ofertas atualizadas hoje no Baú de Promoções!', 
     image="og-image.png?title=ola",
     type='website'
     ></Seo>
+<Layout>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -243,7 +243,15 @@ import Seo from "../../public/lib/seo/metadada.astro"
         <p>Gosta do nosso trabalho? <br> Escaneie o QR Code para contribuir via PIX.</p>
         
         <div class="qr-container">
-            
+            <Image
+                src={qrcode}
+                alt="Cupons de Desconto"
+                width={300}
+                height={260}
+                format="webp"
+                loading="lazy"
+                decoding="async"
+                />
         </div>
         
         <span class="pix-key-text">Chave: <strong>baudepromocao@gmail.com</strong></span>
