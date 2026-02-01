@@ -1,7 +1,7 @@
 ---
 // src/components/SEO.astro
-import { SITE_CONFIG } from "./constants"; // Ajuste o caminho conforme seu projeto
-import { getAbsoluteUrl, getPageTitle } from './utils'; // Ajuste conforme seu projeto
+import { SITE_CONFIG } from "./constants"; 
+import { getAbsoluteUrl, getPageTitle } from './utils'; 
 
 interface Props {
   title?: string;
@@ -22,25 +22,37 @@ const {
 } = Astro.props;
 
 const finalTitle = getPageTitle(title);
-const finalCanonical = canonical ? getAbsoluteUrl(canonical) : new URL(Astro.url.pathname, Astro.site || Astro.url.origin).href;
+// Garante que a URL canônica seja absoluta
+const finalCanonical = canonical 
+  ? getAbsoluteUrl(canonical) 
+  : new URL(Astro.url.pathname, Astro.site || Astro.url.origin).href;
 
 // --- Lógica do Vercel OG ---
+
+// 1. Determinar a Base URL (Domínio)
+// Se Astro.site estiver configurado no astro.config, usa ele. Se não, tenta pegar da request atual (útil em dev).
+const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
+
 let finalImage: string;
 
 if (image) {
-  finalImage = getAbsoluteUrl(image);
+  // Se uma imagem específica foi passada, resolve ela para URL absoluta
+  // Verifica se já é uma URL completa (começa com http), senão concatena
+  if (image.startsWith('http')) {
+    finalImage = image;
+  } else {
+    finalImage = new URL(image, siteBase).href;
+  }
 } else {
-  // 1. Pegamos a base (prioridade para o site definido no config)
-  const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
-  
-  // 2. Criamos a URL apontando para o endpoint
+  // 2. Geração da URL Dinâmica
   const ogUrl = new URL('/og-image.png', siteBase);
   
-  // 3. Adicionamos os parâmetros de forma explícita
-  if (title) ogUrl.searchParams.set('title', title);
-  if (description) ogUrl.searchParams.set('description', description);
+  // 3. Adicionar parâmetros
+  if (title) ogUrl.searchParams.set('title', title.toString());
+  if (description) ogUrl.searchParams.set('description', description.toString());
   
-  finalImage = ogUrl.toString();
+  // 4. Converter para string completa (href)
+  finalImage = ogUrl.href;
 }
 ---
 
@@ -58,9 +70,6 @@ if (image) {
 <meta property="og:description" content={description} />
 <meta property="og:image" content={finalImage} />
 <meta property="og:site_name" content={SITE_CONFIG.title} />
-
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
 
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={finalCanonical} />
