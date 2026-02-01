@@ -28,7 +28,7 @@ export async function GET({ request }: { request: Request }) {
         >
           {title}
         </div>
-      ),1
+      ),
       {
         width: 1200,
         height: 630,
