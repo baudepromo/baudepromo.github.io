@@ -15,15 +15,36 @@ interface Props {
 const { 
   title, 
   description = SITE_CONFIG.description, 
-  image = SITE_CONFIG.defaultImage,
+  // Removemos o defaultImage aqui para tratar na lógica abaixo
+  image,
   canonical,
   noindex = false,
   type = 'website'
 } = Astro.props;
 
 const finalTitle = getPageTitle(title);
-const finalImage = getAbsoluteUrl(image);
 const finalCanonical = canonical ? getAbsoluteUrl(canonical) : getAbsoluteUrl(Astro.url.pathname);
+
+// LÓGICA DO VERCEL OG:
+// 1. Se uma imagem manual foi passada via props, use-a.
+// 2. Se não, construa a URL dinâmica para a API /api/og
+let finalImageUrl = '';
+
+if (image) {
+  finalImageUrl = getAbsoluteUrl(image);
+} else {
+  // Pega a URL base do site (localhost ou produção)
+  const baseUrl = Astro.site ? Astro.site.toString() : Astro.url.origin;
+  
+  // Cria a URL da API: ex: https://meusite.com/api/og?title=Titulo+da+Pagina
+  const ogSearchParams = new URLSearchParams();
+  ogSearchParams.set('title', title || SITE_CONFIG.title);
+  
+  // Opcional: Adicionar descrição se quiser usar no design da imagem
+  // ogSearchParams.set('desc', description); 
+
+  finalImageUrl = new URL(`/api/og?${ogSearchParams.toString()}`, baseUrl).toString();
+}
 ---
 
 <title>{finalTitle}</title>
@@ -38,12 +59,12 @@ const finalCanonical = canonical ? getAbsoluteUrl(canonical) : getAbsoluteUrl(As
 <meta property="og:url" content={finalCanonical} />
 <meta property="og:title" content={finalTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={finalImage} />
+<meta property="og:image" content={finalImageUrl} />
 <meta property="og:site_name" content={SITE_CONFIG.title} />
 
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={finalCanonical} />
 <meta property="twitter:title" content={finalTitle} />
 <meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={finalImage} />
+<meta property="twitter:image" content={finalImageUrl} />
 <meta property="twitter:creator" content={SITE_CONFIG.twitterHandle} />
