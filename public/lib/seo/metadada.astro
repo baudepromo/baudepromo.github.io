@@ -1,7 +1,7 @@
 ---
 // src/components/SEO.astro
-import { SITE_CONFIG } from "./constants";
-import { getAbsoluteUrl, getPageTitle } from './utils';
+import { SITE_CONFIG } from "./constants"; // Ajuste o caminho conforme seu projeto
+import { getAbsoluteUrl, getPageTitle } from './utils'; // Ajuste conforme seu projeto
 
 interface Props {
   title?: string;
@@ -15,28 +15,27 @@ interface Props {
 const {
   title,
   description = SITE_CONFIG.description,
-  image, // Removemos o defaultImage aqui para tratar na lógica abaixo
+  image,
   canonical,
   noindex = false,
   type = 'website'
 } = Astro.props;
 
 const finalTitle = getPageTitle(title);
-const finalCanonical = canonical ? getAbsoluteUrl(canonical) : getAbsoluteUrl(Astro.url.pathname);
+const finalCanonical = canonical ? getAbsoluteUrl(canonical) : new URL(Astro.url.pathname, Astro.site || Astro.url.origin).href;
 
 // --- Lógica do Vercel OG ---
 let finalImage: string;
 
 if (image) {
-  // Se uma imagem foi passada explicitamente, usa ela
+  // Se tem imagem manual (ex: capa do post), usa ela
   finalImage = getAbsoluteUrl(image);
 } else {
-  // Se não, constrói a URL dinâmica para o endpoint que criamos
-  const ogUrl = new URL('/og-image.png', Astro.url.origin); // Usa a origem atual
+  // Se não, gera a dinâmica
+  const ogUrl = new URL('/og-image.png', Astro.url.origin); 
   
-  // Adiciona o título como parametro
+  // Passa os parâmetros com segurança
   if (title) ogUrl.searchParams.set('title', title);
-  // Opcional: Adiciona descrição ou nome do site
   if (description) ogUrl.searchParams.set('description', description);
   
   finalImage = ogUrl.toString();
@@ -59,7 +58,6 @@ if (image) {
 <meta property="og:image" content={finalImage} />
 <meta property="og:site_name" content={SITE_CONFIG.title} />
 
-{/* Adiciona dimensões para ajudar as redes sociais a renderizarem mais rápido */}
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 
@@ -68,4 +66,3 @@ if (image) {
 <meta property="twitter:title" content={finalTitle} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={finalImage} />
-<meta property="twitter:creator" content={SITE_CONFIG.twitterHandle} />
