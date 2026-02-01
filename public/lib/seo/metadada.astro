@@ -5,32 +5,31 @@ import { getAbsoluteUrl, getPageTitle } from './utils';
 
 interface Props {
   title?: string;
-  ogTitle?: string;
+  ogTitle?: string; // NOVO: Título específico para redes sociais
   description?: string;
   image?: string;
   canonical?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
-  // NOVO: Define o estilo da imagem gerada
-  imageMode?: 'banner' | 'icon'; 
+  imageMode?: 'banner' | 'icon';
 }
 
 const {
   title,
-  ogTitle,
+  ogTitle, // Desestruturando a nova prop
   description = SITE_CONFIG.description,
   image,
   canonical,
   noindex = false,
   type = 'website',
-  // Padrão é 'banner' se não for especificado
-  imageMode = 'banner', 
+  imageMode = 'banner',
 } = Astro.props;
 
 // 1. Título do Navegador (Aba)
 const finalTitle = getPageTitle(title);
 
 // 2. Título das Redes Sociais (Card)
+// Se 'ogTitle' for passado, usa ele. Caso contrário, usa o 'finalTitle' padrão.
 const socialTitle = ogTitle || finalTitle;
 
 // Garante que a URL canônica seja absoluta
@@ -54,19 +53,14 @@ if (image) {
   // Geração da URL Dinâmica
   const ogUrl = new URL('/og-image.png', siteBase);
   
+  // Aqui usamos o socialTitle para que o texto na imagem gerada 
+  // combine com o texto do card social
   if (socialTitle) ogUrl.searchParams.set('title', socialTitle);
-  if (description) ogUrl.searchParams.set('description', description);
   
-  // AQUI: Passamos o modo para o endpoint de geração de imagem
-  ogUrl.searchParams.set('mode', imageMode); 
+  if (description) ogUrl.searchParams.set('description', description);
   
   finalImage = ogUrl.href;
 }
-
-// Lógica Opcional: Ajustar o card do Twitter baseado no modo
-// 'summary_large_image' é o banner grande. 'summary' é o ícone pequeno ao lado do texto.
-const twitterCardType = imageMode === 'icon' ? 'summary' : 'summary_large_image';
-
 ---
 
 <head>
@@ -85,21 +79,19 @@ const twitterCardType = imageMode === 'icon' ? 'summary' : 'summary_large_image'
   {/* Open Graph / Facebook / WhatsApp */}
   <meta property="og:type" content={type} />
   <meta property="og:url" content={finalCanonical} />
+  
+  {/* AQUI ESTÁ A MUDANÇA: Usamos socialTitle */}
   <meta property="og:title" content={socialTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={finalImage} />
   <meta property="og:image:alt" content={socialTitle}>
-  
-  {/* Ajusta o tamanho esperado dependendo do modo */}
-  <meta property="og:image:type" content="image/jpeg" />
-  <meta property="og:image:width" content={imageMode === 'icon' ? '600' : '1200'} />
-  <meta property="og:image:height" content={imageMode === 'icon' ? '600' : '630'} />
-  
+  <meta property="og:image:type" content="image/svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:site_name" content={SITE_CONFIG.title} />
 
   {/* Twitter */}
-  {/* AQUI: Usamos a variável dinâmica para o tipo de card */}
-  <meta property="twitter:card" content={twitterCardType} />
+  <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:url" content={finalCanonical} />
   <meta property="twitter:title" content={socialTitle} />
   <meta property="twitter:description" content={description} />
