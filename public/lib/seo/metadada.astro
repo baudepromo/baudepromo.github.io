@@ -22,63 +22,39 @@ const {
 } = Astro.props;
 
 const finalTitle = getPageTitle(title);
-// Garante que a URL canônica seja absoluta
+const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
 const finalCanonical = canonical 
   ? getAbsoluteUrl(canonical) 
-  : new URL(Astro.url.pathname, Astro.site || Astro.url.origin).href;
+  : new URL(Astro.url.pathname, siteBase).href;
 
-// --- Lógica do Vercel OG ---
-
-// 1. Determinar a Base URL (Domínio)
-// Se Astro.site estiver configurado no astro.config, usa ele. Se não, tenta pegar da request atual (útil em dev).
-const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
-
-let finalImage: string;
+// --- Lógica Unificada do Vercel OG ---
+const ogUrl = new URL('/og-image.png', siteBase);
 
 if (image) {
-  // Se uma imagem específica foi passada, resolve ela para URL absoluta
-  // Verifica se já é uma URL completa (começa com http), senão concatena
-  if (image.startsWith('http')) {
-    finalImage = image;
-  } else {
-    finalImage = new URL(image, siteBase).href;
-  }
-} else {
-  // 2. Geração da URL Dinâmica
-  const ogUrl = new URL('/og-image.png', siteBase);
-  if (image) {
-  // Se a imagem for externa, passamos ela como parâmetro codificado
-  ogUrl.searchParams.set('externalImage', image); 
+  // Se houver imagem, passamos ela como 'externalImage' para o seu gerador
+  ogUrl.searchParams.set('externalImage', image);
 }
-  // 3. Adicionar parâmetros
-  if (title) ogUrl.searchParams.set('title', title.toString());
-  if (description) ogUrl.searchParams.set('description', description.toString());
-  
-  // 4. Converter para string completa (href)
-  finalImage = ogUrl.href;
-}
+
+if (title) ogUrl.searchParams.set('title', title);
+if (description) ogUrl.searchParams.set('description', description);
+
+const finalImage = ogUrl.href;
 ---
 
-<title>{finalTitle}</title>
-<meta name="description" content={description} />
-<link rel="canonical" href={finalCanonical} />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta charset="UTF-8" />
+<title>{finalTitle}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-{noindex && <meta name="robots" content="noindex, nofollow" />}
-
-<meta property="og:type" content={type} />
-<meta property="og:url" content={finalCanonical} />
-<meta property="og:title" content={finalTitle} />
-<meta property="og:description" content={description} />
-<meta property="og:image" content={finalImage} />
-<meta property="og:image:type" content="image/png" />
+<meta name="description" content={description} />
+<meta property="og:image" content={finalImage} /> <meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
+
+<meta property="og:title" content={finalTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={finalCanonical} />
+<meta property="og:type" content={type} />
 <meta property="og:site_name" content={SITE_CONFIG.title} />
 
 <meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={finalCanonical} />
-<meta property="twitter:title" content={finalTitle} />
-<meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={finalImage} />
