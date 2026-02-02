@@ -7,17 +7,16 @@ interface Props {
   title?: string;
   ogTitle?: string; // NOVO: Título específico para redes sociais
   description?: string;
-  image?: string;
   canonical?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
 }
 
+const image = "og/ogmain.jpg"
 const {
   title,
   ogTitle, // Desestruturando a nova prop
   description = SITE_CONFIG.description,
-  image,
   canonical,
   noindex = false,
   type = 'website',
@@ -50,13 +49,14 @@ if (image) {
 } else {
   // Geração da URL Dinâmica
   const ogUrl = new URL('/og-image.png', siteBase);
+
   
   // Aqui usamos o socialTitle para que o texto na imagem gerada 
   // combine com o texto do card social
   if (socialTitle) ogUrl.searchParams.set('title', socialTitle);
   
   if (description) ogUrl.searchParams.set('description', description);
-  
+
   finalImage = ogUrl.href;
 }
 ---
