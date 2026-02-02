@@ -20,7 +20,7 @@ const slug = Astro.url.searchParams.get('slug');
 // Como o import é local, a busca é instantânea (resolve o problema da demora)
 const product = (produtosDoBau as Produto[]).find((p) => p.slug === slug);
 
-const seoImage = product?.img || "https://baudepromocao.vercel.app/og/ogmain.jpg";
+const seoImage = product?.img;
 const seoTitle = product?.title || "Melhores Produtos";
 ---
 <Layout>
