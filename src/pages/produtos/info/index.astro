@@ -3,6 +3,7 @@ import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
 import Info from '../../../components/produtos/info.astro';
 import Seo from "../../../../public/lib/seo/metadada.astro"
+import produtosDoBau from "../../../../public/data/produtos.json";
 
 interface Produto {
     id: number | string;
@@ -16,16 +17,12 @@ interface Produto {
 
 const slug = Astro.url.searchParams.get('slug');
 
-const response = await fetch('https://baudepromocao.vercel.app/data/produtos.json');
-
-// 2. Diga ao TypeScript que o JSON é um array de Produtos:
-const produtos: Produto[] = await response.json();
-
-// 3. Agora o TypeScript sabe o que é 'p' e o erro desaparece!
-const product = produtos.find((p) => p.slug === slug);
+// Como o import é local, a busca é instantânea (resolve o problema da demora)
+const product = (produtosDoBau as Produto[]).find((p) => p.slug === slug);
 
 const seoImage = product?.img || "https://baudepromocao.vercel.app/og/ogmain.jpg";
 const seoTitle = product?.title || "Melhores Produtos";
+---
 ---
 <Layout>
     <Seo 
