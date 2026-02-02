@@ -147,6 +147,12 @@
                 return;
             }
 
+            const metaOgImage = document.querySelector('meta[property="og:image"]');
+    const metaTwitterImage = document.querySelector('meta[name="twitter:image"]');
+    
+    if (metaOgImage) metaOgImage.setAttribute('content', product.img);
+    if (metaTwitterImage) metaTwitterImage.setAttribute('content', product.img);
+
             // Define IDs seguros
             const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
             const heartId = "heart_" + safeId;

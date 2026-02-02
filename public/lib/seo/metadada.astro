@@ -11,7 +11,6 @@ interface Props {
   canonical?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
-  imageMode?: 'banner' | 'icon';
 }
 
 const {
@@ -22,7 +21,6 @@ const {
   canonical,
   noindex = false,
   type = 'website',
-  imageMode = 'banner',
 } = Astro.props;
 
 // 1. Título do Navegador (Aba)
