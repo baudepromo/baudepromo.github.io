@@ -85,52 +85,61 @@
             showToast("Erro na operação.");
         }
     }
+    
     // --- FUNÇÃO PARA GERAR SCHEMA JSON-LD ---
 function updateSchema(product) {
     const existingScript = document.getElementById('product-schema');
     if (existingScript) existingScript.remove();
 
-    // --- NOVA LÓGICA DE PREÇO MAIS SEGURA ---
-    let priceFormatted;
-    let rawPrice = product.price;
+    // 1. Tenta pegar currentPrice primeiro, se não existir pega price
+    let rawPrice = product.currentPrice || product.price;
+    let priceFormatted = "0.00";
 
     if (typeof rawPrice === 'number') {
-        // Se já for número (ex: 1299.90), só fixa casas decimais
         priceFormatted = rawPrice.toFixed(2);
-    } else {
+    } else if (rawPrice) {
         let strPrice = String(rawPrice);
-        // Se tiver vírgula, assume formato BR (ex: "1.299,90")
+
+        // A. Remove tudo que NÃO for número, ponto ou vírgula (Tira R$, espaços, letras)
+        // Isso resolve o problema de "R$ 100,00" virar erro
+        strPrice = strPrice.replace(/[^\d.,]/g, ''); 
+
+        // B. Lógica Brasil (ex: 1.200,50 -> 1200.50)
         if (strPrice.includes(',')) {
+            // Remove pontos de milhar (1.200 -> 1200) e troca vírgula por ponto
             priceFormatted = strPrice.replace(/\./g, '').replace(',', '.');
         } else {
-            // Se não tem vírgula, assume que já está certo ou é inteiro (ex: "1299.90" ou "1299")
+            // Caso já esteja no padrão internacional ou sem separadores
             priceFormatted = strPrice;
         }
     }
-    // ----------------------------------------
+
+    // 2. Garante que description não quebre se for nulo
+    const safeDesc = product.title 
+        ? `Aproveite a oferta de ${product.title} por R$ ${priceFormatted} na loja ${product.store}.`
+        : "Oferta imperdível no Baú de Promoções";
 
     const schemaData = {
         "@context": "https://schema.org/",
         "@type": "Product",
         "name": product.title,
         "image": [product.img],
-        "description": `Aproveite a oferta de ${product.title} por R$ ${product.price} na loja ${product.store}.`,
-        "sku": product.id,
+        "description": safeDesc,
+        "sku": String(product.id), // Garante que seja string
         "brand": {
             "@type": "Brand",
-            // Se o produto tiver marca específica no JSON use product.brand, senão usa a loja
-            "name": product.brand || product.store 
+            "name": product.brand || product.store || "Genérico"
         },
         "offers": {
             "@type": "Offer",
-            "url": window.location.href, // Jeito mais curto de pegar a URL completa
+            "url": window.location.href,
             "priceCurrency": "BRL",
-            "price": priceFormatted,
+            "price": priceFormatted, // Agora vai limpo (ex: "1299.90")
             "itemCondition": "https://schema.org/NewCondition",
             "availability": "https://schema.org/InStock",
             "seller": {
                 "@type": "Organization",
-                "name": product.store
+                "name": product.store || "Varejista"
             }
         }
     };
@@ -138,9 +147,13 @@ function updateSchema(product) {
     const script = document.createElement('script');
     script.id = 'product-schema';
     script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(schemaData); // textContent é ligeiramente mais seguro/rápido que .text
+    script.textContent = JSON.stringify(schemaData);
     document.head.appendChild(script);
+    
+    // Debug: Abra o console (F12) para ver o preço que está sendo enviado
+    console.log("Schema Preço Gerado:", priceFormatted);
 }
+
     window.toggleWishlist = (pid, eid) => toggleCollection("wishlists", pid, eid, "active", "Salvo nos favoritos ❤️", "Removido dos favoritos");
     window.toggleAlert = (pid, eid) => toggleCollection("alerts", pid, eid, "active", "Alerta criado! 🔔", "Alerta removido");
 
