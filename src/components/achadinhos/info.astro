@@ -87,36 +87,46 @@
     }
     // --- FUNÇÃO PARA GERAR SCHEMA JSON-LD ---
 function updateSchema(product) {
-    // Remove scripts antigos de schema se houver (para evitar duplicidade ao navegar)
     const existingScript = document.getElementById('product-schema');
     if (existingScript) existingScript.remove();
 
-    // Tratamento do preço (BRL costuma usar vírgula, o Schema exige ponto)
-    // Ex: transforma "1.299,00" em "1299.00"
-    let priceFormatted = String(product.price).replace(/\./g, '').replace(',', '.');
-    
-    // Se o preço for apenas número sem formatação, garante duas casas decimais
-    if(!isNaN(priceFormatted)) {
-        priceFormatted = parseFloat(priceFormatted).toFixed(2);
+    // --- NOVA LÓGICA DE PREÇO MAIS SEGURA ---
+    let priceFormatted;
+    let rawPrice = product.price;
+
+    if (typeof rawPrice === 'number') {
+        // Se já for número (ex: 1299.90), só fixa casas decimais
+        priceFormatted = rawPrice.toFixed(2);
+    } else {
+        let strPrice = String(rawPrice);
+        // Se tiver vírgula, assume formato BR (ex: "1.299,90")
+        if (strPrice.includes(',')) {
+            priceFormatted = strPrice.replace(/\./g, '').replace(',', '.');
+        } else {
+            // Se não tem vírgula, assume que já está certo ou é inteiro (ex: "1299.90" ou "1299")
+            priceFormatted = strPrice;
+        }
     }
+    // ----------------------------------------
 
     const schemaData = {
         "@context": "https://schema.org/",
         "@type": "Product",
         "name": product.title,
         "image": [product.img],
-        "description": `Aproveite a oferta de ${product.title} por R$ ${product.price} na loja ${product.store}. ${product.sku || ''}`,
+        "description": `Aproveite a oferta de ${product.title} por R$ ${product.price} na loja ${product.store}.`,
         "sku": product.id,
         "brand": {
             "@type": "Brand",
-            "name": product.store // Ou use uma propriedade product.brand se tiver no JSON
+            // Se o produto tiver marca específica no JSON use product.brand, senão usa a loja
+            "name": product.brand || product.store 
         },
         "offers": {
             "@type": "Offer",
-            "url": window.location.origin + window.location.pathname, // URL da sua página de detalhes
+            "url": window.location.href, // Jeito mais curto de pegar a URL completa
             "priceCurrency": "BRL",
             "price": priceFormatted,
-            "itemCondition": "https://schema.org/NewCondition", // Baseado no ícone "Original"
+            "itemCondition": "https://schema.org/NewCondition",
             "availability": "https://schema.org/InStock",
             "seller": {
                 "@type": "Organization",
@@ -128,7 +138,7 @@ function updateSchema(product) {
     const script = document.createElement('script');
     script.id = 'product-schema';
     script.type = 'application/ld+json';
-    script.text = JSON.stringify(schemaData);
+    script.textContent = JSON.stringify(schemaData); // textContent é ligeiramente mais seguro/rápido que .text
     document.head.appendChild(script);
 }
     window.toggleWishlist = (pid, eid) => toggleCollection("wishlists", pid, eid, "active", "Salvo nos favoritos ❤️", "Removido dos favoritos");
@@ -248,7 +258,7 @@ if (metaDesc) {
                     <div class="price-tag"><span>R$</span> ${product.currentPrice}</div>
                 </div>
                 <div class="benefits-grid">
-                    <div class="benefit-item">${SVGS.truck} <strong>${product.badge}</strong></div>
+                    <div class="benefit-item">${SVGS.shop} ${product.store}</div>
                     <div class="benefit-item">${SVGS.shield} Compra Segura</div>
                     <div class="benefit-item">${SVGS.card} Parcelamento</div>
                     <div class="benefit-item">${SVGS.check} Original</div>

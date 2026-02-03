@@ -2,7 +2,13 @@
 import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
 import Favoritos from "../../../components/produtos/favoritos.astro"
+import Seo from "../../../../public/lib/seo/metadada.astro"
 ---
+<Seo
+title="Meus Favoritos: Suas Melhores Ofertas Salvas | Baú de Promoções"
+description="Acesse sua lista personalizada e não perca nenhuma oportunidade! Confira os preços dos produtos que você favoritou e garanta o melhor desconto no Baú de Promoções."
+type="article"
+></Seo>
 <Layout>
     <style is:inline>
         .card {
@@ -167,7 +173,7 @@ import Favoritos from "../../../components/produtos/favoritos.astro"
     </style>
     <div class="hero-section" style="position: relative;">
         <div class="faq-wrapper">
-        <a href="/produtos" class="btn-back">
+        <a href="javascript:history.back()" class="btn-back">
           <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>

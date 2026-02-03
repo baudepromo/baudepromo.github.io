@@ -3,8 +3,13 @@ import Layout from "../../../../layouts/MainLayout.astro";
 import Global from '../../../../components/global.astro';
 import LayoutCategorias from "../../../../layouts/categorias.astro";
 import FetchPath from "../../../../components/produtos/categorias.astro";
+import Seo from "../../../../../public/lib/seo/metadada.astro"
 ---
-<Layout title=" Produtos para Casa: Renove seu Lar com Estilo e Economia | Baú de Promoções" description="Sua casa merece o melhor! Descubra uma seleção exclusiva de itens para casa e decoração com ofertas que cabem no seu bolso. Qualidade e sofisticação em promoção.">
+<Seo title="Produtos para Casa: Renove seu Lar com Estilo e Economia | Baú de Promoções"
+description="Sua casa merece o melhor! Descubra uma seleção exclusiva de itens para casa e decoração com ofertas que cabem no seu bolso. Qualidade e sofisticação em promoção."
+type="website"
+></Seo>
+<Layout>
 <LayoutCategorias ativo="casa" title="Casa & Decoração" subtitle="Procurando ofertas para casa? No Baú de Promoções você encontra as melhores categorias com descontos exclusivos e tempo limitado. Aproveite agora antes que acabe!"> </LayoutCategorias>
 <FetchPath fetchpath="/data/categorias/casa.json", categoria="casa"></FetchPath>
 <Global></Global>

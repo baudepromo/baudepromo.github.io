@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://baudepromocao.vercel.app/sitemap-0.xml
+Sitemap: https://baudepromocao.vercel.app/sitemap-index.xml

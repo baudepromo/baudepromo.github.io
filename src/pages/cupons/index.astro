@@ -2,11 +2,13 @@
 import Global from '../../components/global.astro';
 import Layout from '../../layouts/MainLayout.astro';
 import Cupons from '../../components/cupons.astro';
+import Seo from "../../../public/lib/seo/metadada.astro"
 ---
+<Seo title='Cupons de Desconto e Códigos Promocionais | Baú de Promoções'
+description='Pare de pagar mais caro! Resgate agora cupons válidos e códigos exclusivos para as maiores lojas do Brasil. Garanta seu desconto antes que expire.'
+type="website"></Seo>
 <Layout>
     <style is:inline>
-
-        /* Estilo para o botão voltar com SVG */
 
         /* Classe genérica para ícones SVG */
         .icon {
@@ -219,6 +221,7 @@ import Cupons from '../../components/cupons.astro';
     <div class="filter-container">
         <button class="filter-btn active" onclick="filterCoupons(event, 'all')">Todos</button>
         <button class="filter-btn" onclick="filterCoupons(event, 'shopee')">Shopee</button>
+        <button class="filter-btn" onclick="filterCoupons(event, 'Mercado Livre')">Mercado Livre</button>
         <button class="filter-btn" onclick="filterCoupons(event, 'amazon')">Amazon</button>
         <button class="filter-btn" onclick="filterCoupons(event, 'ali')">AliExpress</button>
     </div>

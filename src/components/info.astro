@@ -33,7 +33,6 @@ const { fetchpath2 } = Astro.props;
         bellFilled:   `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
         share:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
         shop:         `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg>`,
-        truck:        `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>`,
         shield:       `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
         card:         `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`,
         check:        `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
@@ -53,7 +52,7 @@ const { fetchpath2 } = Astro.props;
         setTimeout(() => toast.classList.remove('show'), 3000);
     };
 
-    // 4. FUNÇÕES GLOBAIS (DEFINIDAS AQUI PARA EVITAR O ERRO)
+    // 4. FUNÇÕES GLOBAIS
     
     // Função Auxiliar (Interna)
     async function toggleCollection(collectionName, productId, elementId, activeClass, successMsg, removedMsg) {
@@ -94,7 +93,6 @@ const { fetchpath2 } = Astro.props;
         }
     }
 
-    // --- AQUI ESTÁ A CORREÇÃO: "window." ---
     window.toggleWishlist = function(productId, elementId) {
         toggleCollection('wishlists', productId, elementId, 'active', 'Salvo nos favoritos!', 'Removido dos favoritos.');
     };
@@ -125,6 +123,47 @@ const { fetchpath2 } = Astro.props;
         }
     };
 
+    // ============================================
+    // NOVO: Função para Injetar Schema JSON-LD
+    // ============================================
+    function updateSchema(product) {
+        // Remove schema anterior se houver (para navegação SPA)
+        const oldScript = document.getElementById('dynamic-product-schema');
+        if (oldScript) oldScript.remove();
+
+        // Formata o preço para padrão Schema (ponto flutuante, ex: 100.00)
+        // Assume que product.price vem como string "1.200,90" ou similar
+        let price = String(product.price || "0")
+            .replace("R$", "")
+            .trim()
+            .replace(/\./g, "") // Remove pontos de milhar
+            .replace(",", "."); // Troca vírgula decimal por ponto
+
+        const schemaData = {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.title,
+            "image": product.img,
+            "description": product.title + " - Melhor oferta encontrada.", // Fallback simples
+            "sku": String(product.id),
+            "offers": {
+                "@type": "Offer",
+                "url": product.link,
+                "priceCurrency": "BRL",
+                "price": price,
+                "availability": "https://schema.org/InStock",
+                "itemCondition": "https://schema.org/NewCondition"
+            }
+        };
+
+        const script = document.createElement('script');
+        script.id = 'dynamic-product-schema';
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(schemaData);
+        document.head.appendChild(script);
+        console.log("Schema JSON-LD atualizado.");
+    }
+
     // 5. CARREGAMENTO DO PRODUTO
     async function loadProductDetails() {
         const params = new URLSearchParams(window.location.search);
@@ -154,13 +193,16 @@ const { fetchpath2 } = Astro.props;
                 return;
             }
 
+            // === AQUI: Injeta o Schema ===
+            updateSchema(product);
+            // ============================
+
             // Define IDs seguros
             const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
             const heartId = "heart_" + safeId;
             const alertId = "alert_" + safeId;
             
             // TRUQUE PARA O SHARE NÃO QUEBRAR COM ASPAS SIMPLES
-            // Se o título for: TV 50' Samsung -> vira -> TV 50\' Samsung
             const safeTitle = product.title.replace(/'/g, "\\'"); 
             const shareUrl = window.location.origin + window.location.pathname + "?slug=" + product.slug;
 
@@ -189,7 +231,7 @@ const { fetchpath2 } = Astro.props;
                         <div class="price-tag"><span>R$</span> ${product.price}</div>
                     </div>
                     <div class="benefits-grid">
-                        <div class="benefit-item">${SVGS.truck} Frete Grátis</div>
+                        <div class="benefit-item">${SVGS.shop} ${product.store}</div>
                         <div class="benefit-item">${SVGS.shield} Compra Segura</div>
                         <div class="benefit-item">${SVGS.card} Parcelamento</div>
                         <div class="benefit-item">${SVGS.check} Original</div>

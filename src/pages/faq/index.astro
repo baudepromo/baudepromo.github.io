@@ -1,8 +1,14 @@
 ---
 import Layout from "../../layouts/MainLayout.astro"
 import Global from "../../components/global.astro"
+import Seo from "../../../public/lib/seo/metadada.astro"
 ---
-
+<Seo
+title="Perguntas Frequentes FAQ | Baú de Promoções"
+description="Precisa de ajuda com o Baú de Promoções? Confira nosso FAQ completo com informações sobre alertas de preços, lista de desejos e como garantir os menores preços."
+type="article"
+noindex
+></Seo>
 <Layout>
   <script type="application/ld+json">
 {
@@ -10,17 +16,25 @@ import Global from "../../components/global.astro"
   "@type": "FAQPage",
   "mainEntity": [{
     "@type": "Question",
-    "name": "Os cupons do Baú de Promoções são confiáveis?",
+    "name": "Eu pago algo para usar o Baú de Promoções?",
     "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Sim! Todos os nossos achadinhos e cupons são verificados manualmente antes de serem publicados, garantindo que você seja direcionado para lojas oficiais como Amazon e Shopee."
+      "text": "Não! O acesso ao Baú e a todas as ofertas é totalmente gratuito. Nosso modelo de negócio permite que você aproveite os melhores preços sem pagar nenhuma taxa por isso."
     }
   }, {
     "@type": "Question",
-    "name": "Como utilizar um cupom de desconto?",
+    "name": "É seguro comprar através dos links?",
     "acceptedAnswer": {
       "@type": "Answer",
-      "text": "Basta clicar no botão da oferta, copiar o código exibido e colá-lo no campo 'Cupom de Desconto' na finalização da compra na loja parceira."
+      "text": "Sim, é 100% seguro. Nós não processamos pagamentos nem vendemos produtos diretamente. O Baú funciona como uma vitrine que redireciona você para lojas oficiais e confiáveis, como: Amazon, Mercado Livre, Shopee e AliExpress. Toda a transação, pagamento e entrega são realizados diretamente por estas plataformas consagradas."
+    }
+  },
+    {
+    "@type": "Question",
+    "name": "Eu pago algo para usar o Baú de Promoções?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Não! O acesso ao Baú e a todas as ofertas é totalmente gratuito. Nosso modelo de negócio permite que você aproveite os melhores preços sem pagar nenhuma taxa por isso."
     }
   }]
 }
