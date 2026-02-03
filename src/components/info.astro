@@ -43,7 +43,7 @@ const { fetchpath2 } = Astro.props;
     window.showToast = (msg) => {
         const toast = document.getElementById('toast-box');
         if (!toast) {
-            alert(msg); // Fallback se não tiver toast
+            alert(msg);
             return;
         }
         const infoIcon = `<svg style="display:inline-block; vertical-align:middle; margin-right:5px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
@@ -53,8 +53,6 @@ const { fetchpath2 } = Astro.props;
     };
 
     // 4. FUNÇÕES GLOBAIS
-    
-    // Função Auxiliar (Interna)
     async function toggleCollection(collectionName, productId, elementId, activeClass, successMsg, removedMsg) {
         if (!auth.currentUser) {
             const modal = document.getElementById('login-modal');
@@ -69,12 +67,11 @@ const { fetchpath2 } = Astro.props;
         const userRef = doc(db, collectionName, auth.currentUser.uid);
         const wasActive = btn.classList.contains(activeClass);
 
-        btn.classList.toggle(activeClass); // Troca cor instantaneamente
+        btn.classList.toggle(activeClass); 
 
         try {
             const snap = await getDoc(userRef);
             if (!wasActive) {
-                // Adiciona
                 if (!snap.exists()) {
                     await setDoc(userRef, { email: auth.currentUser.email, items: [String(productId)], updatedAt: new Date() });
                 } else {
@@ -82,13 +79,12 @@ const { fetchpath2 } = Astro.props;
                 }
                 window.showToast(successMsg);
             } else {
-                // Remove
                 await updateDoc(userRef, { items: arrayRemove(String(productId)) });
                 window.showToast(removedMsg);
             }
         } catch (e) {
             console.error(`Erro:`, e);
-            btn.classList.toggle(activeClass); // Desfaz em caso de erro
+            btn.classList.toggle(activeClass); 
             window.showToast("Erro ao salvar.");
         }
     }
@@ -102,7 +98,6 @@ const { fetchpath2 } = Astro.props;
     };
 
     window.shareLink = async function(title, url) {
-        console.log("Tentando compartilhar:", title, url);
         if (navigator.share) {
             try {
                 await navigator.share({
@@ -123,28 +118,19 @@ const { fetchpath2 } = Astro.props;
         }
     };
 
-    // ============================================
-    // NOVO: Função para Injetar Schema JSON-LD
-    // ============================================
+    // Atualiza Schema JSON-LD
     function updateSchema(product) {
-        // Remove schema anterior se houver (para navegação SPA)
         const oldScript = document.getElementById('dynamic-product-schema');
         if (oldScript) oldScript.remove();
 
-        // Formata o preço para padrão Schema (ponto flutuante, ex: 100.00)
-        // Assume que product.price vem como string "1.200,90" ou similar
-        let price = String(product.price || "0")
-            .replace("R$", "")
-            .trim()
-            .replace(/\./g, "") // Remove pontos de milhar
-            .replace(",", "."); // Troca vírgula decimal por ponto
+        let price = String(product.price || "0").replace("R$", "").trim().replace(/\./g, "").replace(",", ".");
 
         const schemaData = {
             "@context": "https://schema.org/",
             "@type": "Product",
             "name": product.title,
             "image": product.img,
-            "description": product.title + " - Melhor oferta encontrada.", // Fallback simples
+            "description": product.title + " - Melhor oferta encontrada.", 
             "sku": String(product.id),
             "offers": {
                 "@type": "Offer",
@@ -161,10 +147,9 @@ const { fetchpath2 } = Astro.props;
         script.type = 'application/ld+json';
         script.textContent = JSON.stringify(schemaData);
         document.head.appendChild(script);
-        console.log("Schema JSON-LD atualizado.");
     }
 
-    // 5. CARREGAMENTO DO PRODUTO
+    // 5. CARREGAMENTO DO PRODUTO (MODIFICADO AQUI)
     async function loadProductDetails() {
         const params = new URLSearchParams(window.location.search);
         const slug = params.get('slug'); 
@@ -177,7 +162,6 @@ const { fetchpath2 } = Astro.props;
             const res = await fetch(fetchpath2);
             let products = await res.json();
             
-            // Corrige Slugs
             products = products.map((p, index) => ({
                 ...p,
                 id: p.id !== undefined ? p.id : index,
@@ -193,20 +177,21 @@ const { fetchpath2 } = Astro.props;
                 return;
             }
 
-            // === AQUI: Injeta o Schema ===
             updateSchema(product);
-            // ============================
 
-            // Define IDs seguros
             const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
             const heartId = "heart_" + safeId;
             const alertId = "alert_" + safeId;
-            
-            // TRUQUE PARA O SHARE NÃO QUEBRAR COM ASPAS SIMPLES
             const safeTitle = product.title.replace(/'/g, "\\'"); 
             const shareUrl = window.location.origin + window.location.pathname + "?slug=" + product.slug;
 
             document.title = product.title;
+
+            // --- LÓGICA DO OLD PRICE ---
+            // Se existir oldPrice, cria o HTML com o estilo riscado
+            const oldPriceHtml = product.oldPrice 
+                ? `<span class="old-price" style="text-decoration: line-through; color: #999; font-size: 1.02em; display: block; margin-bottom: 2px;"><strong>R$ ${product.oldPrice}</strong></span>` 
+                : '';
 
             contentArea.innerHTML = `
                 <div class="img-side">
@@ -228,7 +213,8 @@ const { fetchpath2 } = Astro.props;
                     <h1>${product.title}</h1>
                     <div class="price-wrapper">
                         <p class="price-label">Melhor preço encontrado:</p>
-                        <div class="price-tag"><span>R$</span> ${product.price}</div>
+                        
+                        ${oldPriceHtml} <div class="price-tag"><span>R$</span> ${product.price}</div>
                     </div>
                     <div class="benefits-grid">
                         <div class="benefit-item">${SVGS.shop} ${product.store}</div>
@@ -242,7 +228,6 @@ const { fetchpath2 } = Astro.props;
                 </div>
             `;
             
-            // Checa status (Logado)
             if (auth.currentUser) {
                 checkStatus("wishlists", product.id, heartId);
                 checkStatus("alerts", product.id, alertId);
@@ -264,7 +249,6 @@ const { fetchpath2 } = Astro.props;
         } catch(e) { console.log(e); }
     }
 
-    // LOGIN
     const btnLogin = document.getElementById('btn-google-login');
     if(btnLogin) {
         btnLogin.addEventListener('click', async () => {
@@ -279,14 +263,11 @@ const { fetchpath2 } = Astro.props;
         });
     }
 
-    // Monitora Login
     onAuthStateChanged(auth, (user) => { 
         const content = document.getElementById("content-area");
-        // Se ainda não carregou ou se precisa atualizar icones
         if(content) loadProductDetails(); 
     });
 
-    // Inicia
     loadProductDetails();
     console.log("Script Carregado com Sucesso!");
 </script>

@@ -1,5 +1,4 @@
 ---
-
 interface Props {
   ativo?: string; // O "?" significa que não é obrigatório (pode ficar tudo desligado)
   title: string;
@@ -14,26 +13,26 @@ const { ativo, title, subtitle } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap; /* Permite quebrar linha se o espaço acabar */
     gap: 15px;
-    max-width: 800px; /* Largura total da barra */
+    max-width: 850px;
     margin: 30px auto 50px;
-    padding: 0 10px;
+    padding: 0 20px;
 }
 
-/* Ajuste da Busca para preencher o espaço */
 .search-wrapper {
-    margin-top: 0; /* Remove margem antiga */
-    flex: 1; /* Ocupa o espaço restante */
-    margin: 0; /* Zera margens externas */
-    height: 54px; /* Altura fixa para alinhar com o slider */
+    flex: 1; /* A busca cresce e diminui */
+    min-width: 200px; /* Mas não fica minúscula */
+    height: 54px;
     box-sizing: border-box;
 }
 
 /* --- SLIDER COMPACTO --- */
 .compact-price-container {
-    flex: 0 0 260px; /* Largura fixa do slider */
+    flex: 0 0 280px; /* Definimos uma largura fixa confortável */
+    min-width: 280px; /* Garante que ele não esmague em telas médias */
     background: white;
-    border-radius: 50px; /* Redondo igual a busca */
+    border-radius: 50px;
     padding: 10px 20px;
     height: 54px;
     display: flex;
@@ -78,27 +77,22 @@ const { ativo, title, subtitle } = Astro.props;
 }
 
 .range-input-mini {
-    position: absolute;
+    position: relative; /* Mudado de absolute para relative para conter os filhos */
     width: 100%;
-    height: 100%;
-    top: -9px; /* Sobe o input para alinhar a bolinha */
-    pointer-events: none;
-    background: none;
+    height: 4px;
 }
 
 .range-input-mini input {
     position: absolute;
-    /* Aumenta a largura em 16px (tamanho da bolinha) para cobrir as bordas */
-    width: calc(100% + 16px); 
-    height: 100%;
-    /* Puxa 8px para a esquerda para centralizar o início */
-    margin-left: -120px;
-    top: 8.5px; /* Mantém o alinhamento vertical que já estava */
+    width: 100%; /* Ocupa 100% do container pai (280px) */
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%); /* Centraliza verticalmente na linha */
     pointer-events: none;
     background: none;
     -webkit-appearance: none;
     appearance: none;
-    z-index: 2;
+    margin: 0; /* Remova qualquer margem negativa */
 }
 /* Bolinha do Slider Menor */
 .range-input-mini input::-webkit-slider-thumb {
@@ -216,7 +210,7 @@ const { ativo, title, subtitle } = Astro.props;
         @media (max-width: 768px) {
             .hero-section h1 { font-size: 1.8rem; }
             .hero-buttons { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; white-space: nowrap; }
-            .pill-btn { flex: 0 0 auto; }
+            .pill-btn { flex: 0 0 auto; margin: 5px; padding: 12px 100px; }
             .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
             .card-img-wrapper { height: 160px; padding: 10px; }
             .card-info { padding: 15px; }

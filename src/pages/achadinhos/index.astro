@@ -114,7 +114,29 @@ description='Sabe aquele produto incrível que você viu no TikTok? Ele está aq
             font-size: 0.8rem; 
             font-weight: 700; 
         }
+        /* Adicione ou atualize estas classes no seu CSS */
 
+.price-box {
+    margin-top: auto; /* Garante que o preço fique acima do botão */
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column; /* Coloca o preço antigo em cima do atual */
+    align-items: flex-start;
+}
+
+.old-price {
+    font-size: 0.90rem;
+    color: #999; /* Cor cinza para dar menos destaque */
+    text-decoration: line-through; /* O risco no meio do texto */
+    margin-bottom: 2px;
+    font-weight: 400;
+}
+
+.price {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #111; /* Cor de destaque para o preço atual */
+}
 .pagination {
     display: flex;
     align-items: center;
