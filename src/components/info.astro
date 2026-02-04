@@ -6,6 +6,10 @@ interface Props {
 const { fetchpath2 } = Astro.props;
 import Seo from "../../public/lib/seo/metadada.astro"
 ---
+<Seo 
+  title="Carregando oferta..." 
+  description="Confira a melhor oferta no Baú de Promoção" 
+/>
 <script define:vars={{ fetchpath2 }} type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -176,7 +180,8 @@ import Seo from "../../public/lib/seo/metadada.astro"
                 contentArea.innerHTML = `<h2>Oferta não encontrada!</h2>`;
                 return;
             }
-
+            
+            updateOGTags(product);
             updateSchema(product);
 
             const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
@@ -186,6 +191,7 @@ import Seo from "../../public/lib/seo/metadada.astro"
             const shareUrl = `https://baudepromocao.vercel.app/${product.id}`;
 
             document.title = product.title;
+            document.ogimage = product.img;
 
             // --- LÓGICA DO OLD PRICE ---
             // Se existir oldPrice, cria o HTML com o estilo riscado
@@ -270,5 +276,31 @@ import Seo from "../../public/lib/seo/metadada.astro"
 
     loadProductDetails();
     console.log("Script Carregado com Sucesso!");
-    <Seo title={product.title}></Seo>
+
+    function updateOGTags(product) {
+    const metaData = {
+        'og:title': product.title,
+        'og:description': `Oferta imperdível: R$ ${product.price} na loja ${product.store}`,
+        'og:image': product.img,
+        'og:url': window.location.href,
+        'og:type': 'product',
+        'twitter:card': 'summary_large_image',
+        'twitter:title': product.title,
+        'twitter:image': product.img
+    };
+
+    for (const [property, content] of Object.entries(metaData)) {
+        // Tenta encontrar a tag existente ou cria uma nova
+        let element = document.querySelector(`meta[property="${property}"]`) || 
+                      document.querySelector(`meta[name="${property}"]`);
+        
+        if (!element) {
+            element = document.createElement('meta');
+            if (property.startsWith('og:')) element.setAttribute('property', property);
+            else element.setAttribute('name', property);
+            document.head.appendChild(element);
+        }
+        element.setAttribute('content', content);
+    }
+}
 </script>
