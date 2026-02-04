@@ -4,12 +4,60 @@ interface Props {
 }
 
 const { fetchpath2 } = Astro.props;
-import Seo from "../../public/lib/seo/metadada.astro"
+import Seo from "../../public/lib/seo/metadada.astro";
+
+// 1. LÓGICA SERVER-SIDE (Executa antes da página carregar)
+let productData = null;
+let metaTitle = "Carregando oferta...";
+let metaDescription = "Confira a melhor oferta no Baú de Promoção";
+let metaImage = "/og/ogmain.png"; // Coloque uma imagem padrão aqui se quiser
+
+try {
+  // Pega os parâmetros da URL atual (slug ou id)
+  const slug = Astro.url.searchParams.get('slug');
+  const id = Astro.url.searchParams.get('id');
+
+  if (slug || id) {
+    // Faz o fetch no servidor
+    const res = await fetch(fetchpath2);
+    let products = await res.json();
+
+    // Normaliza os dados (mesma lógica que você tinha no JS)
+    products = products.map((p: any, index: number) => ({
+        ...p,
+        id: p.id !== undefined ? p.id : index,
+        slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    }));
+
+    // Encontra o produto
+    if (slug) {
+      productData = products.find((p: any) => p.slug === slug);
+    } else if (id) {
+      productData = products.find((p: any) => String(p.id).trim() === id.trim());
+    }
+
+    // Se achou o produto, define os metadados
+    if (productData) {
+      metaTitle = productData.title;
+      metaDescription = `Oferta imperdível: R$ ${productData.price} na loja ${productData.store}`;
+      metaImage = productData.img;
+    }
+  }
+} catch (error) {
+  console.error("Erro ao buscar dados no servidor:", error);
+}
 ---
+
 <Seo 
-  title="Carregando oferta..." 
-  description="Confira a melhor oferta no Baú de Promoção" 
+  title={metaTitle}
+  description={metaDescription}
+  
 />
+
+<div id="content-area">
+    <h2>Carregando oferta...</h2>
+</div>
+
 <script define:vars={{ fetchpath2 }} type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -191,7 +239,6 @@ import Seo from "../../public/lib/seo/metadada.astro"
             const shareUrl = `https://baudepromocao.vercel.app/${product.id}`;
 
             document.title = product.title;
-            document.ogimage = product.img;
 
             // --- LÓGICA DO OLD PRICE ---
             // Se existir oldPrice, cria o HTML com o estilo riscado

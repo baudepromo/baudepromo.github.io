@@ -7,16 +7,17 @@ interface Props {
   title?: string;
   ogTitle?: string; // NOVO: Título específico para redes sociais
   description?: string;
+  image?: string;
   canonical?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
 }
 
-const image = "og/ogmain.png"
 const {
   title,
   ogTitle, // Desestruturando a nova prop
   description = SITE_CONFIG.description,
+  image,
   canonical,
   noindex = false,
   type = 'website',
