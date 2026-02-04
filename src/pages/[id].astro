@@ -1,0 +1,26 @@
+---
+import { callSafely } from "astro:actions";
+
+const { id } = Astro.params;
+// procura o produto pelo id
+const modules = import.meta.glob("../../public/data/categorias/*.json", {
+  eager: true
+}) as Record<string, { default: any[] }>;
+
+const produtos = Object.values(modules).flatMap(
+  (module) => module.default
+);
+
+const produto = produtos.find(p => p.id === id);
+
+const cutitle = produto?.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+const url = `https://baudepromocao.vercel.app/produtos/categorias/${produto.categoria}/info/?slug=${cutitle}`
+// se não existir → 404
+if (!produto) {
+  return new Response("Produto não encontrado", { status: 404 });
+}
+
+// redireciona
+return Astro.redirect(url, 301);
+---

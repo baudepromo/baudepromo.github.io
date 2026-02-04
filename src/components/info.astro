@@ -96,7 +96,6 @@ const { fetchpath2 } = Astro.props;
     window.toggleAlert = function(productId, elementId) {
         toggleCollection('alerts', productId, elementId, 'active', 'Alerta ativado!', 'Alerta removido.');
     };
-
     window.shareLink = async function(title, url) {
         if (navigator.share) {
             try {
@@ -183,7 +182,7 @@ const { fetchpath2 } = Astro.props;
             const heartId = "heart_" + safeId;
             const alertId = "alert_" + safeId;
             const safeTitle = product.title.replace(/'/g, "\\'"); 
-            const shareUrl = window.location.origin + window.location.pathname + "?slug=" + product.slug;
+            const shareUrl = `https://baudepromocao.vercel.app/${product.id}`;
 
             document.title = product.title;
 
