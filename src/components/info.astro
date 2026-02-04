@@ -4,6 +4,7 @@ interface Props {
 }
 
 const { fetchpath2 } = Astro.props;
+import Seo from "../../public/lib/seo/metadada.astro"
 ---
 <script define:vars={{ fetchpath2 }} type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -269,4 +270,5 @@ const { fetchpath2 } = Astro.props;
 
     loadProductDetails();
     console.log("Script Carregado com Sucesso!");
+    <Seo title={product.title}></Seo>
 </script>
