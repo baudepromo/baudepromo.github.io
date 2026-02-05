@@ -3,6 +3,7 @@
     import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+    // 1. CONFIGURAÇÃO (Não altere)
     const firebaseConfig = {
         apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
         authDomain: "baudepromocao-oficial.firebaseapp.com",
@@ -11,13 +12,13 @@
         messagingSenderId: "743146859125",
         appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
     };
-    
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // --- COLEÇÃO DE ÍCONES SVG ---
+    // 2. ÍCONES
     const SVGS = {
         heartOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
         heartFilled:  `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
@@ -25,273 +26,212 @@
         bellFilled:   `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
         share:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
         shop:         `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg>`,
-        truck:        `<strong>R$</strong>`,
         shield:       `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
         card:         `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`,
         check:        `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
         arrowOut:     `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`
     };
 
-    // --- FUNÇÃO DE LOGIN ---
-    const btnLogin = document.getElementById('btn-google-login');
-    if(btnLogin) {
-        btnLogin.addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                document.getElementById('login-modal').style.display = 'none';
-                showToast(`Bem-vindo, ${result.user.displayName.split(' ')[0]}!`);
-            } catch (error) {
-                console.error("Erro login:", error);
-                showToast("Erro ao fazer login");
-            }
-        });
-    }
-    const createSlug = (text) => {
-    if (!text) return '';
-    return text.toString().toLowerCase().trim()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '')
-};
-    // --- TOGGLE COLLECTIONS ---
+    // 3. TOAST (Notificação)
+    window.showToast = (msg) => {
+        const toast = document.getElementById('toast-box');
+        if (!toast) {
+            alert(msg);
+            return;
+        }
+        const infoIcon = `<svg style="display:inline-block; vertical-align:middle; margin-right:5px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+        toast.innerHTML = `${infoIcon} ${msg}`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    // 4. FUNÇÕES GLOBAIS
     async function toggleCollection(collectionName, productId, elementId, activeClass, successMsg, removedMsg) {
         if (!auth.currentUser) {
-            document.getElementById('login-modal').style.display = 'flex';
+            const modal = document.getElementById('login-modal');
+            if(modal) modal.style.display = 'flex';
+            else alert("Faça login para continuar!");
             return;
         }
 
         const btn = document.getElementById(elementId);
-        const userRef = doc(db, collectionName, auth.currentUser.uid);
-        const wasActive = btn.classList.contains('active');
+        if(!btn) return;
 
-        btn.classList.toggle('active');
+        const userRef = doc(db, collectionName, auth.currentUser.uid);
+        const wasActive = btn.classList.contains(activeClass);
+
+        btn.classList.toggle(activeClass); 
 
         try {
             const snap = await getDoc(userRef);
-            
             if (!wasActive) {
                 if (!snap.exists()) {
                     await setDoc(userRef, { email: auth.currentUser.email, items: [String(productId)], updatedAt: new Date() });
                 } else {
                     await updateDoc(userRef, { items: arrayUnion(String(productId)) });
                 }
-                showToast(successMsg);
+                window.showToast(successMsg);
             } else {
                 await updateDoc(userRef, { items: arrayRemove(String(productId)) });
-                showToast(removedMsg);
+                window.showToast(removedMsg);
             }
         } catch (e) {
-            console.error(`Erro em ${collectionName}:`, e);
-            btn.classList.toggle('active');
-            showToast("Erro na operação.");
-        }
-    }
-    
-    // --- FUNÇÃO PARA GERAR SCHEMA JSON-LD ---
-function updateSchema(product) {
-    const existingScript = document.getElementById('product-schema');
-    if (existingScript) existingScript.remove();
-
-    // 1. Tenta pegar currentPrice primeiro, se não existir pega price
-    let rawPrice = product.currentPrice || product.price;
-    let priceFormatted = "0.00";
-
-    if (typeof rawPrice === 'number') {
-        priceFormatted = rawPrice.toFixed(2);
-    } else if (rawPrice) {
-        let strPrice = String(rawPrice);
-
-        // A. Remove tudo que NÃO for número, ponto ou vírgula (Tira R$, espaços, letras)
-        // Isso resolve o problema de "R$ 100,00" virar erro
-        strPrice = strPrice.replace(/[^\d.,]/g, ''); 
-
-        // B. Lógica Brasil (ex: 1.200,50 -> 1200.50)
-        if (strPrice.includes(',')) {
-            // Remove pontos de milhar (1.200 -> 1200) e troca vírgula por ponto
-            priceFormatted = strPrice.replace(/\./g, '').replace(',', '.');
-        } else {
-            // Caso já esteja no padrão internacional ou sem separadores
-            priceFormatted = strPrice;
+            console.error(`Erro:`, e);
+            btn.classList.toggle(activeClass); 
+            window.showToast("Erro ao salvar.");
         }
     }
 
-    // 2. Garante que description não quebre se for nulo
-    const safeDesc = product.title 
-        ? `Aproveite a oferta de ${product.title} por R$ ${priceFormatted} na loja ${product.store}.`
-        : "Oferta imperdível no Baú de Promoções";
-
-    const schemaData = {
-        "@context": "https://schema.org/",
-        "@type": "Product",
-        "name": product.title,
-        "image": [product.img],
-        "description": safeDesc,
-        "sku": String(product.id), // Garante que seja string
-        "brand": {
-            "@type": "Brand",
-            "name": product.brand || product.store || "Genérico"
-        },
-        "offers": {
-            "@type": "Offer",
-            "url": window.location.href,
-            "priceCurrency": "BRL",
-            "price": priceFormatted, // Agora vai limpo (ex: "1299.90")
-            "itemCondition": "https://schema.org/NewCondition",
-            "availability": "https://schema.org/InStock",
-            "seller": {
-                "@type": "Organization",
-                "name": product.store || "Varejista"
-            }
-        }
+    window.toggleWishlist = function(productId, elementId) {
+        toggleCollection('wishlists', productId, elementId, 'active', 'Salvo nos favoritos!', 'Removido dos favoritos.');
     };
 
-    const script = document.createElement('script');
-    script.id = 'product-schema';
-    script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(schemaData);
-    document.head.appendChild(script);
-    
-    // Debug: Abra o console (F12) para ver o preço que está sendo enviado
-    console.log("Schema Preço Gerado:", priceFormatted);
-}
-
-    window.toggleWishlist = (pid, eid) => toggleCollection("wishlists", pid, eid, "active", "Salvo nos favoritos ❤️", "Removido dos favoritos");
-    window.toggleAlert = (pid, eid) => toggleCollection("alerts", pid, eid, "active", "Alerta criado! 🔔", "Alerta removido");
-
-    // --- SHARE LINK ---
-    window.shareLink = async (title, url) => {
+    window.toggleAlert = function(productId, elementId) {
+        toggleCollection('alerts', productId, elementId, 'active', 'Alerta ativado!', 'Alerta removido.');
+    };
+    window.shareLink = async function(title, url) {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: 'Baú de Promoções',
+                    title: title,
                     text: `Olha essa oferta: ${title}`,
                     url: url
                 });
-            } catch (err) { console.log('Share cancelado'); }
+            } catch (err) {
+                console.log('Compartilhamento cancelado');
+            }
         } else {
             try {
                 await navigator.clipboard.writeText(url);
-                showToast("Link copiado! 📋");
-            } catch (err) { showToast("Erro ao copiar link."); }
+                window.showToast('Link copiado!');
+            } catch (err) {
+                prompt("Copie o link:", url);
+            }
         }
     };
-    // --- CARREGAMENTO DO PRODUTO (POR SLUG) ---
-// --- CARREGAMENTO DO PRODUTO (POR SLUG) ---
-async function loadProductDetails() {
-    const params = new URLSearchParams(window.location.search);
-    
-    const slug = params.get('slug'); 
-    const fallbackId = params.get('id');
-    const contentArea = document.getElementById("content-area");
 
-    if (!slug && !fallbackId) return;
+    // Atualiza Schema JSON-LD
+    function updateSchema(product) {
+        const oldScript = document.getElementById('dynamic-product-schema');
+        if (oldScript) oldScript.remove();
 
-    try {
-        const res = await fetch('/data/achadinhos.json');
-        let products = await res.json();
-        
-        // --- CORREÇÃO AQUI: GERA OS SLUGS IGUAL À PÁGINA ANTERIOR ---
-        products = products.map((p, index) => ({
-            ...p,
-            id: p.id !== undefined ? p.id : index,
-            // A mesma lógica de regex usada na listagem para garantir compatibilidade
-            slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-        }));
-        // -------------------------------------------------------------
+        let price = String(product.price || "0").replace("R$", "").trim().replace(/\./g, "").replace(",", ".");
 
-        let product;
+        const schemaData = {
+            "@context": "https://schema.org/",
+            "@type": "Product",
+            "name": product.title,
+            "image": product.img,
+            "description": product.title + " - Melhor oferta encontrada.", 
+            "sku": String(product.id),
+            "offers": {
+                "@type": "Offer",
+                "url": product.link,
+                "priceCurrency": "BRL",
+                "price": price,
+                "availability": "https://schema.org/InStock",
+                "itemCondition": "https://schema.org/NewCondition"
+            }
+        };
 
-        // Agora a busca vai funcionar porque o array 'products' tem os slugs gerados
-        if (slug) {
-            product = products.find(p => p.slug === slug);
-        } else if (fallbackId) {
-            product = products.find(p => String(p.id).trim() === fallbackId.trim());
-        }
-
-        if (!product) {
-            contentArea.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 100px 20px;">
-                        <h2 style="font-size: 2rem; color: #333;">Oferta não encontrada!</h2>
-                        <p style="color: #666; margin-top: 10px;">O slug na URL não bate com o título no JSON.</p>
-                        <a href="/" style="display: inline-block; margin-top: 30px; color: #ff4b4b; font-weight: bold; text-decoration: none;">Voltar para o início</a>
-                    </div>`;
-            document.title = "Oferta não encontrada | Baú de Promoções";
-            return;
-        }
-
-        // --- ATUALIZAÇÃO DE SEO EXISTENTE ---
-        // 1. Limpa o título para o link não ficar gigante
-const cleanTitle = product.title.length > 55 
-    ? product.title.substring(0, 52) + "..." 
-    : product.title;
-
-// 2. O TITULO (O que aparece no link azul e na aba do navegador)
-// Estrutura: Produto + Preço + Loja
-document.title = `${cleanTitle} - R$ ${product.currentPrice} na ${product.store}`;
-
-// 3. A DESCRIÇÃO (O texto que você criou, que vai embaixo do link)
-const metaDesc = document.querySelector('meta[name="description"]');
-if (metaDesc) {
-    // Aqui sim a sua frase brilha!
-    const descriptionText = `Confira o melhor preço de ${product.title}: apenas R$ ${product.currentPrice} na loja ${product.store}. Oferta verificada hoje pelo Baú de Promoções.`;
-    metaDesc.setAttribute("content", descriptionText);
-}
-
-        // >>> ADICIONE ESTA LINHA AQUI <<<
-        updateSchema(product);
-        // --------------------------------
-
-        const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
-        
-
-        const heartId = "heart_" + safeId;
-        const alertId = "alert_" + safeId;
-        
-        // Renderiza o HTML
-        contentArea.innerHTML = `
-            <div class="img-side">
-                <div class="floating-actions">
-                    <button id="${heartId}" class="icon-btn heart-btn" onclick="toggleWishlist('${product.id}', '${heartId}')">
-                        ${SVGS.heartOutline}
-                        ${SVGS.heartFilled}
-                    </button>
-                    <button id="${alertId}" class="icon-btn alert-btn" onclick="toggleAlert('${product.id}', '${alertId}')">
-                        ${SVGS.bellOutline}
-                        ${SVGS.bellFilled}
-                    </button>
-                    <button class="icon-btn" onclick="shareLink('${product.title.replace(/'/g, "\\'")}', location.href)">
-                        ${SVGS.share}
-                    </button>
-                </div>
-                <img src="${product.img}" alt="${product.title}" loading="lazy">
-            </div>
-            <div class="info-side">
-                <span class="store-tag">${SVGS.shop} ${product.store}</span>
-                <h1>${product.title}</h1>
-                <div class="price-wrapper">
-                    <p class="price-label">Melhor preço encontrado:</p>
-                    <div class="price-tag"><span>R$</span> ${product.currentPrice}</div>
-                </div>
-                <div class="benefits-grid">
-                    <div class="benefit-item">${SVGS.shop} ${product.store}</div>
-                    <div class="benefit-item">${SVGS.shield} Compra Segura</div>
-                    <div class="benefit-item">${SVGS.card} Parcelamento</div>
-                    <div class="benefit-item">${SVGS.check} Original</div>
-                </div>
-                <a href="${product.link}" target="_blank" class="cta-button">
-                    Ir para a Loja ${SVGS.arrowOut}
-                </a>
-            </div>
-        `;
-
-        if (auth.currentUser) {
-            checkStatus("wishlists", product.id, heartId);
-            checkStatus("alerts", product.id, alertId);
-        }
-
-    } catch (e) {
-        console.error("Erro Crítico:", e);
-        contentArea.innerHTML = "<div class='loading-container'><h2>Erro ao carregar oferta.</h2></div>";
+        const script = document.createElement('script');
+        script.id = 'dynamic-product-schema';
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(schemaData);
+        document.head.appendChild(script);
     }
-}
+
+    // 5. CARREGAMENTO DO PRODUTO (MODIFICADO AQUI)
+    async function loadProductDetails() {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get('slug'); 
+        const fallbackId = params.get('id');
+        const contentArea = document.getElementById("content-area");
+
+        if (!slug && !fallbackId) return;
+
+        try {
+            const res = await fetch('/data/achadinhos.json');
+            let products = await res.json();
+            
+            products = products.map((p, index) => ({
+                ...p,
+                id: p.id !== undefined ? p.id : index,
+                slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+            }));
+
+            let product;
+            if (slug) product = products.find(p => p.slug === slug);
+            else if (fallbackId) product = products.find(p => String(p.id).trim() === fallbackId.trim());
+
+            if (!product) {
+                contentArea.innerHTML = `<h2>Oferta não encontrada!</h2>`;
+                return;
+            }
+            
+            updateOGTags(product);
+            updateSchema(product);
+
+            const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
+            const heartId = "heart_" + safeId;
+            const alertId = "alert_" + safeId;
+            const safeTitle = product.title.replace(/'/g, "\\'"); 
+            const shareUrl = `https://baudepromocao.vercel.app/a/${product.id}`;
+
+            document.title = product.title;
+            document.ogimage = product.img;
+
+            // --- LÓGICA DO OLD PRICE ---
+            // Se existir oldPrice, cria o HTML com o estilo riscado
+            const oldPriceHtml = product.oldPrice 
+                ? `<span class="old-price" style="text-decoration: line-through; color: #999; font-size: 1.02em; display: block; margin-bottom: 2px;"><strong>R$ ${product.oldPrice}</strong></span>` 
+                : '';
+
+            contentArea.innerHTML = `
+                <div class="img-side">
+                    <div class="floating-actions">
+                        <button id="${heartId}" class="icon-btn heart-btn" onclick="window.toggleWishlist('${product.id}', '${heartId}')">
+                            ${SVGS.heartOutline}${SVGS.heartFilled}
+                        </button>
+                        <button id="${alertId}" class="icon-btn alert-btn" onclick="window.toggleAlert('${product.id}', '${alertId}')">
+                            ${SVGS.bellOutline}${SVGS.bellFilled}
+                        </button>
+                        <button class="icon-btn" onclick="window.shareLink('${safeTitle}', '${shareUrl}')">
+                          ${SVGS.share}
+                        </button>
+                    </div>
+                    <img src="${product.img}" alt="${product.title}" loading="lazy">
+                </div>
+                <div class="info-side">
+                    <span class="store-tag">${SVGS.shop} ${product.store}</span>
+                    <h1>${product.title}</h1>
+                    <div class="price-wrapper">
+                        <p class="price-label">Melhor preço encontrado:</p>
+                        
+                        ${oldPriceHtml} <div class="price-tag"><span>R$</span> ${product.price}</div>
+                    </div>
+                    <div class="benefits-grid">
+                        <div class="benefit-item">${SVGS.shop} ${product.store}</div>
+                        <div class="benefit-item">${SVGS.shield} Compra Segura</div>
+                        <div class="benefit-item">${SVGS.card} Parcelamento</div>
+                        <div class="benefit-item">${SVGS.check} Original</div>
+                    </div>
+                    <a href="${product.link}" target="_blank" class="cta-button">
+                        Ir para a Loja ${SVGS.arrowOut}
+                    </a>
+                </div>
+            `;
+            
+            if (auth.currentUser) {
+                checkStatus("wishlists", product.id, heartId);
+                checkStatus("alerts", product.id, alertId);
+            }
+
+        } catch (e) {
+            console.error("Erro Crítico:", e);
+            contentArea.innerHTML = "<h2>Erro ao carregar oferta.</h2>";
+        }
+    }
 
     async function checkStatus(collectionName, productId, elementId) {
         if(!auth.currentUser) return;
@@ -303,16 +243,52 @@ if (metaDesc) {
         } catch(e) { console.log(e); }
     }
 
-    window.showToast = (msg) => {
-        const toast = document.getElementById('toast-box');
-        const infoIcon = `<svg style="display:inline-block; vertical-align:middle; margin-right:5px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-        
-        toast.innerHTML = `${infoIcon} ${msg}`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    };
+    const btnLogin = document.getElementById('btn-google-login');
+    if(btnLogin) {
+        btnLogin.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                document.getElementById('login-modal').style.display = 'none';
+                window.showToast(`Bem-vindo!`);
+                loadProductDetails(); 
+            } catch (error) {
+                console.error(error);
+            }
+        });
+    }
 
     onAuthStateChanged(auth, (user) => { 
-        loadProductDetails(); 
+        const content = document.getElementById("content-area");
+        if(content) loadProductDetails(); 
     });
+
+    loadProductDetails();
+    console.log("Script Carregado com Sucesso!");
+
+    function updateOGTags(product) {
+    const metaData = {
+        'og:title': product.title,
+        'og:description': `Oferta imperdível: R$ ${product.price} na loja ${product.store}`,
+        'og:image': product.img,
+        'og:url': window.location.href,
+        'og:type': 'product',
+        'twitter:card': 'summary_large_image',
+        'twitter:title': product.title,
+        'twitter:image': product.img
+    };
+
+    for (const [property, content] of Object.entries(metaData)) {
+        // Tenta encontrar a tag existente ou cria uma nova
+        let element = document.querySelector(`meta[property="${property}"]`) || 
+                      document.querySelector(`meta[name="${property}"]`);
+        
+        if (!element) {
+            element = document.createElement('meta');
+            if (property.startsWith('og:')) element.setAttribute('property', property);
+            else element.setAttribute('name', property);
+            document.head.appendChild(element);
+        }
+        element.setAttribute('content', content);
+    }
+}
 </script>
