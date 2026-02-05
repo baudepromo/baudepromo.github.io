@@ -6,18 +6,17 @@ import { getAbsoluteUrl, getPageTitle } from './utils';
 interface Props {
   title?: string;
   ogTitle?: string;
-  ogImage?: string // NOVO: Título específico para redes sociais
+  image?: string; // A imagem dinâmica entra aqui
   description?: string;
   canonical?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
 }
 
-const image = '/og/ogmain.png'
 const {
   title,
   ogTitle,
-  ogImage, // Desestruturando a nova prop
+  image,
   description = SITE_CONFIG.description,
   canonical,
   noindex = false,
@@ -28,7 +27,6 @@ const {
 const finalTitle = getPageTitle(title);
 
 // 2. Título das Redes Sociais (Card)
-// Se 'ogTitle' for passado, usa ele. Caso contrário, usa o 'finalTitle' padrão.
 const socialTitle = ogTitle || finalTitle;
 
 // Garante que a URL canônica seja absoluta
@@ -36,66 +34,49 @@ const finalCanonical = canonical
   ? getAbsoluteUrl(canonical) 
   : new URL(Astro.url.pathname, Astro.site || Astro.url.origin).href;
 
-// --- Lógica do Vercel OG ---
-
+// --- Lógica da Imagem ---
 const siteBase = Astro.site ? Astro.site.origin : Astro.url.origin;
 let finalImage: string;
 
 if (image) {
-  // Se uma imagem manual foi passada
+  // Se veio da API do produto (http...) ou manual
   if (image.startsWith('http')) {
     finalImage = image;
   } else {
     finalImage = new URL(image, siteBase).href;
   }
 } else {
-  // Geração da URL Dinâmica
+  // Fallback padrão se não tiver imagem
   const ogUrl = new URL('/og-image.png', siteBase);
-
-  
-  // Aqui usamos o socialTitle para que o texto na imagem gerada 
-  // combine com o texto do card social
   if (socialTitle) ogUrl.searchParams.set('title', socialTitle);
-  
   if (description) ogUrl.searchParams.set('description', description);
-
   finalImage = ogUrl.href;
 }
 ---
 
-<head>
-  <!DOCTYPE html>
-<html lang="pt-BR">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-  {/* Título da Aba do Navegador */}
-  <title>{finalTitle}</title>
-  
-  <meta name="description" content={description} />
-  <link rel="canonical" href={finalCanonical} />
-  <link rel="icon" href="/favicon.svg" />
-  <link rel="stylesheet" href="/styles/global.css">
+{/* Título da Aba do Navegador */}
+<title>{finalTitle}</title>
 
-  {noindex && <meta name="robots" content="noindex, nofollow" />}
+<meta name="description" content={description} />
+<link rel="canonical" href={finalCanonical} />
+<link rel="icon" href="/favicon.svg" />
+{noindex && <meta name="robots" content="noindex, nofollow" />}
 
-  {/* Open Graph / Facebook / WhatsApp */}
-  <meta property="og:type" content={type} />
-  <meta property="og:url" content={finalCanonical} />
-  
-  {/* AQUI ESTÁ A MUDANÇA: Usamos socialTitle */}
-  <meta property="og:title" content={socialTitle} />
-  <meta property="og:description" content={description} />
-  <meta property="og:image" content={ogImage} />
-  <meta property="og:image:alt" content={socialTitle}>
-  <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content={SITE_CONFIG.title} />
+{/* Open Graph / Facebook / WhatsApp */}
+<meta property="og:type" content={type} />
+<meta property="og:url" content={finalCanonical} />
+<meta property="og:title" content={socialTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={finalImage} />
+<meta property="og:image:alt" content={socialTitle} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content={SITE_CONFIG.title} />
 
-  {/* Twitter */}
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content={finalCanonical} />
-  <meta property="twitter:title" content={socialTitle} />
-  <meta property="twitter:description" content={description} />
-  <meta property="twitter:image" content='https://baudepromocao.vercel.app/og/ogmain.png' />
-</head>
+{/* Twitter - AGORA CORRIGIDO PARA USAR A IMAGEM DINÂMICA */}
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={finalCanonical} />
+<meta property="twitter:title" content={socialTitle} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={finalImage} />

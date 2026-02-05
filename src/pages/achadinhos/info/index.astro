@@ -12,14 +12,14 @@ const productId = Astro.url.searchParams.get('id');
 let seoData = {
   title: "O Seu Próximo Essencial Está Aqui | Baú de Promoção",
   description: "Bem-vindo ao Baú de Promoções...",
-  image: "https://seusite.com/imagem-padrao.jpg" // Imagem default importante
+  image: "https://baudepromocao.vercel.app/og/ogmain.png" // Imagem default importante
 };
 
 // 3. Fazer o Fetch no Servidor (Server-Side)
 if (productId) {
   try {
     // Substitua pela URL real da sua API/JSON
-    const response = await fetch(`https://api.seusite.com/produtos/${productId}.json`);
+    const response = await fetch(`https://baudepromocao.vercel.app/data/achadinhos.json`);
     
     if (response.ok) {
       const product = await response.json();
@@ -40,7 +40,7 @@ if (productId) {
   type="article" 
   ogTitle={seoData.title} 
   description={seoData.description}
-  ogImage={seoData.image} 
+  image={seoData.image}
 />
 
 <Layout>
