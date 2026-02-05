@@ -136,7 +136,7 @@
     // Carregamento Inicial
     async function loadProducts() {
         try {
-            const res = await fetch('/data/categorias/achadinhos.json');
+            const res = await fetch('/data/achadinhos.json');
             if (!res.ok) throw new Error("Erro ao buscar JSON");
             const data = await res.json();
             

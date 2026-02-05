@@ -186,7 +186,7 @@ async function loadProductDetails() {
     if (!slug && !fallbackId) return;
 
     try {
-        const res = await fetch('/data/categorias/achadinhos.json');
+        const res = await fetch('/data/achadinhos.json');
         let products = await res.json();
         
         // --- CORREÇÃO AQUI: GERA OS SLUGS IGUAL À PÁGINA ANTERIOR ---
