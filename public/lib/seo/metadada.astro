@@ -7,17 +7,16 @@ interface Props {
   title?: string;
   ogTitle?: string; // NOVO: Título específico para redes sociais
   description?: string;
-  image?: string;
   canonical?: string;
   noindex?: boolean;
   type?: 'website' | 'article';
 }
 
+const image = '/og/ogmain.png'
 const {
   title,
   ogTitle, // Desestruturando a nova prop
   description = SITE_CONFIG.description,
-  image,
   canonical,
   noindex = false,
   type = 'website',
@@ -84,7 +83,7 @@ if (image) {
   {/* AQUI ESTÁ A MUDANÇA: Usamos socialTitle */}
   <meta property="og:title" content={socialTitle} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content={finalImage} />
+  <meta property="og:image" content='https://baudepromocao.vercel.app/og/ogmain.png' />
   <meta property="og:image:alt" content={socialTitle}>
   <meta property="og:image:type" content="image/png" />
   <meta property="og:image:width" content="1200" />
@@ -96,5 +95,5 @@ if (image) {
   <meta property="twitter:url" content={finalCanonical} />
   <meta property="twitter:title" content={socialTitle} />
   <meta property="twitter:description" content={description} />
-  <meta property="twitter:image" content={finalImage} />
+  <meta property="twitter:image" content='https://baudepromocao.vercel.app/og/ogmain.png' />
 </head>

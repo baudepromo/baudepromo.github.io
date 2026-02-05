@@ -1,0 +1,17 @@
+---
+import achadinhos from "../../../public/data/achadinhos.json";
+
+const { id } = Astro.params;
+
+// procura o produto pelo id
+const achadinho = achadinhos.find(p => p.id === id);
+
+// se não existir → 404
+if (!achadinho) {
+  return new Response("Produto não encontrado", { status: 404 });
+}
+const cutitle = achadinho?.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+// redireciona
+return Astro.redirect(`https://baudepromocao.vercel.app/achadinhos/info/?slug=${cutitle}`, 301);
+---
