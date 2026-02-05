@@ -1,50 +1,84 @@
 ---
 import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
-import Info from '../../../components/achadinhos/info.astro'
-import Seo from "../../../../public/lib/seo/metadada.astro"
+import Info from '../../../components/achadinhos/info.astro';
+import Seo from "../../../../public/lib/seo/metadada.astro";
+
+// 1. Identificar o ID do produto (Exemplo usando Query Param: ?id=123)
+// Se sua rota for [id].astro, use: const { id } = Astro.params;
+const productId = Astro.url.searchParams.get('id');
+
+// 2. Definir valores padrão (caso a API falhe ou não tenha ID)
+let seoData = {
+  title: "O Seu Próximo Essencial Está Aqui | Baú de Promoção",
+  description: "Bem-vindo ao Baú de Promoções...",
+  image: "https://seusite.com/imagem-padrao.jpg" // Imagem default importante
+};
+
+// 3. Fazer o Fetch no Servidor (Server-Side)
+if (productId) {
+  try {
+    // Substitua pela URL real da sua API/JSON
+    const response = await fetch(`https://api.seusite.com/produtos/${productId}.json`);
+    
+    if (response.ok) {
+      const product = await response.json();
+      
+      // Atualiza os dados de SEO com o retorno da API
+      // Ajuste 'product.img', 'product.nome' conforme o seu JSON real
+      seoData.image = product.img || seoData.image; 
+      seoData.title = product.nome ? `${product.nome} | Baú` : seoData.title;
+      seoData.description = product.descricao || seoData.description;
+    }
+  } catch (error) {
+    console.error("Erro ao buscar dados do produto para SEO:", error);
+  }
+}
 ---
-<Seo type="article" ogTitle="O Seu Próximo Essencial Está Aqui | Baú de Promoção" description="Bem-vindo ao Baú de Promoções, o seu destino definitivo para produtos que facilitam a rotina, inspiram o estilo e transformam o seu dia a dia. Nossa missão é reunir, em um só lugar, uma curadoria inteligente que une inovação, qualidade e o melhor custo-benefício do mercado."></Seo>
+
+<Seo 
+  type="article" 
+  ogTitle={seoData.title} 
+  description={seoData.description}
+  ogImage={seoData.image} 
+/>
+
 <Layout>
     <link rel="stylesheet" href="/styles/pages/produtos.css">
-<section class="hero-section" style="position: relative;">
-<div class="faq-wrapper">
-    <a href="/achadinhos" class="btn-back">
-      <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-      Voltar
-    </a>
-    <h1>Melhores Produtos do Baú</h1>
-    <p>Apenas produtos selecionados</p>
+    
+    <section class="hero-section" style="position: relative;">
+        <div class="faq-wrapper">
+            <a href="/achadinhos" class="btn-back">
+              <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+              Voltar
+            </a>
+            
+            <h1>{productId ? 'Oferta Encontrada' : 'Melhores Produtos do Baú'}</h1>
+            <p>Apenas produtos selecionados</p>
+        </div>
+    </section> 
 
-</section> <div class="main-container">
-    <div id="content-area" class="detail-card">
-        <div class="loading-container">
+    <div class="main-container">
+        <div id="content-area" class="detail-card">
+            <div class="loading-container">
                 <p style="margin-top: 20px; color: var(--text-muted); font-weight: 600;">Carregando melhor oferta...</p>
+            </div>
         </div>
     </div>
-</div>
+
     <div id="toast-box" class="toast"></div>
 
     <div id="login-modal" class="modal-overlay">
-        <div style="background: white; padding: 40px; border-radius: 25px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
-            <div style="width: 70px; height: 70px; background: #fff0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
-            </div>
-            <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #1a1a1a;">Faça Login</h2>
-            <p style="color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; font-size: 0.95rem;">Para salvar favoritos e criar alertas, precisamos saber quem é você.</p>
-            
-            <button id="btn-google-login" style="width: 100%; background: #1a1a1a; color: white; border: none; padding: 15px; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
-                Entrar com Google
-            </button>
-
-            <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: #666; margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+       <div style="background: white; padding: 40px; border-radius: 25px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+           <button onclick="document.getElementById('login-modal').style.display='none'" style="background: transparent; border: none; color: #666; margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
                 Cancelar
             </button>
-        </div>
+       </div>
     </div>
-    <Global ></Global>
+    
+    <Global></Global>
     <Info></Info>
 </Layout>
