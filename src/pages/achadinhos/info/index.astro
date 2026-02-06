@@ -4,34 +4,39 @@ import Global from '../../../components/global.astro';
 import Info from '../../../components/achadinhos/info.astro';
 import Seo from "../../../../public/lib/seo/metadada.astro";
 
-// 1. Identificar o ID do produto (Exemplo usando Query Param: ?id=123)
-// Se sua rota for [id].astro, use: const { id } = Astro.params;
+interface Produto {
+  id: string | number;
+  title: string;
+  img: string;
+  // adicione outros campos que existirem no seu JSON
+}
+
 const productId = Astro.url.searchParams.get('id');
 
-// 2. Definir valores padrão (caso a API falhe ou não tenha ID)
 let seoData = {
   title: "O Seu Próximo Essencial Está Aqui | Baú de Promoção",
   description: "Bem-vindo ao Baú de Promoções...",
-  image: "https://baudepromocao.vercel.app/og/ogmain.png" // Imagem default importante
+  image: "https://baudepromocao.vercel.app/og/ogmain.png"
 };
 
-// 3. Fazer o Fetch no Servidor (Server-Side)
 if (productId) {
   try {
-    // Substitua pela URL real da sua API/JSON
     const response = await fetch(`https://baudepromocao.vercel.app/data/achadinhos.json`);
     
     if (response.ok) {
-      const product = await response.json();
+      // 2. Diga ao TypeScript que isso é um Array de Produtos
+      const allProducts: Produto[] = await response.json();
       
-      // Atualiza os dados de SEO com o retorno da API
-      // Ajuste 'product.img', 'product.nome' conforme o seu JSON real
-      seoData.image = product.img || seoData.image; 
-      seoData.title = product.nome ? `${product.nome} | Baú` : seoData.title;
-      seoData.description = product.descricao || seoData.description;
+      // Agora o TS sabe que 'item' é um 'Produto', e o erro some!
+      const product = allProducts.find((item) => item.id == productId);
+
+      if (product) {
+        seoData.image = product.img || seoData.image; 
+        seoData.title = product.title ? `${product.title} | Baú` : seoData.title;
+      }
     }
   } catch (error) {
-    console.error("Erro ao buscar dados do produto para SEO:", error);
+    console.error("Erro ao buscar dados:", error);
   }
 }
 ---
@@ -39,7 +44,7 @@ if (productId) {
 <Seo 
   type="article" 
   ogTitle={seoData.title} 
-  description={seoData.description}
+  description={seoData.title}
   image={seoData.image}
 />
 
