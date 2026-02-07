@@ -8,7 +8,6 @@ interface Produto {
   id: string | number;
   title: string;
   img: string;
-  // adicione outros campos que existirem no seu JSON
 }
 
 const productId = Astro.url.searchParams.get('id');
@@ -42,8 +41,9 @@ if (productId) {
 ---
 
 <Seo 
+  slot="seo"
   type="article" 
-  ogTitle={seoData.title} 
+  title={seoData.title} 
   description={seoData.title}
   image={seoData.image}
 />
