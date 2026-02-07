@@ -53,22 +53,34 @@ if (image) {
   finalImage = ogUrl.href;
 }
 ---
+
+{/* Título da Aba do Navegador */}
+<!DOCTYPE html>
+<html lang="pt-br">
+    <meta charset="utf-8">
 <title>{finalTitle}</title>
+
 <meta name="description" content={description} />
 <link rel="canonical" href={finalCanonical} />
+<link rel="icon" href="/favicon.svg" />
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-{/* Open Graph */}
+{/* Open Graph / Facebook / WhatsApp */}
 <meta property="og:type" content={type} />
 <meta property="og:url" content={finalCanonical} />
 <meta property="og:title" content={socialTitle} />
 <meta property="og:description" content={description} />
-<meta property="og:image" content={image} />
+<meta property="og:image" content={finalImage} />
+<meta property="og:image:alt" content={socialTitle} />
+<meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
+<meta property="og:site_name" content={SITE_CONFIG.title} />
 
-{/* Twitter */}
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content={socialTitle} />
-<meta name="twitter:image" content={image} />
+{/* Twitter - AGORA CORRIGIDO PARA USAR A IMAGEM DINÂMICA */}
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={finalCanonical} />
+<meta property="twitter:title" content={socialTitle} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={finalImage} />
