@@ -3,12 +3,18 @@ import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
 import Info from '../../../components/achadinhos/info.astro';
 import Seo from "../../../../public/lib/seo/metadada.astro";
-
+import { SITE_CONFIG } from "public/lib/seo/constants";
+import { getAbsoluteUrl, getPageTitle } from 'public/lib/seo/utils'; 
 interface Produto {
   id: string | number;
-  title: string;
   img: string;
 }
+
+const {
+  title
+} = Astro.props;
+
+const finalTitle = getPageTitle(title);
 
 const productId = Astro.url.searchParams.get('id');
 
@@ -31,7 +37,7 @@ if (productId) {
 
       if (product) {
         seoData.image = product.img || seoData.image; 
-        seoData.title = product.title ? `${product.title} | Baú` : seoData.title;
+        seoData.title = title ? `${title} | Baú` : seoData.title;
       }
     }
   } catch (error) {
@@ -43,7 +49,7 @@ if (productId) {
 <Seo 
   slot="seo"
   type="article" 
-  title={seoData.title} 
+  title={finalTitle} 
   description={seoData.title}
   image={seoData.image}
 />
