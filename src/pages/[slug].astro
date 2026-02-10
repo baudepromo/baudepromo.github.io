@@ -19,20 +19,17 @@ function gerarSlug(texto: string) {
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
+
 const { slug } = Astro.params;
 
-// Tenta conectar ao Supabase com tratamento de erro
 let product = null;
+
 try {
     const supabaseUrl = import.meta.env.SUPABASE_URL;
     const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-        throw new Error("Variáveis de ambiente do Supabase não configuradas.");
-    }
-
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // 1. Buscamos os produtos
     const { data: products, error } = await supabase
         .from('produtos')
         .select('*');
@@ -41,20 +38,28 @@ try {
 
     if (products) {
         product = products.find(p => {
-            const textoBase = p.slug || p.title || p.nome_do_produto || "";
-            return gerarSlug(textoBase) === slug;
+            // Tenta usar 'slug', depois 'title', depois 'nome_do_produto'
+            // IMPORTANTE: Se o seu banco já tem uma coluna 'slug', 
+            // não precisamos rodar a função gerarSlug nela se ela já estiver formatada.
+            
+            const slugNoBanco = p.slug; // Se você já tiver a coluna slug preenchida
+            const tituloNoBanco = p.title || p.nome_do_produto || "";
+            
+            const slugCalculado = slugNoBanco || gerarSlug(tituloNoBanco);
+            
+            // Log para você ver na Vercel o que está sendo comparado
+            console.log(`URL solicitada: ${slug} | No Banco: ${slugCalculado}`);
+            
+            return slugCalculado === slug;
         });
     }
 } catch (e) {
-    if (e instanceof Error) {
-        console.error("Erro crítico no servidor:", e.message);
-    } else {
-        console.error("Erro desconhecido:", e);
-    }
-    return Astro.redirect('/404'); 
+    console.error("Erro na busca:", e instanceof Error ? e.message : e);
 }
 
+// Se após a busca ainda for null, redireciona
 if (!product) {
+    console.log("Produto não encontrado para o slug:", slug);
     return Astro.redirect('/404');
 }
 
