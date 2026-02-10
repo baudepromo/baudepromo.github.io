@@ -1,0 +1,238 @@
+---
+export const prerender = false;
+import { createClient } from '@supabase/supabase-js';
+import Layout from "../layouts/MainLayout.astro";
+import Global from '../components/global.astro';
+import Seo from "../../public/lib/seo/metadada.astro";
+
+// --- Configuração do Supabase ---
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// --- Função de Slugificação (Mantida igual para compatibilidade) ---
+function gerarSlug(texto: string) {
+  if (!texto) return '';
+  return texto
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// --- Lógica de Busca (Server Side) ---
+const { slug } = Astro.params;
+
+let product = null;
+
+// Tenta buscar o produto. 
+// NOTA: O ideal é você ter uma coluna 'slug' no banco de dados.
+// Como fallback, buscamos todos e filtramos (igual seu código antigo), 
+// mas recomendo fortemente criar a coluna 'slug' no Supabase para ficar mais rápido.
+
+const { data: products, error } = await supabase
+    .from('produtos')
+    .select('*');
+
+if (products) {
+    product = products.find(p => {
+        const textoBase = p.slug || p.title || p.nome_do_produto;
+        const slugGerado = gerarSlug(textoBase);
+        console.log(`Comparando URL: ${slug} com Produto: ${slugGerado}`); // <--- Adicione isso
+        return slugGerado === slug;
+    });
+}
+
+// Se não achar o produto, redireciona para 404 ou Home
+if (!product) {
+    return Astro.redirect('/404');
+}
+
+// --- Mapeamento de Dados ---
+const p = {
+    id: product?.id,
+    title: product?.title || product?.nome_do_produto,
+    price: product?.price,
+    oldPrice: product?.oldPrice, 
+    img: product?.img || (Array.isArray(product.image) ? product.image[0] : product.image), // Tratamento extra para imagem
+    store: product?.store,
+    link: product?.link,
+};
+
+// IDs e Strings de segurança
+const safeId = String(p.id).replace(/[^a-zA-Z0-9]/g, '');
+const heartId = `heart_${safeId}`;
+const alertId = `alert_${safeId}`;
+const safeTitle = p.title ? p.title.replace(/'/g, "\\'") : "Produto";
+
+// SVGs (Mantidos originais)
+const SVGS = {
+    shop: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg>`,
+    heartOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
+    heartFilled: `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
+    bellOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
+    bellFilled: `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
+    share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
+    arrowOut: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`
+};
+---
+
+<Seo title={p.title} image={p.img}></Seo>
+
+<Layout title={p.title}>
+    <link rel="stylesheet" href="/styles/pages/produtos.css">
+    
+    <div class="main-container">
+        <div class="detail-card">
+            <div class="img-side">
+                <div class="floating-actions">
+                    <button id={heartId} class="icon-btn" onclick={`toggleWishlist('${p.id}', '${heartId}')`}>
+                        <Fragment set:html={SVGS.heartOutline + SVGS.heartFilled} />
+                    </button>
+                    <button id={alertId} class="icon-btn" onclick={`toggleAlert('${p.id}', '${alertId}')`}>
+                        <Fragment set:html={SVGS.bellOutline + SVGS.bellFilled} />
+                    </button>
+                    <button class="icon-btn" onclick={`shareLink('${safeTitle}', window.location.href)`}>
+                        <Fragment set:html={SVGS.share} />
+                    </button>
+                </div>
+                <img src={p.img} alt={p.title} />
+            </div>
+
+            <div class="info-side">
+                <span class="store-tag"><Fragment set:html={SVGS.shop} /> {p.store}</span>
+                <h1>{p.title}</h1>
+                <div class="price-wrapper">
+                    {p.oldPrice && <span class="old-price">R$ {p.oldPrice}</span>}
+                    <div class="price-tag"><span>R$</span> {p.price}</div>
+                </div>
+                <a href={p.link} target="_blank" class="cta-button">
+                    Ir para a Loja <Fragment set:html={SVGS.arrowOut} />
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <Global />
+</Layout>
+
+<script define:vars={{ productId: p.id, heartId, alertId, safeTitle }}>
+    // Importações do Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // Configuração
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    // Funções de Toast
+    window.showToast = (msg) => {
+        const toast = document.getElementById('toast-box');
+        if (!toast) { alert(msg); return; }
+        toast.innerHTML = msg; 
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+
+    // Função de Compartilhar
+    window.shareLink = async function(title, url) {
+        if (navigator.share) {
+            try { 
+                await navigator.share({ title: title, text: `Olha essa oferta: ${title}`, url: url });
+            } catch (err) { console.log('Cancelado'); }
+        } else {
+            try { 
+                await navigator.clipboard.writeText(url);
+                window.showToast('Link copiado!'); 
+            } catch (err) { prompt("Copie o link:", url); }
+        }
+    };
+
+    // Funções de Coleção (Wishlist/Alerts)
+    async function toggleCollection(collectionName, pId, elementId, activeClass, successMsg, removedMsg) {
+        if (!auth.currentUser) {
+            const modal = document.getElementById('login-modal');
+            if(modal) modal.style.display = 'flex';
+            return;
+        }
+        const btn = document.getElementById(elementId);
+        if(!btn) return;
+
+        const userRef = doc(db, collectionName, auth.currentUser.uid);
+        const wasActive = btn.classList.contains(activeClass);
+        btn.classList.toggle(activeClass);
+
+        try {
+            const snap = await getDoc(userRef);
+            if (!wasActive) {
+                if (!snap.exists()) {
+                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(pId)], updatedAt: new Date() });
+                } else {
+                    await updateDoc(userRef, { items: arrayUnion(String(pId)) });
+                }
+                window.showToast(successMsg);
+            } else {
+                await updateDoc(userRef, { items: arrayRemove(String(pId)) });
+                window.showToast(removedMsg);
+            }
+        } catch (e) {
+            console.error(e);
+            btn.classList.toggle(activeClass); 
+            window.showToast("Erro ao salvar.");
+        }
+    }
+
+    // Expor para o window
+    window.toggleWishlist = (pid, eid) => toggleCollection('wishlists', pid, eid, 'active', 'Salvo!', 'Removido.');
+    window.toggleAlert = (pid, eid) => toggleCollection('alerts', pid, eid, 'active', 'Alerta ativado!', 'Alerta removido.');
+
+    // Verificar status ao carregar (Auth State)
+    async function checkStatus(collectionName, pId, elementId) {
+        if(!auth.currentUser) return;
+        try {
+            const snap = await getDoc(doc(db, collectionName, auth.currentUser.uid));
+            if (snap.exists() && snap.data().items?.includes(String(pId))) {
+                document.getElementById(elementId)?.classList.add('active');
+            }
+        } catch(e) {}
+    }
+
+    // Login Listener
+    const btnLogin = document.getElementById('btn-google-login');
+    if(btnLogin) {
+        btnLogin.addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+                const modal = document.getElementById('login-modal');
+                if(modal) modal.style.display = 'none';
+                window.showToast(`Bem-vindo!`);
+                checkStatus("wishlists", productId, heartId);
+                checkStatus("alerts", productId, alertId);
+            } catch (error) { console.error(error); }
+        });
+    }
+
+    onAuthStateChanged(auth, (user) => { 
+        if(user) {
+            checkStatus("wishlists", productId, heartId);
+            checkStatus("alerts", productId, alertId);
+        }
+    });
+</script>

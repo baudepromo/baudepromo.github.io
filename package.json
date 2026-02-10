@@ -12,6 +12,7 @@
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.7.0",
     "@astrojs/vercel": "^8.0.4",
+    "@supabase/supabase-js": "^2.95.3",
     "@types/react-dom": "^19.2.3",
     "@vercel/og": "^0.8.6",
     "astro": "^5.16.15",

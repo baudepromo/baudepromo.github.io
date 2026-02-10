@@ -1,294 +1,233 @@
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script is:inline>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- SELETORES DO DOM ---
+    const productGrid = document.getElementById("product-grid");
+    const searchInput = document.getElementById("search");
+    const loadMoreBtn = document.getElementById("load-more");
 
-    // 1. CONFIGURAÇÃO (Não altere)
-    const firebaseConfig = {
-        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-        authDomain: "baudepromocao-oficial.firebaseapp.com",
-        projectId: "baudepromocao-oficial",
-        storageBucket: "baudepromocao-oficial.firebasestorage.app",
-        messagingSenderId: "743146859125",
-        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    // Elementos de Filtro
+    const minPriceInput = document.getElementById("min-price");
+    const maxPriceInput = document.getElementById("max-price");
+    const applyPriceBtn = document.getElementById("btn-apply-price");
+    const storeCheckboxes = document.querySelectorAll('input[name="store"]');
+    const sortSelect = document.getElementById("sort-select");
+
+    // Mobile Sidebar
+    const mobileFilterBtn = document.getElementById("mobile-filter-btn");
+    const sidebar = document.getElementById("filter-sidebar");
+    const closeSidebar = document.querySelector(".close-sidebar");
+
+    // --- ESTADO GLOBAL ---
+    let allProducts = []; // Armazena TODOS os produtos vindos da API
+    let filteredProducts = []; // Armazena os produtos após filtrar
+    
+    let state = {
+        itemsToShow: 12, // Paginação simulada
+        search: "",
+        category: "melhor", // Valor padrão
+        minPrice: null,
+        maxPrice: null,
+        stores: [],
+        sort: "relevance"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    // 2. ÍCONES
-    const SVGS = {
-        heartOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
-        heartFilled:  `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
-        bellOutline:  `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
-        bellFilled:   `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
-        share:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
-        shop:         `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg>`,
-        shield:       `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
-        card:         `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`,
-        check:        `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
-        arrowOut:     `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`
-    };
-
-    // 3. TOAST (Notificação)
-    window.showToast = (msg) => {
-        const toast = document.getElementById('toast-box');
-        if (!toast) {
-            alert(msg);
-            return;
-        }
-        const infoIcon = `<svg style="display:inline-block; vertical-align:middle; margin-right:5px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-        toast.innerHTML = `${infoIcon} ${msg}`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    };
-
-    // 4. FUNÇÕES GLOBAIS
-    async function toggleCollection(collectionName, productId, elementId, activeClass, successMsg, removedMsg) {
-        if (!auth.currentUser) {
-            const modal = document.getElementById('login-modal');
-            if(modal) modal.style.display = 'flex';
-            else alert("Faça login para continuar!");
-            return;
-        }
-
-        const btn = document.getElementById(elementId);
-        if(!btn) return;
-
-        const userRef = doc(db, collectionName, auth.currentUser.uid);
-        const wasActive = btn.classList.contains(activeClass);
-
-        btn.classList.toggle(activeClass); 
-
+    // --- 1. BUSCA INICIAL (Carrega tudo da API) ---
+    async function initFetch() {
         try {
-            const snap = await getDoc(userRef);
-            if (!wasActive) {
-                if (!snap.exists()) {
-                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(productId)], updatedAt: new Date() });
-                } else {
-                    await updateDoc(userRef, { items: arrayUnion(String(productId)) });
-                }
-                window.showToast(successMsg);
-            } else {
-                await updateDoc(userRef, { items: arrayRemove(String(productId)) });
-                window.showToast(removedMsg);
-            }
-        } catch (e) {
-            console.error(`Erro:`, e);
-            btn.classList.toggle(activeClass); 
-            window.showToast("Erro ao salvar.");
+            // Buscamos TUDO de uma vez (ou por categoria inicial)
+            // Nota: Se a API suportar paginação, idealmente traga o máximo possível para filtrar aqui
+            let url = `/api/buscap.json?cat=${state.category}`; 
+            
+            const response = await fetch(url);
+            const result = await response.json();
+
+            if (result.error) throw new Error(result.error);
+            
+            // Verifica se result.data é um array, senão tenta o próprio result
+            allProducts = Array.isArray(result.data) ? result.data : result;
+            
+            // Aplica os filtros iniciais
+            applyFilters();
+
+        } catch (erro) {
+            console.error("Erro ao carregar:", erro);
+            if(productGrid) productGrid.innerHTML = `<p style='grid-column: 1/-1; text-align:center;'>Erro ao carregar ofertas.</p>`;
         }
     }
 
-    window.toggleWishlist = function(productId, elementId) {
-        toggleCollection('wishlists', productId, elementId, 'active', 'Salvo nos favoritos!', 'Removido dos favoritos.');
-    };
+    // --- 2. LÓGICA DE FILTRAGEM (O Coração da Correção) ---
+    function applyFilters() {
+        // Começa com todos os produtos
+        let tempProducts = [...allProducts];
 
-    window.toggleAlert = function(productId, elementId) {
-        toggleCollection('alerts', productId, elementId, 'active', 'Alerta ativado!', 'Alerta removido.');
-    };
-    window.shareLink = async function(title, url) {
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: title,
-                    text: `Olha essa oferta: ${title}`,
-                    url: url
-                });
-            } catch (err) {
-                console.log('Compartilhamento cancelado');
-            }
-        } else {
-            try {
-                await navigator.clipboard.writeText(url);
-                window.showToast('Link copiado!');
-            } catch (err) {
-                prompt("Copie o link:", url);
-            }
+        // A. Filtro de Categoria (se houver lógica no JSON para isso)
+        // (Geralmente category é filtrado na API, mas se vier tudo misturado, filtre aqui)
+
+        // B. Filtro de Busca (Texto)
+        if (state.search) {
+            const term = state.search.toLowerCase();
+            tempProducts = tempProducts.filter(p => 
+                p.title.toLowerCase().includes(term)
+            );
         }
-    };
 
-    // Atualiza Schema JSON-LD
-    function updateSchema(product) {
-        const oldScript = document.getElementById('dynamic-product-schema');
-        if (oldScript) oldScript.remove();
+        // C. Filtro de Preço
+        if (state.minPrice) {
+            tempProducts = tempProducts.filter(p => parseFloat(p.price) >= parseFloat(state.minPrice));
+        }
+        if (state.maxPrice) {
+            tempProducts = tempProducts.filter(p => parseFloat(p.price) <= parseFloat(state.maxPrice));
+        }
 
-        let price = String(product.price || "0").replace("R$", "").trim().replace(/\./g, "").replace(",", ".");
+        // D. Filtro de Lojas (Checkbox)
+        if (state.stores.length > 0) {
+            tempProducts = tempProducts.filter(p => {
+                // Normaliza o nome da loja (Amazon -> amazon) para comparar
+                const pStore = p.store ? p.store.toLowerCase().replace(/\s/g, '') : '';
+                return state.stores.includes(pStore);
+            });
+        }
 
-        const schemaData = {
-            "@context": "https://schema.org/",
-            "@type": "Product",
-            "name": product.title,
-            "image": product.img,
-            "description": product.title + " - Melhor oferta encontrada.", 
-            "sku": String(product.id),
-            "offers": {
-                "@type": "Offer",
-                "url": product.link,
-                "priceCurrency": "BRL",
-                "price": price,
-                "availability": "https://schema.org/InStock",
-                "itemCondition": "https://schema.org/NewCondition"
-            }
-        };
+        // E. Ordenação
+        if (state.sort === 'price_asc') {
+            tempProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+        } else if (state.sort === 'price_desc') {
+            tempProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+        }
+        // 'relevance' mantemos a ordem original ou lógica própria
 
-        const script = document.createElement('script');
-        script.id = 'dynamic-product-schema';
-        script.type = 'application/ld+json';
-        script.textContent = JSON.stringify(schemaData);
-        document.head.appendChild(script);
+        // Salva e renderiza
+        filteredProducts = tempProducts;
+        state.itemsToShow = 12; // Reseta paginação ao filtrar
+        renderProducts();
     }
 
-    // 5. CARREGAMENTO DO PRODUTO (MODIFICADO AQUI)
-    async function loadProductDetails() {
-        const params = new URLSearchParams(window.location.search);
-        const slug = params.get('slug'); 
-        const fallbackId = params.get('id');
-        const contentArea = document.getElementById("content-area");
+    // --- 3. RENDERIZAÇÃO NA TELA ---
+    function renderProducts() {
+        if (!productGrid) return;
 
-        if (!slug && !fallbackId) return;
+        productGrid.innerHTML = "";
+        
+        // Pega apenas a fatia baseada no "Carregar Mais"
+        const visibleItems = filteredProducts.slice(0, state.itemsToShow);
 
-        try {
-            const res = await fetch('/data/achadinhos.json');
-            let products = await res.json();
+        if (visibleItems.length === 0) {
+            productGrid.innerHTML = `<div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>Nenhum produto encontrado com esses filtros.</div>`;
+            if(loadMoreBtn) loadMoreBtn.style.display = "none";
+            return;
+        }
+
+        visibleItems.forEach(p => {
+            // Normaliza classe da loja para CSS
+            const storeClass = p.store ? `badge-${p.store.toLowerCase().replace(/\s/g, '')}` : 'badge-default';
             
-            products = products.map((p, index) => ({
-                ...p,
-                id: p.id !== undefined ? p.id : index,
-                slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-            }));
-
-            let product;
-            if (slug) product = products.find(p => p.slug === slug);
-            else if (fallbackId) product = products.find(p => String(p.id).trim() === fallbackId.trim());
-
-            if (!product) {
-                contentArea.innerHTML = `<h2>Oferta não encontrada!</h2>`;
-                return;
-            }
-            
-            updateOGTags(product);
-            updateSchema(product);
-
-            const safeId = String(product.id).replace(/[^a-zA-Z0-9]/g, '');
-            const heartId = "heart_" + safeId;
-            const alertId = "alert_" + safeId;
-            const safeTitle = product.title.replace(/'/g, "\\'"); 
-            const shareUrl = `https://baudepromocao.vercel.app/a/${product.id}`;
-
-            document.title = product.title;
-            document.ogimage = product.img;
-
-            // --- LÓGICA DO OLD PRICE ---
-            // Se existir oldPrice, cria o HTML com o estilo riscado
-            const oldPriceHtml = product.oldPrice 
-                ? `<span class="old-price" style="text-decoration: line-through; color: #999; font-size: 1.02em; display: block; margin-bottom: 2px;"><strong>R$ ${product.oldPrice}</strong></span>` 
-                : '';
-
-            contentArea.innerHTML = `
-                <div class="img-side">
-                    <div class="floating-actions">
-                        <button id="${heartId}" class="icon-btn heart-btn" onclick="window.toggleWishlist('${product.id}', '${heartId}')">
-                            ${SVGS.heartOutline}${SVGS.heartFilled}
-                        </button>
-                        <button id="${alertId}" class="icon-btn alert-btn" onclick="window.toggleAlert('${product.id}', '${alertId}')">
-                            ${SVGS.bellOutline}${SVGS.bellFilled}
-                        </button>
-                        <button class="icon-btn" onclick="window.shareLink('${safeTitle}', '${shareUrl}')">
-                          ${SVGS.share}
-                        </button>
-                    </div>
-                    <img src="${product.img}" alt="${product.title}" loading="lazy">
+            const card = document.createElement("article");
+            card.className = "card";
+            card.innerHTML = `
+                <div class="card-img-wrapper">
+                    <span class="store-badge ${storeClass}">${p.store || 'Oferta'}</span>
+                    <img src="${p.img || p.image}" alt="${p.title}" loading="lazy">
                 </div>
-                <div class="info-side">
-                    <span class="store-tag">${SVGS.shop} ${product.store}</span>
-                    <h1>${product.title}</h1>
-                    <div class="price-wrapper">
-                        <p class="price-label">Melhor preço encontrado:</p>
-                        
-                        ${oldPriceHtml} <div class="price-tag"><span>R$</span> ${product.price}</div>
+                <div class="card-info">
+                    <h3>${p.title}</h3>
+                    <div class="price-row">
+                        <span class="card-price">R$ ${p.price}</span>
+                        <a href="${p.url}" class="btn-ver" target="_blank">Ver</a>
                     </div>
-                    <div class="benefits-grid">
-                        <div class="benefit-item">${SVGS.shop} ${product.store}</div>
-                        <div class="benefit-item">${SVGS.shield} Compra Segura</div>
-                        <div class="benefit-item">${SVGS.card} Parcelamento</div>
-                        <div class="benefit-item">${SVGS.check} Original</div>
-                    </div>
-                    <a href="${product.link}" target="_blank" class="cta-button">
-                        Ir para a Loja ${SVGS.arrowOut}
-                    </a>
                 </div>
             `;
-            
-            if (auth.currentUser) {
-                checkStatus("wishlists", product.id, heartId);
-                checkStatus("alerts", product.id, alertId);
-            }
+            productGrid.appendChild(card);
+        });
 
-        } catch (e) {
-            console.error("Erro Crítico:", e);
-            contentArea.innerHTML = "<h2>Erro ao carregar oferta.</h2>";
+        // Botão Carregar Mais
+        if (loadMoreBtn) {
+            loadMoreBtn.style.display = (filteredProducts.length > state.itemsToShow) ? "inline-block" : "none";
         }
     }
 
-    async function checkStatus(collectionName, productId, elementId) {
-        if(!auth.currentUser) return;
-        try {
-            const snap = await getDoc(doc(db, collectionName, auth.currentUser.uid));
-            if (snap.exists() && snap.data().items?.includes(String(productId))) {
-                document.getElementById(elementId)?.classList.add('active');
-            }
-        } catch(e) { console.log(e); }
-    }
+    // --- 4. EVENT LISTENERS (Interação do Usuário) ---
 
-    const btnLogin = document.getElementById('btn-google-login');
-    if(btnLogin) {
-        btnLogin.addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, provider);
-                document.getElementById('login-modal').style.display = 'none';
-                window.showToast(`Bem-vindo!`);
-                loadProductDetails(); 
-            } catch (error) {
-                console.error(error);
-            }
+    // Preço
+    if(applyPriceBtn) {
+        applyPriceBtn.addEventListener("click", () => {
+            state.minPrice = minPriceInput.value;
+            state.maxPrice = maxPriceInput.value;
+            applyFilters();
+            // Mobile UX: fecha sidebar
+            if(window.innerWidth <= 900 && sidebar) sidebar.classList.remove("active");
         });
     }
 
-    onAuthStateChanged(auth, (user) => { 
-        const content = document.getElementById("content-area");
-        if(content) loadProductDetails(); 
+    // Lojas
+    storeCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", (e) => {
+            const val = e.target.value.toLowerCase();
+            if (e.target.checked) {
+                state.stores.push(val);
+            } else {
+                state.stores = state.stores.filter(s => s !== val);
+            }
+            applyFilters();
+        });
     });
 
-    loadProductDetails();
-    console.log("Script Carregado com Sucesso!");
-
-    function updateOGTags(product) {
-    const metaData = {
-        'og:title': product.title,
-        'og:description': `Oferta imperdível: R$ ${product.price} na loja ${product.store}`,
-        'og:image': product.img,
-        'og:url': window.location.href,
-        'og:type': 'product',
-        'twitter:card': 'summary_large_image',
-        'twitter:title': product.title,
-        'twitter:image': product.img
-    };
-
-    for (const [property, content] of Object.entries(metaData)) {
-        // Tenta encontrar a tag existente ou cria uma nova
-        let element = document.querySelector(`meta[property="${property}"]`) || 
-                      document.querySelector(`meta[name="${property}"]`);
-        
-        if (!element) {
-            element = document.createElement('meta');
-            if (property.startsWith('og:')) element.setAttribute('property', property);
-            else element.setAttribute('name', property);
-            document.head.appendChild(element);
-        }
-        element.setAttribute('content', content);
+    // Ordenação
+    if(sortSelect) {
+        sortSelect.addEventListener("change", (e) => {
+            state.sort = e.target.value;
+            applyFilters();
+        });
     }
-}
+
+    // Busca (Com delay para não travar)
+    let timer;
+    if(searchInput) {
+        searchInput.addEventListener("input", (e) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                state.search = e.target.value.trim();
+                applyFilters();
+            }, 500);
+        });
+    }
+
+    // Botão Carregar Mais
+    if(loadMoreBtn) {
+        loadMoreBtn.addEventListener("click", () => {
+            state.itemsToShow += 12;
+            renderProducts();
+        });
+    }
+
+    // Categorias (Pills no topo)
+    document.querySelectorAll(".pill-btn[data-tab]").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            // Se for link <a>, deixa navegar. Se for botão JS:
+            e.preventDefault(); 
+            document.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            state.category = btn.dataset.tab;
+            
+            // Opcional: Recarregar API se mudar categoria radicalmente
+            // initFetch(); 
+            // OU apenas filtrar se os dados já estiverem todos aqui
+            applyFilters(); 
+        });
+    });
+
+    // Mobile Sidebar Toggle
+    if(mobileFilterBtn) {
+        mobileFilterBtn.addEventListener("click", () => {
+            if(sidebar) sidebar.classList.add("active");
+        });
+    }
+    if(closeSidebar) {
+        closeSidebar.addEventListener("click", () => {
+            if(sidebar) sidebar.classList.remove("active");
+        });
+    }
+
+    // Inicializa
+    initFetch();
+});
 </script>

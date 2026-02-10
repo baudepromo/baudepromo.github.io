@@ -1,8 +1,21 @@
 <script is:inline>
     let allProducts = [];
-    let filteredProducts = [];
     let currentPage = 1;
+    let totalPages = 1;
     const PER_PAGE = 12;
+
+    // --- NOVA FUNÇÃO: Gera o slug a partir do título ---
+    function generateSlug(title) {
+        return title
+            .toString()
+            .toLowerCase()
+            .trim()
+            .normalize('NFD') // Decompõe caracteres acentuados
+            .replace(/[\u0300-\u036f]/g, '') // Remove os acentos
+            .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
+            .replace(/[\s_-]+/g, '-') // Substitui espaços e underscores por hífens
+            .replace(/^-+|-+$/g, ''); // Remove hífens extras no início ou fim
+    }
 
     // 1. Limpa o preço para formato numérico (Schema)
     function parsePriceToNumber(priceStr) {
@@ -21,7 +34,9 @@
             "@type": "ItemList",
             "itemListElement": products.map((p, index) => {
                 const priceNumber = parsePriceToNumber(p.currentPrice || p.price);
-                const productUrl = window.location.origin + `/achadinhos/info?slug=${p.slug || ''}`;
+                // USA O GERADOR DE SLUG AQUI
+                const slug = generateSlug(p.title);
+                const productUrl = window.location.origin + `/achadinhos/info?slug=${slug}`;
 
                 return {
                     "@type": "ListItem",
@@ -51,54 +66,38 @@
     }
 
     // --- LÓGICA DE PESQUISA ---
-    const normalizeText = (text) => 
-        text ? text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") : "";
-
+    let debounceTimer;
     document.getElementById('search').addEventListener('input', (e) => {
-        const termoBusca = normalizeText(e.target.value);
-        const palavrasChave = termoBusca.split(' ').filter(p => p.length > 0);
-
-        filteredProducts = allProducts.filter(produto => {
-            const conteudoBusca = normalizeText(`${produto.title} ${produto.badge || ''}`);
-            return palavrasChave.every(palavra => conteudoBusca.includes(palavra));
-        });
-
-        currentPage = 1; 
-        render();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            currentPage = 1;
+            fetchProducts();
+        }, 400);
     });
 
-    // 3. FUNÇÃO RENDER PRINCIPAL (Atualizada com Old Price)
-    function render() {
+    // 3. FUNÇÃO RENDER PRINCIPAL
+    function render(products) {
         const grid = document.getElementById('grid');
         grid.innerHTML = '';
         
-        if (filteredProducts.length === 0) {
+        if (!products || products.length === 0) {
             grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding: 50px; color: #666;">Nenhum produto encontrado. 🔍</p>';
             document.getElementById('page').innerText = "0";
             return;
         }
 
-        const start = (currentPage - 1) * PER_PAGE;
-        const end = start + PER_PAGE;
-        
-        const visibleProducts = filteredProducts.slice(start, end);
+        updateSchema(products);
 
-        // Atualiza Schema apenas com visíveis
-        updateSchema(visibleProducts);
-
-        visibleProducts.forEach((p, index) => {
+        products.forEach((p, index) => {
             let displayPrice = p.currentPrice || p.price || "0,00";
+            let oldPriceHtml = p.oldPrice ? `<span class="old-price">${p.oldPrice}</span>` : '';
             
-            // --- NOVA LÓGICA DO OLD PRICE ---
-            // Se p.oldPrice existir, cria o span. Se não, string vazia.
-            let oldPriceHtml = p.oldPrice 
-                ? `<span class="old-price">${p.oldPrice}</span>` 
-                : '';
-
             const loadingAttr = index < 8 ? 'eager' : 'lazy';
             const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
-            const productSlug = p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            const detailUrl = `/achadinhos/info?slug=${productSlug}`;
+            
+            // USA O GERADOR DE SLUG AQUI TAMBÉM
+            const slug = generateSlug(p.title);
+            const detailUrl = `/achadinhos/info?slug=${slug}`;
 
             grid.insertAdjacentHTML('beforeend', `
                 <a href="${detailUrl}" class="card" target="_blank">
@@ -117,11 +116,9 @@
                     </div>
                     <div class="card-info">
                         <h3 class="card-title">${p.title}</h3>
-                        
                         <div class="price-box">
                             ${oldPriceHtml} <span class="price">${displayPrice}</span>
                         </div>
-                        
                         <span class="btn-view">VER OFERTA</span>
                     </div>
                 </a>
@@ -130,28 +127,47 @@
 
         document.getElementById('page').innerText = currentPage;
         document.getElementById('prev').disabled = currentPage === 1;
-        document.getElementById('next').disabled = end >= filteredProducts.length;
+        document.getElementById('next').disabled = currentPage >= totalPages;
     }
 
-    // Carregamento Inicial
-    async function loadProducts() {
+    // --- CARREGAMENTO DO SERVIDOR ---
+    async function fetchProducts() {
+        const query = document.getElementById('search').value;
+        const grid = document.getElementById('grid');
+
         try {
-            const res = await fetch('/data/achadinhos.json');
-            if (!res.ok) throw new Error("Erro ao buscar JSON");
-            const data = await res.json();
+            const url = `/api/busca.json?q=${encodeURIComponent(query)}&page=${currentPage}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Erro ao buscar dados");
             
-            allProducts = data.sort(() => Math.random() - 0.5);
-            filteredProducts = [...allProducts];
-            render();
+            const result = await res.json();
+            
+            allProducts = result.data;
+            totalPages = result.meta.totalPages;
+            
+            render(allProducts);
         } catch (err) {
             console.error(err);
-            document.getElementById('grid').innerHTML = '<p style="grid-column:1/-1; text-align:center;">Erro ao carregar ofertas.</p>';
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Erro ao conectar com o banco de dados.</p>';
         }
     }
 
     // Eventos de clique
-    document.getElementById('prev').onclick = () => { if(currentPage > 1) { currentPage--; render(); window.scrollTo(0,0); } };
-    document.getElementById('next').onclick = () => { if((currentPage * PER_PAGE) < filteredProducts.length) { currentPage++; render(); window.scrollTo(0,0); } };
+    document.getElementById('prev').onclick = () => { 
+        if(currentPage > 1) { 
+            currentPage--; 
+            fetchProducts(); 
+            window.scrollTo(0,0); 
+        } 
+    };
+    
+    document.getElementById('next').onclick = () => { 
+        if(currentPage < totalPages) { 
+            currentPage++; 
+            fetchProducts(); 
+            window.scrollTo(0,0); 
+        } 
+    };
 
-    loadProducts();
+    fetchProducts();
 </script>

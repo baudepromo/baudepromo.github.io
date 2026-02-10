@@ -1,115 +1,287 @@
-<script is:inline>
-    const productGrid = document.getElementById("product-grid");
-    const searchInput = document.getElementById("search"); // ID corrigido conforme seu HTML
+<script type="module">
+    // 1. IMPORTAR E INICIALIZAR SUPABASE (Essencial!)
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+    const supabaseUrl = 'https://xsdvzxggeuetqbmpvikw.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60'
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- SELETORES DO DOM ---
+        const productGrid = document.getElementById("product-grid");
+        const searchInput = document.getElementById("search");
+        const loadMoreBtn = document.getElementById("load-more");
+
+        const minPriceInput = document.getElementById("min-price");
+        const maxPriceInput = document.getElementById("max-price");
+        const applyPriceBtn = document.getElementById("btn-apply-price");
+        const storeCheckboxes = document.querySelectorAll('input[name="store"]');
+        const sortSelect = document.getElementById("sort-select");
+
+        const mobileFilterBtn = document.getElementById("mobile-filter-btn");
+        const sidebar = document.getElementById("filter-sidebar");
+        const closeSidebar = document.querySelector(".close-sidebar");
+
+        // --- ESTADO GLOBAL ---
+        let allProducts = []; 
+        let filteredProducts = []; 
+        
+        let state = {
+            itemsToShow: 12,
+            search: "", 
+            minPrice: null,
+            maxPrice: null,
+            stores: [],
+            sort: "relevance"
+        };
+
+        // --- RECUPERAR BUSCA DA URL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchFromUrl = urlParams.get('search');
+        
+        if (searchFromUrl) {
+            state.search = searchFromUrl;
+            if (searchInput) searchInput.value = searchFromUrl;
+        }
+
+        // --- LÓGICA DE FILTRAGEM ---
+        function applyFilters() {
+            let tempProducts = [...allProducts];
+
+            // Filtro de Busca (Texto)
+            if (state.search) {
+                const term = state.search.toLowerCase();
+                tempProducts = tempProducts.filter(p => 
+                    // Garante que p.title existe antes de fazer lowercase
+                    p.title && p.title.toLowerCase().includes(term)
+                );
+            }
+
+            // Filtro de Preço
+            if (state.minPrice) {
+                tempProducts = tempProducts.filter(p => parseFloat(p.price) >= parseFloat(state.minPrice));
+            }
+            if (state.maxPrice) {
+                tempProducts = tempProducts.filter(p => parseFloat(p.price) <= parseFloat(state.maxPrice));
+            }
+
+            // Filtro de Lojas
+            if (state.stores.length > 0) {
+                tempProducts = tempProducts.filter(p => {
+                    const pStore = p.store ? p.store.toLowerCase().replace(/\s/g, '') : '';
+                    return state.stores.includes(pStore);
+                });
+            }
+
+            // Ordenação
+            if (state.sort === 'price_asc') {
+                tempProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+            } else if (state.sort === 'price_desc') {
+                tempProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+            }
+
+            filteredProducts = tempProducts;
+            state.itemsToShow = 12;
+            renderProducts();
+        }
+
+        // --- RENDERIZAÇÃO ---
+        function renderProducts() {
+    if (!productGrid) return;
+    productGrid.innerHTML = "";
     
-    let allProducts = []; 
-    let currentCategory = "melhor";
+    const visibleItems = filteredProducts.slice(0, state.itemsToShow);
 
-    async function loadAndDisplay() {
-        if (!productGrid) return;
-
-        try {
-            const response = await fetch('/data/produtos.json'); 
-            if (!response.ok) throw new Error("Arquivo JSON não encontrado");
-            
-            const data = await response.json(); 
-            
-            allProducts = data.map((p, index) => ({
-                ...p,
-                id: p.id ?? index,
-                slug: p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-            }));
-
-            // Chama a função de renderização inicial
-            renderizarFiltros();
-
-        } catch (erro) {
-            console.error("Erro crítico:", erro);
-            productGrid.innerHTML = `<p style='grid-column: 1/-1; text-align:center;'>Erro ao carregar ofertas.</p>`;
-        }
+    if (visibleItems.length === 0) {
+        productGrid.innerHTML = `<div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>Nenhum produto encontrado.</div>`;
+        if(loadMoreBtn) loadMoreBtn.style.display = "none";
+        return;
     }
 
-    // Função central que decide o que aparece na tela
-    function renderizarFiltros() {
-        const termo = searchInput?.value.toLowerCase().trim() || "";
+    visibleItems.forEach(p => {
+        const storeClass = p.store ? `badge-${p.store.toLowerCase().replace(/\s/g, '')}` : 'badge-default';
+        const imgUrl = p.img || 'https://via.placeholder.com/300?text=Sem+Imagem';
+
+        const card = document.createElement("article");
+        card.className = "card";
         
-        const filtrados = allProducts.filter(p => {
-            // Se o usuário digitou algo, buscamos em TUDO (ignora categoria)
-            // Se a busca estiver vazia, filtramos pela categoria selecionada
-            // ... dentro de renderizarFiltros ...
-if (termo.length > 0) {
-    return p.title.toLowerCase().includes(termo) || 
-           p.store.toLowerCase().includes(termo);
-} else {
-    // CORREÇÃO: Se for 'melhores', retorna true (mostra tudo), senão filtra pela categoria
-    return currentCategory === "melhor" ? true : p.category === currentCategory;
-}});
-
-        exibirProdutos(filtrados);
-    }
-
-    function exibirProdutos(lista) {
-        productGrid.innerHTML = "";
-        
-        if(lista.length === 0) {
-            productGrid.innerHTML = `
-                <div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>
-                    <p>Nenhum produto encontrado para sua busca.</p>
-                </div>`;
-            return;
-        }
-
-        lista.forEach(p => {
-            const storeClass = `badge-${p.store.toLowerCase().replace(/\s/g, '')}`;
-            const card = document.createElement("article");
-            card.className = "card";
-            card.innerHTML = `
-                <div class="card-img-wrapper">
-                    <span class="store-badge ${storeClass}">${p.store}</span>
-                    <img 
-                     src="${p.img}" 
-                     alt="${p.title}"
-                     onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
-                     loading="lazy"
-                     decoding="async"
-                     width="300"
-                     height="300"
-                     >
+        // CORREÇÃO AQUI: Usamos p.internalPath no href e removemos o target="_blank" 
+        // para abrir na mesma aba (já que é uma página interna do site)
+        card.innerHTML = `
+            <div class="card-img-wrapper">
+                <span class="store-badge ${storeClass}">${p.store || 'Oferta'}</span>
+                <img src="${imgUrl}" alt="${p.title}" loading="lazy">
+            </div>
+            <div class="card-info">
+                <h3>${p.title}</h3>
+                <div class="price-row">
+                    <span class="card-price">R$ ${parseFloat(p.price).toFixed(2).replace('.', ',')}</span>
+                    <a href="${p.internalPath}" class="btn-ver">Ver</a>
                 </div>
-                <div class="card-info">
-                    <h3>${p.title}</h3>
-                    <div class="price-row">
-                        <span class="card-price">R$ ${p.price}</span>
-                        <a href="${p.url}" class="btn-ver">Ver Produto</a>
-                    </div>
-                </div>
-            `;
-            productGrid.appendChild(card);
-        });
-    }
-
-    // --- EVENTOS ---
-
-    // 1. Escuta a barra de pesquisa
-    searchInput?.addEventListener("input", () => {
-        renderizarFiltros();
+            </div>
+        `;
+        productGrid.appendChild(card);
     });
 
-    // 2. Escuta os botões de categoria
-    document.querySelectorAll(".pill-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            // Estética dos botões
-            document.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-            
-            // Se clicar em categoria, limpa a busca para não confundir o usuário
-            if (searchInput) searchInput.value = "";
-            
-            currentCategory = btn.dataset.tab;
-            renderizarFiltros();
-        });
-    });
+    if (loadMoreBtn) {
+        loadMoreBtn.style.display = (filteredProducts.length > state.itemsToShow) ? "inline-block" : "none";
+    }
+}
 
-    // Inicia o carregamento
-    loadAndDisplay();
+function gerarSlug(texto) {
+  return texto
+    .toString()
+    .normalize('NFD')                   // Decompõe caracteres acentuados
+    .replace(/[\u0300-\u036f]/g, '')    // Remove os acentos
+    .toLowerCase()                      // Converte para minúsculas
+    .trim()                             // Remove espaços no início e fim
+    .replace(/[^a-z0-9\s-]/g, '')       // Remove caracteres que não são letras, números ou espaços
+    .replace(/\s+/g, '-')               // Substitui espaços por hifens
+    .replace(/-+/g, '-')                // Remove hifens duplicados (--- vira -)
+    .replace(/^-+|-+$/g, '');           // Remove hifens extras no começo ou fim
+}
+
+// 2. AJUSTE NO FETCH E MAPEAMENTO
+async function initFetch() {
+    try {
+        let { data, error } = await supabase
+            .from('produtos')
+            .select('*');
+
+        if (error) throw error;
+
+        allProducts = data.map(item => {
+            // --- LÓGICA DE SLUG IDENTICA AO [slug].astro ---
+            // Isso garante que o link gerado aqui bata com a página criada no servidor
+            const titleField = item.title || item.nome_do_produto || "produto";
+            
+            // Se já tiver slug no banco, usa ele. Se não, gera na hora.
+            const slug = item.slug || titleField.toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-') // Substitui caracteres especiais por hífens
+                .replace(/(^-|-$)/g, '');    // Remove hífens do começo e fim
+
+            return {
+                title: item.title, 
+                price: item.price,
+                img: item.img,
+                store: item.store,
+                link: item.link, // Esse é o link externo (da loja)
+                internalPath: `/${slug}` // <--- CRIAMOS AQUI O CAMINHO INTERNO
+            };
+        });
+
+        applyFilters();
+
+    } catch (error) {
+        console.error("Erro Supabase:", error);
+        if(productGrid) productGrid.innerHTML = `<p style="text-align:center; width:100%">Erro ao carregar produtos: ${error.message}</p>`;
+    }
+}
+
+        // --- EVENT LISTENERS ---
+        if(loadMoreBtn) {
+            loadMoreBtn.addEventListener("click", () => {
+                state.itemsToShow += 12;
+                renderProducts();
+            });
+        }
+
+        if(applyPriceBtn) {
+            applyPriceBtn.addEventListener("click", () => {
+                state.minPrice = minPriceInput.value;
+                state.maxPrice = maxPriceInput.value;
+                applyFilters();
+                if(window.innerWidth <= 900 && sidebar) sidebar.classList.remove("active");
+            });
+        }
+
+        storeCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", (e) => {
+                const val = e.target.value.toLowerCase();
+                if (e.target.checked) {
+                    state.stores.push(val);
+                } else {
+                    state.stores = state.stores.filter(s => s !== val);
+                }
+                applyFilters();
+            });
+        });
+
+        if(sortSelect) {
+            sortSelect.addEventListener("change", (e) => {
+                state.sort = e.target.value;
+                applyFilters();
+            });
+        }
+
+        // Busca Client-Side (Mais rápida para catálogos pequenos/médios)
+        if(searchInput) {
+            searchInput.addEventListener("input", (e) => {
+                const value = e.target.value.trim();
+                state.search = value;
+                
+                // Atualiza URL sem recarregar
+                const url = new URL(window.location);
+                if (value) url.searchParams.set('search', value);
+                else url.searchParams.delete('search');
+                window.history.replaceState({}, '', url);
+
+                applyFilters();
+            });
+        }
+
+        if(mobileFilterBtn && sidebar) {
+            mobileFilterBtn.addEventListener("click", () => sidebar.classList.add("active"));
+        }
+        if(closeSidebar && sidebar) {
+            closeSidebar.addEventListener("click", () => sidebar.classList.remove("active"));
+        }
+
+        // --- INICIALIZAÇÃO E SUPABASE ---
+        async function initFetch() {
+            try {
+                // Buscamos TODOS os produtos de uma vez.
+                // Isso permite que o filtro de busca do JS funcione instantaneamente 
+                // sem precisar ir no banco de dados a cada letra digitada.
+                let { data, error } = await supabase
+                    .from('produtos') // Nome da sua tabela
+                    .select('*');
+
+                if (error) throw error;
+
+                // 2. MAPEAMENTO DE DADOS (CRUCIAL)
+                // Aqui transformamos as colunas do banco (ex: nome_do_produto)
+                // para o formato que seu HTML espera (ex: title)
+                allProducts = data.map(item => {
+    // Garanta que o título ou slug existam para não gerar "/undefined"
+    const titleField = item.title || item.nome_do_produto || "produtos";
+    
+    const slug = item.slug || titleField.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+
+    // Se por algum motivo o slug ainda for vazio, evita o "undefined"
+    const finalSlug = slug || 'produto-sem-nome';
+
+    return {
+        title: item.title, 
+        price: item.price,
+        img: item.img,
+        store: item.store,
+        link: item.link, 
+        internalPath: `/${finalSlug}` // <--- Agora mais seguro
+    };
+});
+
+                // Aplica filtros iniciais (caso tenha vindo busca da URL)
+                applyFilters();
+
+            } catch (error) {
+                console.error("Erro Supabase:", error);
+                if(productGrid) productGrid.innerHTML = `<p style="text-align:center; width:100%">Erro ao carregar produtos: ${error.message}</p>`;
+            }
+        }
+
+        initFetch();
+    });
 </script>

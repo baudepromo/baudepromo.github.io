@@ -1,11 +1,12 @@
 [
   {
     "id": "5250065",
-    "img": "https://m.media-amazon.com/images/I/61v1Sm8OlBL._AC_SX522_.jpg",
-    "store": "amazon",
     "title": "Protetor Solar Facial Principia FPS 60, 16,5% Mix de Filtros UV + 5% Niacinamida FPS 60 PS-01 com 40ml",
+    "oldPrice": "39,02",
     "price": "39,59",
-    "categoria": "beleza",
-    "link": "https://amzn.to/3Lp1YuI"
+    "store": "amazon",
+    "category": "beleza",
+    "img": "https://m.media-amazon.com/images/I/61v1Sm8OlBL._AC_SX522_.jpg",
+    "link": "https://amzn.to/4r35rhX"
   }
 ]

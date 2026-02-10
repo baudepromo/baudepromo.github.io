@@ -1,0 +1,47 @@
+[
+    //achadinhos
+    {
+        "id": "number",
+        "title": "string",
+        "oldPrice": "number",
+        "price" "number",
+        "badge" "string",
+        "store" "string",
+        "img" "link",
+        "link" "url"
+    }
+    //Produtos
+    {
+        "id": "number",
+        "title": "string",
+        "oldPrice": "number",
+        "price": "number",
+        "store": "string",
+        "category": "string",
+        "img": "string",
+        "link": "url",
+    }
+    //clear code
+    //achadinhos
+    {
+        "id": "",
+        "title": "",
+        "oldPrice": "",
+        "price" "",
+        "badge" "",
+        "store" "",
+        "img" "",
+        "link" ""
+    }
+    //Produtos
+    {
+        "id": "",
+        "title": "",
+        "oldPrice": "",
+        "price": "",
+        "store": "",
+        "category": "",
+        "img": "",
+        "link": "",
+    }
+]
