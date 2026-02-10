@@ -1,16 +1,11 @@
 ---
 export const prerender = false;
+
 import { createClient } from '@supabase/supabase-js';
 import Layout from "../layouts/MainLayout.astro";
 import Global from '../components/global.astro';
 import Seo from "../../public/lib/seo/metadada.astro";
 
-// --- Configuração do Supabase ---
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// --- Função de Slugificação (Mantida igual para compatibilidade) ---
 function gerarSlug(texto: string) {
   if (!texto) return '';
   return texto
@@ -24,31 +19,41 @@ function gerarSlug(texto: string) {
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '');
 }
-
-// --- Lógica de Busca (Server Side) ---
 const { slug } = Astro.params;
 
+// Tenta conectar ao Supabase com tratamento de erro
 let product = null;
+try {
+    const supabaseUrl = import.meta.env.SUPABASE_URL;
+    const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
 
-// Tenta buscar o produto. 
-// NOTA: O ideal é você ter uma coluna 'slug' no banco de dados.
-// Como fallback, buscamos todos e filtramos (igual seu código antigo), 
-// mas recomendo fortemente criar a coluna 'slug' no Supabase para ficar mais rápido.
+    if (!supabaseUrl || !supabaseKey) {
+        throw new Error("Variáveis de ambiente do Supabase não configuradas.");
+    }
 
-const { data: products, error } = await supabase
-    .from('produtos')
-    .select('*');
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-if (products) {
-    product = products.find(p => {
-        const textoBase = p.slug || p.title || p.nome_do_produto;
-        const slugGerado = gerarSlug(textoBase);
-        console.log(`Comparando URL: ${slug} com Produto: ${slugGerado}`); // <--- Adicione isso
-        return slugGerado === slug;
-    });
+    const { data: products, error } = await supabase
+        .from('produtos')
+        .select('*');
+
+    if (error) throw error;
+
+    if (products) {
+        product = products.find(p => {
+            const textoBase = p.slug || p.title || p.nome_do_produto || "";
+            return gerarSlug(textoBase) === slug;
+        });
+    }
+} catch (e) {
+    if (e instanceof Error) {
+        console.error("Erro crítico no servidor:", e.message);
+    } else {
+        console.error("Erro desconhecido:", e);
+    }
+    return Astro.redirect('/404'); 
 }
 
-// Se não achar o produto, redireciona para 404 ou Home
 if (!product) {
     return Astro.redirect('/404');
 }
@@ -81,7 +86,6 @@ const SVGS = {
     arrowOut: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`
 };
 ---
-
 <Seo title={p.title} image={p.img}></Seo>
 
 <Layout title={p.title}>
