@@ -13,10 +13,9 @@ const { slug } = Astro.params;
 // Exemplo: se a URL for "iphone-15-promocao-8842", o idFromUrl será "8842".
 const idFromUrl = slug ? slug.split('.').pop() : null;
 
-const supabase = createClient(
-  import.meta.env.SUPABASE_URL,
-  import.meta.env.SUPABASE_ANON_KEY
-);
+const supabaseUrl = 'https://xsdvzxggeuetqbmpvikw.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 // 2. BUSCA PELO ID (e não mais pelo slug inteiro)
 const { data: product, error } = await supabase
@@ -112,7 +111,7 @@ const SVGS = {
     <Global />
 </Layout>
 
-<script type="module">
+<script>
     // No Astro, imports dentro de <script> funcionam nativamente.
     // Dica: Seria melhor instalar via npm (npm install firebase), 
     // mas mantendo seu padrão de URL por enquanto:
