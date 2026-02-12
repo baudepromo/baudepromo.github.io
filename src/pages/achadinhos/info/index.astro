@@ -2,9 +2,9 @@
 import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
 import Info from '../../../components/achadinhos/info.astro';
-import Seo from "../../../../public/lib/seo/metadada.astro";
-import { SITE_CONFIG } from "public/lib/seo/constants";
-import { getAbsoluteUrl, getPageTitle } from 'public/lib/seo/utils'; 
+import Seo from "../../../lib/seo/metadada.astro";
+import { SITE_CONFIG } from "../../../lib/seo/constants";
+import { getAbsoluteUrl, getPageTitle } from '../../../lib/seo/utils'; 
 interface Produto {
   id: string | number;
   img: string;

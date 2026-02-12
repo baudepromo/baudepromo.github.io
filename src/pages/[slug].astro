@@ -97,7 +97,7 @@ const SVGS = {
     // Importações ajustadas (verifique se o caminho do seu firebase.js está correto)
     import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
     import { getAuth, onAuthStateChanged } from "firebase/auth";
-    import { app } from '../../puvfdlic/lib/firebase/firebase'; // Ajuste o caminho se necessário
+    import { app } from '../../public/lib/firebase/firebase'; // Ajuste o caminho se necessário
 
     const db = getFirestore(app);
     const auth = getAuth(app);
@@ -120,8 +120,7 @@ const SVGS = {
             alert(msg);
         }
     }
-    document.addEventListener("DOMContentLoaded", () => {
-   
+
     async function toggleCollection(collectionName, btnElement, successMsg, removedMsg) {
         const user = auth.currentUser;
         if (!user) {
@@ -191,7 +190,6 @@ const SVGS = {
             });
         }
     });
-});
 </script>
 
 <style is:global>
