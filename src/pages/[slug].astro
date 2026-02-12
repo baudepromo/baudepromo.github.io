@@ -8,35 +8,52 @@ import Seo from "../lib/seo/metadada.astro";
 
 const { slug } = Astro.params;
 
-// 1. EXTRAÇÃO DO ID (Melhorada para aceitar hífen ou ponto)
-const idFromUrl = slug ? slug.split(/[-.]/).pop() : null;
+// 1. LÓGICA DE EXTRAÇÃO DO ID
+// Divide a URL pelos traços e pega o último pedaço.
+// Exemplo: se a URL for "iphone-15-promocao-8842", o idFromUrl será "8842".
+const idFromUrl = slug ? slug.split('.').pop() : null;
 
-const supabaseUrl = 'https://xsdvzxggeuetqbmpvikw.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60'
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(
+  import.meta.env.SUPABASE_URL,
+  import.meta.env.SUPABASE_ANON_KEY
+);
 
+// 2. BUSCA PELO ID (e não mais pelo slug inteiro)
 const { data: product, error } = await supabase
   .from('produtos')
   .select('*')
-  .eq('id', idFromUrl)
+  .eq('id', idFromUrl) // Altera de 'slug' para 'id'
   .single();
 
+// Tratamento de erro caso o ID não exista ou seja inválido
 if (error || !product) {
-     return Astro.redirect('/404');
+    console.error("Produto não encontrado ou erro na busca:", error);
+    // Opcional: Redirecionar para 404
+    // return Astro.redirect('/404');
 }
 
-const p = {
-    id: String(product.id),
+// O resto permanece igual, pois 'product' agora contém os dados corretos
+const p = product ? {
+    id: product.id,
     title: product.title || product.nome_do_produto,
     price: product.price,
     oldPrice: product.oldPrice, 
     img: product.img || (Array.isArray(product.image) ? product.image[0] : product.image),
     store: product.store,
     link: product.link,
-};
+} : {}; // Objeto vazio para evitar crash se não houver produto
 
-const safeTitle = p.title.replace(/"/g, '&quot;');
+// Previne erro na renderização se o produto for nulo
+if (!product) {
+   // Você pode retornar um fragmento vazio ou redirecionar aqui também
+}
 
+const safeId = p.id ? String(p.id).replace(/[^a-zA-Z0-9]/g, '') : '';
+const heartId = `heart_${safeId}`;
+const alertId = `alert_${safeId}`;
+const safeTitle = p.title || "Produto";
+
+// ... (O resto das constantes SVGS permanece idêntico)
 const SVGS = {
     shop: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg>`,
     heartOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
@@ -56,6 +73,8 @@ const SVGS = {
         id="product-metadata" 
         style="display: none;" 
         data-id={p.id} 
+        data-heart-id={heartId} 
+        data-alert-id={alertId} 
         data-title={safeTitle}
     ></div>
 
@@ -63,13 +82,13 @@ const SVGS = {
         <div class="detail-card">
             <div class="img-side">
                 <div class="floating-actions">
-                    <button id="btn-wishlist" class="icon-btn js-wishlist-btn" title="Favoritar">
+                    <button id={heartId} class="icon-btn js-wishlist-btn">
                         <Fragment set:html={SVGS.heartOutline + SVGS.heartFilled} />
                     </button>
-                    <button id="btn-alert" class="icon-btn js-alert-btn" title="Ativar Alerta">
+                    <button id={alertId} class="icon-btn js-alert-btn">
                         <Fragment set:html={SVGS.bellOutline + SVGS.bellFilled} />
                     </button>
-                    <button id="btn-share" class="icon-btn js-share-btn" title="Compartilhar">
+                    <button class="icon-btn js-share-btn">
                         <Fragment set:html={SVGS.share} />
                     </button>
                 </div>
@@ -94,111 +113,105 @@ const SVGS = {
 </Layout>
 
 <script type="module">
-    // Importações ajustadas (verifique se o caminho do seu firebase.js está correto)
-    import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
-    import { getAuth, onAuthStateChanged } from "firebase/auth";
-    import { app } from '../../public/lib/firebase/firebase'; // Ajuste o caminho se necessário
+    // No Astro, imports dentro de <script> funcionam nativamente.
+    // Dica: Seria melhor instalar via npm (npm install firebase), 
+    // mas mantendo seu padrão de URL por enquanto:
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    const db = getFirestore(app);
+    // 1. RECUPERAR DADOS DO HTML
+    const metaEl = document.getElementById('product-metadata');
+    if (!metaEl) throw new Error("Metadata não encontrada");
+
+    const { id: productId, heartId, alertId, title: productTitle } = metaEl.dataset;
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
+
+    const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
 
-    const metaData = document.getElementById('product-metadata');
-    const productId = metaData?.dataset.id;
-    const productTitle = metaData?.dataset.title;
-
-    const heartBtn = document.getElementById('btn-wishlist');
-    const alertBtn = document.getElementById('btn-alert');
-    const shareBtn = document.getElementById('btn-share');
-
+    // Funções
     function showToast(msg) {
         const toast = document.getElementById('toast-box');
-        if (toast) {
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        } else {
-            alert(msg);
-        }
+        if (!toast) { console.log(msg); return; }
+        toast.textContent = msg; 
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    async function toggleCollection(collectionName, btnElement, successMsg, removedMsg) {
-        const user = auth.currentUser;
-        if (!user) {
+    async function toggleCollection(collectionName, pId, elementId, activeClass, successMsg, removedMsg) {
+        if (!auth.currentUser) {
             const modal = document.getElementById('login-modal');
-            modal ? modal.style.display = 'flex' : alert("Faça login para salvar produtos.");
+            if(modal) modal.style.display = 'flex';
             return;
         }
+        
+        const btn = document.getElementById(elementId);
+        const userRef = doc(db, collectionName, auth.currentUser.uid);
+        const wasActive = btn?.classList.contains(activeClass);
 
-        const isAdding = !btnElement.classList.contains('active');
-        btnElement.classList.toggle('active'); // UI Otimista
-
-        const userRef = doc(db, collectionName, user.uid);
+        btn?.classList.toggle(activeClass);
 
         try {
             const snap = await getDoc(userRef);
-            if (isAdding) {
+            if (!wasActive) {
                 if (!snap.exists()) {
-                    await setDoc(userRef, { items: [productId], updatedAt: new Date() });
+                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(pId)], updatedAt: new Date() });
                 } else {
-                    await updateDoc(userRef, { items: arrayUnion(productId) });
+                    await updateDoc(userRef, { items: arrayUnion(String(pId)) });
                 }
                 showToast(successMsg);
             } else {
-                await updateDoc(userRef, { items: arrayRemove(productId) });
+                await updateDoc(userRef, { items: arrayRemove(String(pId)) });
                 showToast(removedMsg);
             }
         } catch (e) {
-            console.error(e);
-            btnElement.classList.toggle('active'); // Reverte em erro
-            showToast("Erro ao salvar. Tente novamente.");
+            btn?.classList.toggle(activeClass); 
+            showToast("Erro ao processar.");
         }
     }
 
     // Listeners
-    heartBtn?.addEventListener('click', () => 
-        toggleCollection('wishlists', heartBtn, '❤️ Salvo nos favoritos!', 'Removido dos favoritos.'));
+    document.querySelector('.js-wishlist-btn')?.addEventListener('click', () => {
+        toggleCollection('wishlists', productId, heartId, 'active', 'Salvo!', 'Removido.');
+    });
 
-    alertBtn?.addEventListener('click', () => 
-        toggleCollection('alerts', alertBtn, '🔔 Alerta de preço ativado!', 'Alerta desativado.'));
+    document.querySelector('.js-alert-btn')?.addEventListener('click', () => {
+        toggleCollection('alerts', productId, alertId, 'active', 'Alerta ativado!', 'Alerta removido.');
+    });
 
-    shareBtn?.addEventListener('click', async () => {
+    document.querySelector('.js-share-btn')?.addEventListener('click', () => {
         const url = window.location.href;
         if (navigator.share) {
-            try {
-                await navigator.share({ title: productTitle, url });
-            } catch (err) {}
+            navigator.share({ title: productTitle, url }).catch(() => {});
         } else {
-            await navigator.clipboard.writeText(url);
-            showToast('🔗 Link copiado!');
+            navigator.clipboard.writeText(url);
+            showToast('Link copiado!');
         }
     });
 
-    // Verificar estado inicial
-    onAuthStateChanged(auth, async (user) => {
-        if (user && productId) {
-            // Favoritos
-            getDoc(doc(db, "wishlists", user.uid)).then(snap => {
-                if (snap.exists() && snap.data().items?.includes(productId)) {
-                    heartBtn?.classList.add('active');
-                }
-            });
-            // Alertas
-            getDoc(doc(db, "alerts", user.uid)).then(snap => {
-                if (snap.exists() && snap.data().items?.includes(productId)) {
-                    alertBtn?.classList.add('active');
-                }
-            });
+    onAuthStateChanged(auth, async (user) => { 
+        if(user) {
+            // Check wishlist
+            const wSnap = await getDoc(doc(db, "wishlists", user.uid));
+            if (wSnap.exists() && wSnap.data().items?.includes(String(productId))) {
+                document.getElementById(heartId)?.classList.add('active');
+            }
+            // Check alerts
+            const aSnap = await getDoc(doc(db, "alerts", user.uid));
+            if (aSnap.exists() && aSnap.data().items?.includes(String(productId))) {
+                document.getElementById(alertId)?.classList.add('active');
+            }
         }
     });
 </script>
-
-<style is:global>
-    /* CSS Essencial para os botões funcionarem visualmente */
-    .icon-btn .icon-filled { display: none; }
-    .icon-btn .icon-outline { display: block; }
-
-    .icon-btn.active .icon-filled { display: block; color: #ff4757; }
-    .icon-btn.active .icon-outline { display: none; }
-    
-    .icon-btn.active#btn-alert .icon-filled { color: #ffa502; }
-</style>
