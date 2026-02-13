@@ -3,8 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 
 // 1. Configuração do Cliente Supabase
 // Certifique-se de ter essas variáveis no seu arquivo .env
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabaseUrl = "https://xsdvzxggeuetqbmpvikw.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // 2. Captura o parâmetro 'id' da rota (o nome do arquivo é [id].astro)
