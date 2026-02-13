@@ -47,7 +47,7 @@ if (image) {
   }
 } else {
   // Fallback padrão se não tiver imagem
-  const ogUrl = new URL('/og-image.png', siteBase);
+  const ogUrl = new URL('/og/ogmain.png', siteBase);
   if (socialTitle) ogUrl.searchParams.set('title', socialTitle);
   if (description) ogUrl.searchParams.set('description', description);
   finalImage = ogUrl.href;

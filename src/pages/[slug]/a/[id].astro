@@ -1,0 +1,278 @@
+---
+export const prerender = false;
+
+import { createClient } from '@supabase/supabase-js';
+import Layout from "../../../layouts/MainLayout.astro"; // Ajuste os imports (subiu 3 níveis)
+import Global from '../../../components/global.astro';
+import Seo from "../../../lib/seo/metadada.astro";
+
+// AQUI ESTÁ A MUDANÇA PRINCIPAL
+// O Astro captura o [id] da pasta e o [slug] da pasta anterior
+const { id, slug } = Astro.params;
+
+const SUPABASE_URL = "https://xsdvzxggeuetqbmpvikw.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60";
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Consulta direta pelo ID (não precisa mais tratar string)
+const { data: product, error } = await supabase
+  .from('achadinhos')
+  .select('*')
+  .eq('id', id)
+  .single();
+
+if (error || !product) {
+    console.error("Produto não encontrado ou erro:", error);
+    // Opcional: Redirecionar para 404 se não achar
+    // return Astro.redirect('/404');
+}
+
+// Opcional: Verificar se o slug da URL bate com o do produto para SEO
+// Se o usuário acessar /slug-errado/p/123, ele carrega o produto 123, 
+// mas idealmente deveria redirecionar para o slug correto (Canonical URL).
+
+const p = product ? {
+    id: product.id,
+    title: product.title || product.nome_do_produto,
+    price: product.price,
+    oldPrice: product.oldPrice, 
+    img: product.img || (Array.isArray(product.image) ? product.image[0] : product.image),
+    store: product.store,
+    link: product.link,
+} : {}; 
+
+const safeId = p.id ? String(p.id).replace(/[^a-zA-Z0-9]/g, '') : '';
+const heartId = `heart_${safeId}`;
+const alertId = `alert_${safeId}`;
+const safeTitle = p.title || "Produto";
+
+// 2. ÍCONES (Atualizados para bater com o exemplo HTML)
+const SVGS = {
+    shop: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-8 2a2 2 0 1 1-4 0 2 2 0 0 1 4 0z"></path></svg>`,
+    heartOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
+    heartFilled: `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`,
+    bellOutline: `<svg class="icon-outline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
+    bellFilled: `<svg class="icon-filled" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>`,
+    share: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>`,
+    shield: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+    card: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>`,
+    check: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+    arrowOut: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left:8px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>`
+};
+---
+<Seo title={p.title} image={p.img}></Seo>
+
+<Layout title={p.title}>
+    <link rel="stylesheet" href="/styles/pages/produtos.css">
+
+    <div id="product-metadata" style="display: none;" 
+        data-id={p.id} 
+        data-heart-id={heartId} 
+        data-alert-id={alertId} 
+        data-title={safeTitle}
+    ></div>
+
+    <section class="hero-section" style="position: relative;">
+        <div class="faq-wrapper">
+            <h1>Melhores Ofertas</h1>
+            <p>Seleção especial do Baú</p>
+            <a href="/achadinhos" class="btn-back">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Voltar
+            </a>
+        </div>
+    </section>
+
+    <div class="main-container">
+        <div id="content-area" class="detail-card">
+            <div class="img-side">
+                <div class="floating-actions">
+                    <button id={heartId} class="icon-btn js-wishlist-btn">
+                        <Fragment set:html={SVGS.heartOutline + SVGS.heartFilled} />
+                    </button>
+                    <button id={alertId} class="icon-btn js-alert-btn">
+                        <Fragment set:html={SVGS.bellOutline + SVGS.bellFilled} />
+                    </button>
+                    <button class="icon-btn js-share-btn">
+                        <Fragment set:html={SVGS.share} />
+                    </button>
+                </div>
+                <img src={p.img} alt={p.title} loading="lazy" />
+            </div>
+
+            <div class="info-side">
+                <span class="store-tag"><Fragment set:html={SVGS.shop} /> {p.store}</span>
+                <h1>{p.title}</h1>
+                <div class="price-wrapper">
+                    <p class="price-label">Melhor preço encontrado:</p>
+                    {p.oldPrice && <span class="old-price" style="text-decoration: line-through; color: #999; display: block;">R$ {p.oldPrice}</span>}
+                    <div class="price-tag"><span>R$</span> {p.price}</div>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-item"><Fragment set:html={SVGS.shop} /> {p.store}</div>
+                    <div class="benefit-item"><Fragment set:html={SVGS.shield} /> Compra Segura</div>
+                    <div class="benefit-item"><Fragment set:html={SVGS.card} /> Parcelamento</div>
+                    <div class="benefit-item"><Fragment set:html={SVGS.check} /> Original</div>
+                </div>
+
+                <a href={p.link} target="_blank" class="cta-button">
+                    Ir para a Loja <Fragment set:html={SVGS.arrowOut} />
+                </a>
+            </div>
+        </div>
+
+        <div id="toast-box" class="toast"></div>
+
+        <div id="login-modal" class="modal-overlay">
+            <div style="background: white; padding: 40px; border-radius: 25px; text-align: center; max-width: 380px; width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.2);">
+                <div style="width: 70px; height: 70px; background: #fff0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#e74bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </div>
+                <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: #1a1a1a;">Faça Login</h2>
+                <p style="color: #666; line-height: 1.5; margin-bottom: 30px; font-size: 0.95rem;">Para salvar favoritos e criar alertas, precisamos saber quem é você.</p>
+                
+                <button id="btn-google-login" style="width: 100%; background: #1a1a1a; color: white; border: none; padding: 15px; border-radius: 50px; font-weight: 600; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
+                    Entrar com Google
+                </button>
+                
+                <button class="js-close-modal" style="background: transparent; border: none; color: #666; margin-top: 20px; cursor: pointer; font-weight: 600; font-size: 0.9rem;">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <Global />
+</Layout>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // 1. RECUPERAR DADOS DO HTML
+    const metaEl = document.getElementById('product-metadata');
+    if (!metaEl) throw new Error("Metadata não encontrada");
+
+    const { id: productId, heartId, alertId, title: productTitle } = metaEl.dataset;
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+
+    // Funções de UI
+    function showToast(msg) {
+        const toast = document.getElementById('toast-box');
+        if (!toast) { console.log(msg); return; }
+        const infoIcon = `<svg style="display:inline-block; vertical-align:middle; margin-right:5px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+        toast.innerHTML = `${infoIcon} ${msg}`;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function toggleModal(show) {
+        const modal = document.getElementById('login-modal');
+        if(modal) modal.style.display = show ? 'flex' : 'none';
+    }
+
+    async function toggleCollection(collectionName, pId, elementId, activeClass, successMsg, removedMsg) {
+        if (!auth.currentUser) {
+            toggleModal(true); // Abre o modal bonito se não estiver logado
+            return;
+        }
+        
+        const btn = document.getElementById(elementId);
+        const userRef = doc(db, collectionName, auth.currentUser.uid);
+        const wasActive = btn?.classList.contains(activeClass);
+
+        btn?.classList.toggle(activeClass);
+
+        try {
+            const snap = await getDoc(userRef);
+            if (!wasActive) {
+                if (!snap.exists()) {
+                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(pId)], updatedAt: new Date() });
+                } else {
+                    await updateDoc(userRef, { items: arrayUnion(String(pId)) });
+                }
+                showToast(successMsg);
+            } else {
+                await updateDoc(userRef, { items: arrayRemove(String(pId)) });
+                showToast(removedMsg);
+            }
+        } catch (e) {
+            console.error(e);
+            btn?.classList.toggle(activeClass); 
+            showToast("Erro ao processar.");
+        }
+    }
+
+    // Listeners de Ação
+    document.querySelector('.js-wishlist-btn')?.addEventListener('click', () => {
+        toggleCollection('wishlists', productId, heartId, 'active', 'Salvo nos favoritos!', 'Removido dos favoritos.');
+    });
+
+    document.querySelector('.js-alert-btn')?.addEventListener('click', () => {
+        toggleCollection('alerts', productId, alertId, 'active', 'Alerta ativado!', 'Alerta removido.');
+    });
+
+    document.querySelector('.js-share-btn')?.addEventListener('click', () => {
+    // Em vez de window.location.href, construímos a URL curta
+    const shortUrl = `${window.location.origin}/a/${productId}`;
+    
+    if (navigator.share) {
+        navigator.share({ 
+            title: productTitle, 
+            url: shortUrl 
+        }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(shortUrl);
+        showToast('Link curto copiado!');
+    }
+});
+
+    // Listeners do Modal
+    document.querySelector('.js-close-modal')?.addEventListener('click', () => toggleModal(false));
+    
+    document.getElementById('btn-google-login')?.addEventListener('click', async () => {
+        try {
+            await signInWithPopup(auth, provider);
+            toggleModal(false);
+            showToast("Bem-vindo! Tente salvar agora.");
+        } catch (error) {
+            console.error(error);
+            showToast("Erro no login.");
+        }
+    });
+
+    // Estado da Autenticação
+    onAuthStateChanged(auth, async (user) => { 
+        if(user) {
+            // Check wishlist
+            const wSnap = await getDoc(doc(db, "wishlists", user.uid));
+            if (wSnap.exists() && wSnap.data().items?.includes(String(productId))) {
+                document.getElementById(heartId)?.classList.add('active');
+            }
+            // Check alerts
+            const aSnap = await getDoc(doc(db, "alerts", user.uid));
+            if (aSnap.exists() && aSnap.data().items?.includes(String(productId))) {
+                document.getElementById(alertId)?.classList.add('active');
+            }
+        }
+    });
+</script>

@@ -1,26 +1,49 @@
 ---
-import { callSafely } from "astro:actions";
+import { createClient } from "@supabase/supabase-js";
 
+// 1. Configuração do Cliente Supabase
+// Certifique-se de ter essas variáveis no seu arquivo .env
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// 2. Captura o parâmetro 'id' da rota (o nome do arquivo é [id].astro)
 const { id } = Astro.params;
-// procura o produto pelo id
-const modules = import.meta.glob("../../../public/data/categorias/*.json", {
-  eager: true
-}) as Record<string, { default: any[] }>;
 
-const produtos = Object.values(modules).flatMap(
-  (module) => module.default
-);
-
-const produto = produtos.find(p => p.id === id);
-
-const cutitle = produto?.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-
-const url = `https://baudepromocao.vercel.app/produtos/categorias/${produto.category}/info/?slug=${cutitle}`
-// se não existir → 404
-if (!produto) {
-  return new Response("Produto não encontrado", { status: 404 });
+// Validação simples para evitar chamadas desnecessárias
+if (!id) {
+  return Astro.redirect('/404');
 }
 
-// redireciona
-return Astro.redirect(url, 301);
+// 3. Busca no Supabase
+// Substitua 'produtos' pelo nome da sua tabela
+// Substitua 'slug' pelo nome da sua coluna (slug_do_produto_coluna)
+const { data, error } = await supabase
+  .from('produtos') 
+  .select('slug') // Selecionamos apenas o slug, pois já temos o ID
+  .eq('id', id)
+  .single();
+
+// 4. Tratamento de Erro (Produto não encontrado)
+if (error || !data) {
+  console.error("Erro ao buscar produto ou ID inexistente:", error);
+  return Astro.redirect('/404'); // Redireciona para página de erro
+}
+
+// 5. Construção da URL de Destino
+// Estrutura pedida: meusite.com/slug_do_produto_coluna/a/id_do_produto
+const targetUrl = `/${data.slug}/p/${id}`;
+
+// 6. Executa o Redirecionamento (Código 302 temporário ou 301 permanente)
+return Astro.redirect(targetUrl, 302); 
 ---
+
+<html>
+  <head>
+    <title>Redirecionando...</title>
+    <meta http-equiv="refresh" content={`0;url=${targetUrl}`} />
+  </head>
+  <body>
+    <p>Redirecionando para o produto...</p>
+  </body>
+</html>

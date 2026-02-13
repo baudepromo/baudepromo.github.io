@@ -90,14 +90,13 @@
 
         products.forEach((p, index) => {
             let displayPrice = p.currentPrice || p.price || "0,00";
-            let oldPriceHtml = p.oldPrice ? `<span class="old-price">${p.oldPrice}</span>` : '';
+            let oldPriceHtml = p.oldPrice ? `<span class="old-price">R$ ${p.oldPrice}</span>` : '';
             
             const loadingAttr = index < 8 ? 'eager' : 'lazy';
             const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
             
             // USA O GERADOR DE SLUG AQUI TAMBÉM
-            const slug = generateSlug(p.title);
-            const detailUrl = `/achadinhos/info?slug=${slug}`;
+            const detailUrl = `/${p.slug}/a/${p.id}`;
 
             grid.insertAdjacentHTML('beforeend', `
                 <a href="${detailUrl}" class="card" target="_blank">
@@ -117,7 +116,7 @@
                     <div class="card-info">
                         <h3 class="card-title">${p.title}</h3>
                         <div class="price-box">
-                            ${oldPriceHtml} <span class="price">${displayPrice}</span>
+                            ${oldPriceHtml} <span class="price">R$ ${displayPrice}</span>
                         </div>
                         <span class="btn-view">VER OFERTA</span>
                     </div>

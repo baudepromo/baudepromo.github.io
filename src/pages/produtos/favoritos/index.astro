@@ -1,44 +1,47 @@
 ---
 import Layout from "../../../layouts/MainLayout.astro";
 import Global from '../../../components/global.astro';
-import Favoritos from "../../../components/produtos/favoritos.astro"
 import Seo from "../../../lib/seo/metadada.astro"
 ---
 <Seo
-title="Meus Favoritos: Suas Melhores Ofertas Salvas | Baú de Promoções"
-description="Acesse sua lista personalizada e não perca nenhuma oportunidade! Confira os preços dos produtos que você favoritou e garanta o melhor desconto no Baú de Promoções."
-type="article"
+    title="Meus Favoritos: Suas Melhores Ofertas Salvas | Baú de Promoções"
+    description="Acesse sua lista personalizada e não perca nenhuma oportunidade! Confira os preços dos produtos que você favoritou e garanta o melhor desconto no Baú de Promoções."
+    type="article"
 ></Seo>
+
 <Layout>
     <style is:inline>
+        /* --- ESTILOS ORIGINAIS MANTIDOS --- */
         .card {
-    background: linear-gradient(180deg, #ffffff, #fafafa);
-    border-radius: 22px;
-    padding: 20px;
-    position: relative;
-    transition: all .35s ease;
-    box-shadow: 0 10px 30px rgba(0,0,0,.06);
-    overflow: hidden;
-}
+            background: linear-gradient(180deg, #ffffff, #fafafa);
+            border-radius: 22px;
+            padding: 20px;
+            position: relative;
+            transition: all .35s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,.06);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-.card::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(120deg, transparent, rgba(255,94,58,.08), transparent);
-    opacity: 0;
-    transition: opacity .3s;
-}
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent, rgba(255,94,58,.08), transparent);
+            opacity: 0;
+            transition: opacity .3s;
+            pointer-events: none;
+        }
 
-.card:hover::before {
-    opacity: 1;
-}
+        .card:hover::before { opacity: 1; }
 
-.card:hover {
-    transform: translateY(-10px) scale(1.02);
-    box-shadow: 0 20px 45px rgba(0,0,0,.15);
-}.
-.pill-btn {
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(0,0,0,.15);
+        }
+
+        .pill-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -57,26 +60,39 @@ type="article"
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .btn-white { background: white; color: #ff5e3a; }
-        .btn-details { 
-            background: var(--accent-black); 
-            color: white; 
-            width: 100%; 
+        .btn-details {
+            background: linear-gradient(135deg, #111, #333);
+            border-radius: 14px;
+            font-size: .95rem;
+            letter-spacing: .3px;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            width: 100%;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: auto; /* Empurra para o fundo do card */
         }
-        .btn-details:hover { background: #333; }
 
-        /* --- GRID E CARDS --- */
+        .btn-details::after {
+            content: "→";
+            position: absolute;
+            right: 20px;
+            opacity: 0;
+            transition: all .3s;
+        }
+
+        .btn-details:hover::after {
+            opacity: 1;
+            right: 15px;
+        }
 
         .fav-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 25px;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .card img {
@@ -98,101 +114,183 @@ type="article"
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
         }
+        
 
-        .btn-details {
-    background: linear-gradient(135deg, #111, #333);
-    border-radius: 14px;
-    font-size: .95rem;
-    letter-spacing: .3px;
-    position: relative;
-    overflow: hidden;
-}
+        /* Hero Styles *
 
-.btn-details::after {
-    content: "→";
-    position: absolute;
-    right: 20px;
-    opacity: 0;
-    transition: all .3s;
-}
-
-.btn-details:hover::after {
-    opacity: 1;
-    right: 15px;
-}
-
-
-        /* --- ESTADOS VAZIOS E LOADING --- */
-        .empty-state {
+        /* States */
+        .empty-state, .loading-container {
             grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
             background: white;
             border-radius: 20px;
-            padding: 60px 20px;
-            text-align: center;
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         
-        .empty-state h2 { color: #333; margin-top: 20px; }
-        .empty-state p { color: #666; margin-bottom: 20px; }
-        .empty-icon { font-size: 4rem; color: #ddd; }
-
-        .loading-spinner {
-            font-size: 3rem;
-            color: #ff9000;
-        }
+        .loading-container i, .empty-state i { margin-bottom: 15px; }
 
         @media (max-width: 768px) {
-            .hero-section { padding-bottom: 60px; }
-            .fav-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
-            .card { padding: 15px; }
-            .card h3 { font-size: 0.9rem; }
-            .price { font-size: 1.1rem; }
+            .fav-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px; }
+            .card { padding: 10px; border-radius: 15px; }
+            .card h3 { font-size: 0.85rem; height: 36px; }
+            .price { font-size: 1rem; margin-bottom: 10px; }
+            .pill-btn { padding: 8px 12px; font-size: 0.8rem; }
         }
-        .fav-heart {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: white;
-    border: none;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    color: #ff4b4b;
-    display: grid;
-    place-items: center;
-    cursor: pointer;
-    box-shadow: 0 6px 15px rgba(0,0,0,.15);
-    transition: transform .2s, background .2s;
-}
-
-.fav-heart:hover {
-    transform: scale(1.15);
-    background: #ff4b4b;
-    color: #fff;
-}
     </style>
-    <div class="hero-section" style="position: relative;">
-        <div class="faq-wrapper">
-        <a href="javascript:history.back()" class="btn-back">
+
+     <section class="hero-section" style="position: relative;">
+      <div class="faq-wrapper">
+        <a href="/" class="btn-back">
           <svg class="icon-back" viewBox="0 0 24 24" fill="none" stroke-width="2.5">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
           Voltar
         </a>
-        </div>
-        <h1>Meus Favoritos 🤍</h1>
-        <p>A lista dos seus produtos mais desejados.</p>
-        </div>
 
+        <h1>Ofertas Imperdíveis 🔥</h1>
+        <p>A curadoria das melhores promoções da internet em um só lugar.</p>
+        </div>
+        </section>
     <div class="main-content">
         <div id="fav-grid" class="fav-grid">
-            <div class="empty-state">
-                <i class="fas fa-circle-notch fa-spin loading-spinner"></i>
-                <p style="margin-top: 15px;">Carregando seus Produtos...</p>
+            <div class="loading-container">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; color: #333;"></i>
+                <p style="margin-top: 15px; font-weight: 600; color: #666;">Verificando login...</p>
             </div>
         </div>
     </div>
-    <Favoritos></Favoritos>
+
     <Global></Global>
 </Layout>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
+        authDomain: "baudepromocao-oficial.firebaseapp.com",
+        projectId: "baudepromocao-oficial",
+        storageBucket: "baudepromocao-oficial.firebasestorage.app",
+        messagingSenderId: "743146859125",
+        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const SUPABASE_URL = "https://xsdvzxggeuetqbmpvikw.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+        const grid = document.getElementById("fav-grid");
+        currentUser = user;
+
+        if (user) {
+            grid.innerHTML = `<div class="loading-container"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></div>`;
+            await loadUserFavorites(user.uid);
+        } else {
+            renderLoginState(grid);
+        }
+    });
+
+    async function loadUserFavorites(uid) {
+        const grid = document.getElementById("fav-grid");
+
+        try {
+            const userDocRef = doc(db, "wishlists", uid);
+            const userSnap = await getDoc(userDocRef);
+
+            if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
+                renderEmptyState(grid);
+                return;
+            }
+
+            // --- CORREÇÃO AQUI: FILTRAR APENAS IDs NUMÉRICOS ---
+            // Isso remove textos como "Electrolux Kit..." que poluem o seu Firebase
+            const rawItems = userSnap.data().items;
+            const favoriteIds = rawItems
+                .map(id => String(id))
+                .filter(id => /^\d+$/.test(id)); // Só aceita se for apenas números
+
+            if (favoriteIds.length === 0) {
+                renderEmptyState(grid);
+                return;
+            }
+
+            const { data: products, error } = await supabase
+                .from('produtos')
+                .select('*')
+                .in('id', favoriteIds);
+
+            if (error) throw error;
+            renderGrid(grid, products);
+
+        } catch (error) {
+            console.error("Erro detalhado:", error);
+            grid.innerHTML = `<div class="empty-state"><p>Erro ao carregar. Tente atualizar a página.</p></div>`;
+        }
+    }
+
+    function renderGrid(grid, products) {
+        if (!products || products.length === 0) {
+            renderEmptyState(grid);
+            return;
+        }
+        grid.innerHTML = "";
+        products.forEach(p => {
+            const title = p.title || p.nome_do_produto;
+            const img = p.img || (Array.isArray(p.image) ? p.image[0] : p.image);
+            grid.innerHTML += `
+                <div class="card" id="card-${p.id}">
+                    <img src="${img}" alt="${title}">
+                    <div class="card-content">
+                        <h3>${title}</h3>
+                        <span class="price">R$ ${p.price}</span>
+                        <a href="/${p.slug}/p/${p.id}" class="pill-btn btn-details">Ver Oferta</a>
+                    </div>
+                </div>`;
+        });
+    }
+
+    window.removeFavorite = async (productId) => {
+        if (!currentUser) return;
+        const card = document.getElementById(`card-${productId}`);
+        if(confirm("Remover dos favoritos?")) {
+            try {
+                card.style.opacity = '0.3';
+                const userDocRef = doc(db, "wishlists", currentUser.uid);
+                
+                // Remove tanto o ID string quanto o ID número para limpar o banco
+                await updateDoc(userDocRef, {
+                    items: arrayRemove(String(productId))
+                });
+                await updateDoc(userDocRef, {
+                    items: arrayRemove(Number(productId))
+                });
+
+                card.remove();
+                if (document.getElementById("fav-grid").children.length === 0) renderEmptyState(document.getElementById("fav-grid"));
+            } catch (e) {
+                card.style.opacity = '1';
+                alert("Erro ao remover.");
+            }
+        }
+    };
+
+    function renderEmptyState(grid) {
+        grid.innerHTML = `<div class="empty-state"><h2>Sua lista está vazia</h2><a href="/produtos" class="pill-btn btn-details">Ver Ofertas</a></div>`;
+    }
+
+    function renderLoginState(grid) {
+        grid.innerHTML = `<div class="empty-state"><h2>Faça login para ver seus favoritos</h2></div>`;
+    }
+</script>
