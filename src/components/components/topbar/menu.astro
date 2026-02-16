@@ -1,0 +1,36 @@
+<div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    <nav id="sideMenu" class="mobile-menu" aria-label="Menu Principal">
+        <button class="close-menu" onclick="toggleMenu()" aria-label="Fechar menu">&times;</button>
+
+        <div class="menu-links">
+            <a href="/"><span>⬅️</span> Início</a>
+            <a href="/achadinhos"><span>🛒</span> Achadinhos</a>
+            <a href="/produtos"><span>📦</span> Produtos</a>
+            <a href="/cupons"><span>🎫</span> Cupons</a>
+        </div>
+
+        <hr class="menu-divider">
+
+        <div class="menu-links-secondary">
+            <a href="/sobre"><span>ℹ️</span> Sobre</a>
+            <a href="/faq"><span>💬</span> FAQ</a>
+            <a href="/contatos"><span>✉️</span> Contato</a>
+            <a href="/afiliados"><span>🤝</span> Afiliados</a>
+            <a href="/politica-de-privacidade"><span>👤</span> Política de Privacidade</a>
+            <a href="/termos-de-uso"><span>⚖️</span> Termos de Uso</a>
+        </div>
+
+       <div class="auth-container">
+            <button id="loginBtn" class="btn-login" onclick="openAuthModal()">
+                Entrar
+            </button>
+
+            <div id="userInfo" class="user-profile" style="display: none;">
+                <img id="userPhoto" src="" alt="Foto">
+                <div class="user-details">
+                    <span id="userName">Usuário</span>
+                    <small onclick="logout()" class="logout-link">Sair</small>
+                </div>
+            </div>
+        </div>
+    </nav>

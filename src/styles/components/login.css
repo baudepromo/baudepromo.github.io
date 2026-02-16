@@ -1,0 +1,142 @@
+.user-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .user-profile img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #007bff;
+    }
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.2;
+        font-size: 0.85rem;
+    }
+    #userName { font-weight: bold; color: #333; }
+    .logout-link { color: #dc3545; cursor: pointer; font-size: 0.75rem; text-decoration: underline; }
+
+    /* --- MODAL DE LOGIN --- */
+    .modal-overlay {
+        display: none;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        align-items: center; justify-content: center;
+        z-index: 2000;
+    }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 350px;
+        text-align: center;
+        position: relative;
+    }
+    .modal-content input {
+        width: 100%; padding: 10px; margin: 10px 0;
+        border: 1px solid #ddd; border-radius: 6px;
+    }
+    .close-modal {
+        position: absolute; top: 10px; right: 15px;
+        font-size: 24px; cursor: pointer;
+    }
+    .google-btn {
+        background: white; border: 1px solid #ccc;
+        color: #333; width: 100%; padding: 10px;
+        border-radius: 6px; cursor: pointer; font-weight: 600;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        margin-top: 10px;
+    }
+    .main-auth-btn {
+        background: #007bff; color: white; border: none;
+        width: 100%; padding: 12px; border-radius: 6px;
+        font-weight: bold; cursor: pointer; margin-top: 10px;
+    }
+    
+    /* Responsividade para esconder Auth no mobile se necessário */
+    @media (max-width: 600px) {
+        .logo-text { display: none; } /* Esconde texto da logo no mobile se faltar espaço */
+    }
+    
+    .pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-icon { width: 1.2em; height: 1.2em; display: block; }
+    .btn-white { background: white; color: #ff4b4b; }
+    .btn-white:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    
+    /* Adição para acessibilidade de links de pular conteúdo */
+    .skip-link {
+        position: absolute; top: -40px; left: 0; background: #000; color: white; padding: 8px; z-index: 100;
+        transition: top 0.3s;
+    }
+    .skip-link:focus { top: 0; }
+    .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    backdrop-filter: blur(3px);
+}
+.modal-overlay.active { display: flex; }
+
+.modal-content {
+    background: var(--white);
+    padding: 30px;
+    border-radius: var(--radius-card);
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    text-align: center;
+}
+
+.auth-form input, .auth-input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.google-btn {
+    background: white; border: 1px solid #ccc; width: 100%; padding: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    border-radius: 5px; cursor: pointer; margin-top: 10px;
+}
+
+/* --- USUÁRIO / LOGIN --- */
+.btn-login, .btn-login-menu {
+    background: linear-gradient(135deg, #007bff, #0056b3); /* Unificado para azul ou use o laranja original */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 240px;
+}
+
+.btn-login:hover { background: #004494; }
+
+.user-profile {
+    margin-top: auto; padding-top: 20px; border-top: 1px solid #ddd;
+    display: flex; align-items: center; gap: 10px;
+}
+.user-profile img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #007bff; object-fit: cover;}

@@ -1,5 +1,4 @@
 ---
-import Global from '../../components/global.astro';
 import Layout from '../../layouts/MainLayout.astro';
 import Achadinhos from '../../components/achadinhos/achadinhos.astro'
 import Seo from "../../lib/seo/metadada.astro"
@@ -58,6 +57,13 @@ description='Sabe aquele produto incrível que você viu no TikTok? Ele está aq
 }
 </script>
     <style is:inline>
+        .icon {
+            width: 1.1em;
+            height: 1.1em;
+            fill: currentColor; /* Herda a cor do texto */
+            vertical-align: middle;
+            margin-right: 6px;
+        }
         .search-wrapper input {margin-top: 25px; width: 100%; padding: 16px 20px 16px 50px; border-radius: 50px; border: none; font-size: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); outline: none;}
         .search-wrapper i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #999; }
 
@@ -238,6 +244,24 @@ description='Sabe aquele produto incrível que você viu no TikTok? Ele está aq
         </a>
     <h1>Ofertas & Achadinhos</h1>
     <p>Curadoria diária das melhores promoções.</p>
+
+    <div class="hero-buttons">
+            <button class="pill-btn active">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <svg viewBox="0 0 576 512"> <path d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"/></svg>
+                </svg>
+                Melhores Achadinhos
+            </button>
+
+            <a href="achadinhos/favoritos/" class="pill-link">
+                <button class="pill-btn" data-tab="Favoritos">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    Seus Favoritos
+                </button>
+            </a>
+    </div>
     
     <div class="search-wrapper">
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -269,6 +293,5 @@ description='Sabe aquele produto incrível que você viu no TikTok? Ele está aq
     </button>
 </nav>
     </main>
-    <Achadinhos></Achadinhos>
-    <Global></Global>
+    <Achadinhos client:load/>
 </Layout>

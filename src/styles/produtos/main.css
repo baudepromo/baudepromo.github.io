@@ -1,0 +1,552 @@
+.icon {
+            width: 1.1em;
+            height: 1.1em;
+            fill: currentColor; /* Herda a cor do texto */
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            max-width: 1200px; margin: 0 auto; padding: 0 20px 40px;
+            position: relative; z-index: 2; flex: 1; width: 100%;
+        }
+
+        /* Barra de Busca */
+        .search-container {
+            background: white; padding: 10px 20px; border-radius: 100px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px;
+            max-width: 500px; margin: 0 auto 40px; border: 1px solid #eee;
+        }
+        
+        /* AJUSTE: Mudei de 'i' para '.icon' para pegar o SVG */
+        .search-container .icon { color: #ff4b4b; width: 1.2rem; height: 1.2rem; }
+        
+        .search-container input {
+            border: none; outline: none; font-size: 1rem; width: 100%; color: var(--text-dark);
+        }
+
+        /* Grid de Produtos */
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-top: 60px;
+        }
+
+        /* --- CARDS NOVOS --- */
+        .card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: all 0.3s ease;
+            display: flex; flex-direction: column; position: relative; border: 1px solid transparent;
+        }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: #ffe0e0; }
+
+        .card-img-wrapper {
+            height: 220px; padding: 20px; display: flex; align-items: center; justify-content: center;
+            background: #fff; position: relative; border-bottom: 1px solid #f0f0f0;
+        }
+        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s; }
+        .card:hover img { transform: scale(1.08); }
+
+        .store-badge {
+            position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 700;
+            padding: 4px 10px; border-radius: 8px; text-transform: uppercase; z-index: 10;
+        }
+        .badge-amazon { background: var(--amazon); color: #000; }
+        .badge-shopee { background: var(--shopee); color: #fff; }
+        .badge-aliexpress { background: var(--aliexpress); color: #fff; }
+        .badge-mercadolivre { background: var(--mercado-livre); color: #000; }
+
+        .card-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; text-align: left; }
+        
+        .card h3 {
+            font-size: 0.95rem; font-weight: 600; color: #333; margin-bottom: 10px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;
+        }
+
+        .price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .card-price { color: #ff4b4b; font-weight: 800; font-size: 1.3rem; }
+        
+        .btn-ver {
+            background: var(--text-dark); color: white; text-decoration: none;
+            padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-ver:hover { background: #ff4b4b; }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .hero-section h1 { font-size: 1.8rem; }
+            .hero-buttons { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; white-space: nowrap; }
+            .pill-btn { flex: 0 0 auto; }
+            .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .card-img-wrapper { height: 160px; padding: 10px; }
+            .card-info { padding: 15px; }
+            .card-price { font-size: 1.1rem; }
+        }
+        /* --- ESTILO DA BARRA DE PESQUISA (Atualizado) --- */
+    /* --- ESTILO DA BARRA DE PESQUISA (PREMIUM) --- */
+.search-wrapper {
+    position: sticky;
+    top: 15px;
+    z-index: 1000; /* Garante que fique acima de tudo */
+    margin-top: 25px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    background: white;
+    border-radius: 25px; /* Bordas mais arredondadas estilo Google */
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+/* Estado Ativo (quando clica ou tem menu aberto) */
+.search-wrapper.active {
+    border-radius: 25px 25px 0 0; /* Reto embaixo para colar na lista */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-color: transparent;
+}
+
+.search-icon {
+    width: 20px;
+    height: 20px;
+    stroke: #ff4d4d;
+    stroke-width: 2.5;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.search-wrapper:focus-within .search-icon {
+    transform: scale(1.1) rotate(90deg); /* Pequena animação */
+}
+
+#search {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 1rem;
+    color: #333;
+    background: transparent;
+    font-weight: 500;
+}
+#search::placeholder { color: #999; font-weight: 400; }
+
+/* --- AUTOCOMPLETE LIST --- */
+.autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 0 0 25px 25px; /* Arredonda o fundo */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    z-index: 1000;
+    max-height: 350px;
+    overflow-y: auto;
+    border-top: 1px solid #f0f0f0;
+    display: none; /* Controlado pelo JS */
+    padding-bottom: 10px;
+}
+
+/* Cabeçalho (Histórico / Sugestões) */
+.autocomplete-header {
+    padding: 12px 20px 5px;
+    font-size: 0.75rem;
+    color: #ff4b4b;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: white;
+}
+
+/* Itens da Lista */
+.autocomplete-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #444;
+    transition: background 0.1s;
+    font-size: 0.95rem;
+}
+
+/* Ícones dentro da lista */
+.autocomplete-item svg {
+    width: 16px; height: 16px; flex-shrink: 0;
+}
+.icon-history { stroke: #999; }
+.icon-search { stroke: #ff4b4b; }
+
+/* Destaque do texto digitado */
+.autocomplete-item b {
+    color: #000;
+    font-weight: 700;
+}
+
+/* Hover e Seleção por Teclado */
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+    background-color: #f7f9fa;
+    color: #000;
+}
+
+/* Botão de Limpar Histórico */
+.clear-history-btn {
+    font-size: 0.75rem;
+    color: #999;
+    text-decoration: underline;
+    cursor: pointer;
+    float: right;
+    font-weight: 400;
+    text-transform: none;
+}
+.clear-history-btn:hover { color: #ff4b4b; }
+
+/* --- CSS DO BANNER SLIDER --- */
+.banner-slider-container {
+    width: 100%;
+    margin: 20px 0 30px 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px; /* Arredondar os cantos do container geral */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.banner-track {
+    display: flex;
+    width: 100%;
+    /* Removemos o scroll-snap nativo para controlar via JS com transform */
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
+}
+
+.banner-slide {
+    min-width: 100%; /* Garante que cada slide ocupe 100% da largura */
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 40px 0;
+}
+
+.banner-inner-content {
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 2;
+}
+
+/* --- ANIMAÇÕES DE TEXTO --- */
+.banner-content { 
+    max-width: 50%; 
+    opacity: 0; 
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+/* Quando o slide está ativo (classe adicionada via JS) */
+.banner-slide.active .banner-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.banner-content span { 
+    color: rgba(255,255,255,0.9); 
+    font-size: 0.85rem; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    letter-spacing: 1px;
+    display: block; 
+    margin-bottom: 15px;
+    background: rgba(0,0,0,0.1);
+    width: fit-content;
+    padding: 5px 12px;
+    border-radius: 50px;
+}
+
+.banner-content h2 { 
+    color: white; 
+    font-size: 3rem; 
+    margin: 0 0 20px; 
+    line-height: 1.1; 
+    font-weight: 800;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.banner-content p { 
+    color: rgba(255,255,255,0.95); 
+    margin-bottom: 30px; 
+    font-size: 1.1rem; 
+    max-width: 90%;
+}
+
+.btn-banner {
+    background: white;
+    color: #333;
+    padding: 14px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: inline-block;
+}
+.btn-banner:hover { 
+    transform: translateY(-3px) scale(1.05); 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+}
+
+/* Animação da Imagem */
+.banner-slide img {
+    max-height: 320px;
+    max-width: 45%;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.3));
+    opacity: 0;
+    transform: translateX(30px) scale(0.9);
+    transition: all 0.8s 0.2s ease-out; /* Delay ligeiro */
+}
+
+.banner-slide.active img {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+/* Dots Navigation */
+.slider-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    position: absolute;
+    bottom: 25px;
+    width: 100%;
+    z-index: 10;
+}
+
+.dot {
+    width: 12px; 
+    height: 12px; 
+    background: rgba(255,255,255,0.4); 
+    border-radius: 50%; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.dot.active { 
+    background: white; 
+    transform: scale(1.3); 
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .banner-slide { min-height: auto; padding: 40px 20px 60px; } /* Espaço extra embaixo pros dots */
+    .banner-inner-content { flex-direction: column-reverse; text-align: center; padding: 0; gap: 30px; }
+    .banner-content { max-width: 100%; }
+    .banner-content span { margin: 0 auto 10px; }
+    .banner-content h2 { font-size: 1.8rem; }
+    .banner-slide img { max-height: 180px; max-width: 70%; transform: translateY(20px); }
+    .banner-slide.active img { transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .search-wrapper {
+        top: 10px;
+        width: 90%; /* Ajuste para não colar nas bordas no celular */
+    }
+}
+
+.shop-container {
+    display: flex;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    position: relative;
+    align-items: flex-start; /* Importante para o sticky funcionar */
+}
+
+/* --- SIDEBAR (Filtros) --- */
+.sidebar {
+    width: 260px; /* Largura fixa igual Kabum */
+    flex-shrink: 0;
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #eee;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    position: sticky; /* Faz o menu acompanhar a rolagem */
+    top: 100px; /* Distância do topo quando grudar */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+}
+
+.product-feed {
+    flex-grow: 1; /* Ocupa o resto do espaço */
+    width: 100%;
+}
+
+/* Estilos dos Grupos de Filtro */
+.filter-group {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+.filter-group:last-child { border-bottom: none; }
+
+.filter-group h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #333;
+    text-transform: uppercase;
+}
+
+/* Inputs de Preço */
+.price-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.input-wrapper {
+    background: #f5f5f5;
+    padding: 5px 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    border: 1px solid transparent;
+}
+.input-wrapper:focus-within { border-color: #ff4b4b; background: white; }
+
+.input-wrapper span { font-size: 0.8rem; color: #666; margin-right: 4px; }
+.input-wrapper input {
+    width: 100%; border: none; background: transparent; outline: none; font-weight: 600;
+    font-size: 0.9rem; width: 50px;
+}
+/* Remove setas do input number */
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.btn-filter-action {
+    width: 100%;
+    background: white;
+    border: 1px solid #ff4b4b;
+    color: #ff4b4b;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 0.85rem;
+}
+.btn-filter-action:hover { background: #ff4b4b; color: white; }
+
+/* Checkboxes Estilizados (Estilo Kabum) */
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #555;
+    user-select: none;
+}
+.custom-checkbox input { display: none; } /* Esconde o original */
+
+.checkmark {
+    height: 18px; width: 18px;
+    background-color: #eee;
+    border-radius: 4px;
+    margin-right: 10px;
+    position: relative;
+    transition: 0.2s;
+}
+
+.custom-checkbox:hover .checkmark { background-color: #ddd; }
+.custom-checkbox input:checked ~ .checkmark { background-color: #ff4b4b; }
+.custom-checkbox input:checked ~ .checkmark:after {
+    content: ""; position: absolute; display: block;
+    left: 6px; top: 2px; width: 5px; height: 10px;
+    border: solid white; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.filter-select {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none;
+}
+
+/* --- RESPONSIVIDADE (Mobile) --- */
+.mobile-only { display: none; }
+
+@media (max-width: 900px) {
+    .shop-container { display: block; }
+    
+    .mobile-only { display: flex; }
+    
+    #mobile-filter-btn {
+        width: 100%; margin-bottom: 20px; justify-content: center;
+        background: #333; color: white; border: none;
+    }
+
+    .sidebar {
+        position: fixed; top: 0; left: -100%; width: 85%; height: 100vh;
+        z-index: 2000; transition: 0.3s ease; border-radius: 0;
+        box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+    }
+    .sidebar.active { left: 0; }
+    
+    .sidebar-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;
+    }
+    .close-sidebar { font-size: 2rem; cursor: pointer; }
+    
+    /* Grid adjustments for single column feed */
+    .cards-grid { grid-template-columns: repeat(2, 1fr); margin-top: 0; }
+}
+.shop-container {
+    display: flex;         /* Ativa o lado a lado */
+    align-items: flex-start; /* Impede que a sidebar estique até o chão */
+    gap: 30px;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;        /* Impede que a sidebar "esprema" */
+    position: sticky;      /* Faz ela grudar ao rolar */
+    top: 100px;
+}
+
+.product-feed {
+    flex-grow: 1;          /* Faz os produtos ocuparem o resto do espaço */
+}
+
+/* Garante que no mobile ela mude o comportamento */
+@media (max-width: 900px) {
+    .shop-container {
+        display: block;    /* No celular, volta a ser um embaixo do outro */
+    }
+    .sidebar {
+        position: fixed;   /* No mobile, vira um menu lateral escondido */
+        left: -100%;
+        top: 0;
+        z-index: 2000;
+        height: 100vh;
+        transition: 0.3s;
+    }
+    .sidebar.active {
+        left: 0;
+    }
+}

@@ -1,7 +1,7 @@
 ---
-import Global from '../../components/global.astro';
 import Layout from '../../layouts/MainLayout.astro';
 import Seo from "../../lib/seo/metadada.astro"
+import '../../styles/i.css';
 ---
 <Seo 
     title='Baú de Promoções: Onde a sua economia é o nosso maior tesouro. | Baú de Promoção', 
@@ -9,7 +9,6 @@ import Seo from "../../lib/seo/metadada.astro"
     type='article'
     ></Seo>
 <Layout>
-  <link rel="stylesheet" href="/styles/pages/i.css">
 
   <div class="hero-section">
     <h1>Baú de Promoções</h1>
@@ -73,7 +72,7 @@ import Seo from "../../lib/seo/metadada.astro"
       </p>
 
       <div style="text-align: center;">
-        <a href="javascript:history.back()" class="pill-btn btn-back-footer">
+        <a href="/" class="pill-btn btn-back-footer">
           Voltar para o Início
         </a>
       </div>
@@ -81,5 +80,4 @@ import Seo from "../../lib/seo/metadada.astro"
     </div>
   </div>
 
-  <Global />
 </Layout>

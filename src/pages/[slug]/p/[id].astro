@@ -5,7 +5,8 @@ import { createClient } from '@supabase/supabase-js';
 import Layout from "../../../layouts/MainLayout.astro"; // Ajuste os imports (subiu 3 níveis)
 import Global from '../../../components/global.astro';
 import Seo from "../../../lib/seo/metadada.astro";
-
+import '../../../styles/pages/info.css';
+import P from "../../../components/produtos/p.astro"
 // AQUI ESTÁ A MUDANÇA PRINCIPAL
 // O Astro captura o [id] da pasta e o [slug] da pasta anterior
 const { id, slug } = Astro.params;
@@ -33,7 +34,7 @@ if (error || !product) {
 
 const p = product ? {
     id: product.id,
-    title: product.title || product.nome_do_produto,
+    title: product.title,
     price: product.price,
     oldPrice: product.oldPrice, 
     img: product.img || (Array.isArray(product.image) ? product.image[0] : product.image),
@@ -148,131 +149,5 @@ const SVGS = {
     </div>
 
     <Global />
+    <P client:load />
 </Layout>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // 1. RECUPERAR DADOS DO HTML
-    const metaEl = document.getElementById('product-metadata');
-    if (!metaEl) throw new Error("Metadata não encontrada");
-
-    const { id: productId, heartId, alertId, title: productTitle } = metaEl.dataset;
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-        authDomain: "baudepromocao-oficial.firebaseapp.com",
-        projectId: "baudepromocao-oficial",
-        storageBucket: "baudepromocao-oficial.firebasestorage.app",
-        messagingSenderId: "743146859125",
-        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
-
-    // Funções de UI
-    function showToast(msg) {
-        const toast = document.getElementById('toast-box');
-        if (!toast) { console.log(msg); return; }
-        const infoIcon = `<svg style="display:inline-block; vertical-align:middle; margin-right:5px" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
-        toast.innerHTML = `${infoIcon} ${msg}`;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    function toggleModal(show) {
-        const modal = document.getElementById('login-modal');
-        if(modal) modal.style.display = show ? 'flex' : 'none';
-    }
-
-    async function toggleCollection(collectionName, pId, elementId, activeClass, successMsg, removedMsg) {
-        if (!auth.currentUser) {
-            toggleModal(true); // Abre o modal bonito se não estiver logado
-            return;
-        }
-        
-        const btn = document.getElementById(elementId);
-        const userRef = doc(db, collectionName, auth.currentUser.uid);
-        const wasActive = btn?.classList.contains(activeClass);
-
-        btn?.classList.toggle(activeClass);
-
-        try {
-            const snap = await getDoc(userRef);
-            if (!wasActive) {
-                if (!snap.exists()) {
-                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(pId)], updatedAt: new Date() });
-                } else {
-                    await updateDoc(userRef, { items: arrayUnion(String(pId)) });
-                }
-                showToast(successMsg);
-            } else {
-                await updateDoc(userRef, { items: arrayRemove(String(pId)) });
-                showToast(removedMsg);
-            }
-        } catch (e) {
-            console.error(e);
-            btn?.classList.toggle(activeClass); 
-            showToast("Erro ao processar.");
-        }
-    }
-
-    // Listeners de Ação
-    document.querySelector('.js-wishlist-btn')?.addEventListener('click', () => {
-        toggleCollection('wishlists', productId, heartId, 'active', 'Salvo nos favoritos!', 'Removido dos favoritos.');
-    });
-
-    document.querySelector('.js-alert-btn')?.addEventListener('click', () => {
-        toggleCollection('alerts', productId, alertId, 'active', 'Alerta ativado!', 'Alerta removido.');
-    });
-
-    document.querySelector('.js-share-btn')?.addEventListener('click', () => {
-    // Em vez de window.location.href, construímos a URL curta
-    const shortUrl = `${window.location.origin}/p/${productId}`;
-    
-    if (navigator.share) {
-        navigator.share({ 
-            title: productTitle, 
-            url: shortUrl 
-        }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(shortUrl);
-        showToast('Link curto copiado!');
-    }
-});
-
-    // Listeners do Modal
-    document.querySelector('.js-close-modal')?.addEventListener('click', () => toggleModal(false));
-    
-    document.getElementById('btn-google-login')?.addEventListener('click', async () => {
-        try {
-            await signInWithPopup(auth, provider);
-            toggleModal(false);
-            showToast("Bem-vindo! Tente salvar agora.");
-        } catch (error) {
-            console.error(error);
-            showToast("Erro no login.");
-        }
-    });
-
-    // Estado da Autenticação
-    onAuthStateChanged(auth, async (user) => { 
-        if(user) {
-            // Check wishlist
-            const wSnap = await getDoc(doc(db, "wishlists", user.uid));
-            if (wSnap.exists() && wSnap.data().items?.includes(String(productId))) {
-                document.getElementById(heartId)?.classList.add('active');
-            }
-            // Check alerts
-            const aSnap = await getDoc(doc(db, "alerts", user.uid));
-            if (aSnap.exists() && aSnap.data().items?.includes(String(productId))) {
-                document.getElementById(alertId)?.classList.add('active');
-            }
-        }
-    });
-</script>

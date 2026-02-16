@@ -39,7 +39,7 @@
         const grid = document.getElementById("fav-grid");
 
         try {
-            const userDocRef = doc(db, "wishlists", uid);
+            const userDocRef = doc(db, "wishlists2", uid);
             const userSnap = await getDoc(userDocRef);
 
             if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
@@ -60,7 +60,7 @@
             }
 
             const { data: products, error } = await supabase
-                .from('produtos')
+                .from('achadinhos')
                 .select('*')
                 .in('id', favoriteIds);
 
@@ -88,36 +88,11 @@
                     <div class="card-content">
                         <h3>${title}</h3>
                         <span class="price">R$ ${p.price}</span>
-                        <a href="/${p.slug}/p/${p.id}" class="pill-btn btn-details">Ver Oferta</a>
+                        <a href="/${p.slug}/a/${p.id}" class="pill-btn btn-details">Ver Oferta</a>
                     </div>
                 </div>`;
         });
     }
-
-    window.removeFavorite = async (productId) => {
-        if (!currentUser) return;
-        const card = document.getElementById(`card-${productId}`);
-        if(confirm("Remover dos favoritos?")) {
-            try {
-                card.style.opacity = '0.3';
-                const userDocRef = doc(db, "wishlists", currentUser.uid);
-                
-                // Remove tanto o ID string quanto o ID número para limpar o banco
-                await updateDoc(userDocRef, {
-                    items: arrayRemove(String(productId))
-                });
-                await updateDoc(userDocRef, {
-                    items: arrayRemove(Number(productId))
-                });
-
-                card.remove();
-                if (document.getElementById("fav-grid").children.length === 0) renderEmptyState(document.getElementById("fav-grid"));
-            } catch (e) {
-                card.style.opacity = '1';
-                alert("Erro ao remover.");
-            }
-        }
-    };
 
     function renderEmptyState(grid) {
         grid.innerHTML = `<div class="empty-state"><h2>Sua lista está vazia</h2><a href="/produtos" class="pill-btn btn-details">Ver Ofertas</a></div>`;

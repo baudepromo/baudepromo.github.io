@@ -1,0 +1,98 @@
+/* --- BOTÕES: PILL (Cápsula) --- */
+.pill-btn {
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 0.95rem;
+}
+
+.pill-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-white { background: var(--white); color: var(--accent-orange); }
+.btn-black { background: var(--accent-black); color: var(--white); }
+.btn-yellow { background: var(--accent-yellow); color: var(--accent-black); }
+
+/* --- BOTÕES: AÇÃO PRIMÁRIA --- */
+.btn-primary {
+    background: var(--primary-red);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* --- BOTÕES: NAVEGAÇÃO / VOLTAR --- */
+.back-btn, .btn-back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light); /* Ajuste se o fundo for claro */
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9rem;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.back-btn:hover, .btn-back:hover { 
+    background: rgba(0,0,0,0.2);
+    transform: translateX(-4px);
+    color: rgba(255, 150, 126, 1);
+}
+
+.icon-back {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+/* --- CARDS --- */
+.card {
+    background: var(--white);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card:hover { transform: translateY(-5px); }
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background: #f0f0f0;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+/* --- MODAIS & FORMULÁRIOS --- */

@@ -1,5 +1,4 @@
 ---
-import Global from '../../components/global.astro';
 import Layout from '../../layouts/MainLayout.astro';
 import Cupons from '../../components/cupons.astro';
 import Seo from "../../lib/seo/metadada.astro"
@@ -238,6 +237,5 @@ type="website"></Seo>
         Cupom copiado com sucesso!
     </div>
     
-    <Cupons></Cupons>
-    <Global></Global>
+    <Cupons client:load />
 </Layout>

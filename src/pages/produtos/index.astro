@@ -1,8 +1,8 @@
 ---
 import Layout from "../../layouts/MainLayout.astro";
-import Global from '../../components/global.astro';
 import Produtos from "../../components/produtos/produtos.astro";
 import Seo from "../../lib/seo/metadada.astro"
+import '../../styles/produtos/main.css'
 ---
 <Seo
     title="Produtos em alta | Baú de Promoção"
@@ -50,438 +50,6 @@ import Seo from "../../lib/seo/metadada.astro"
   }
 }
 </script>
-    <style is:inline>
-        
-        /* --- ESTILOS DE ÍCONES (Adicionado) --- */
-        .icon {
-            width: 1.1em;
-            height: 1.1em;
-            fill: currentColor; /* Herda a cor do texto */
-            vertical-align: middle;
-            margin-right: 6px;
-        }
-
-        /* --- CONTEÚDO PRINCIPAL --- */
-        .main-content {
-            max-width: 1200px; margin: 0 auto; padding: 0 20px 40px;
-            position: relative; z-index: 2; flex: 1; width: 100%;
-        }
-
-        /* Barra de Busca */
-        .search-container {
-            background: white; padding: 10px 20px; border-radius: 100px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08); display: flex; align-items: center; gap: 15px;
-            max-width: 500px; margin: 0 auto 40px; border: 1px solid #eee;
-        }
-        
-        /* AJUSTE: Mudei de 'i' para '.icon' para pegar o SVG */
-        .search-container .icon { color: #ff4b4b; width: 1.2rem; height: 1.2rem; }
-        
-        .search-container input {
-            border: none; outline: none; font-size: 1rem; width: 100%; color: var(--text-dark);
-        }
-
-        /* Grid de Produtos */
-        .cards-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-top: 60px;
-        }
-
-        /* --- CARDS NOVOS --- */
-        .card {
-            background: white; border-radius: 20px; overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); transition: all 0.3s ease;
-            display: flex; flex-direction: column; position: relative; border: 1px solid transparent;
-        }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); border-color: #ffe0e0; }
-
-        .card-img-wrapper {
-            height: 220px; padding: 20px; display: flex; align-items: center; justify-content: center;
-            background: #fff; position: relative; border-bottom: 1px solid #f0f0f0;
-        }
-        .card img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s; }
-        .card:hover img { transform: scale(1.08); }
-
-        .store-badge {
-            position: absolute; top: 15px; right: 15px; font-size: 0.7rem; font-weight: 700;
-            padding: 4px 10px; border-radius: 8px; text-transform: uppercase; z-index: 10;
-        }
-        .badge-amazon { background: var(--amazon); color: #000; }
-        .badge-shopee { background: var(--shopee); color: #fff; }
-        .badge-aliexpress { background: var(--aliexpress); color: #fff; }
-        .badge-mercadolivre { background: var(--mercado-livre); color: #000; }
-
-        .card-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; text-align: left; }
-        
-        .card h3 {
-            font-size: 0.95rem; font-weight: 600; color: #333; margin-bottom: 10px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;
-        }
-
-        .price-row { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
-        .card-price { color: #ff4b4b; font-weight: 800; font-size: 1.3rem; }
-        
-        .btn-ver {
-            background: var(--text-dark); color: white; text-decoration: none;
-            padding: 8px 15px; border-radius: 50px; font-size: 0.8rem; font-weight: 600;
-            transition: 0.2s;
-        }
-        .btn-ver:hover { background: #ff4b4b; }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .hero-section h1 { font-size: 1.8rem; }
-            .hero-buttons { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; white-space: nowrap; }
-            .pill-btn { flex: 0 0 auto; }
-            .cards-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-            .card-img-wrapper { height: 160px; padding: 10px; }
-            .card-info { padding: 15px; }
-            .card-price { font-size: 1.1rem; }
-        }
-        /* --- ESTILO DA BARRA DE PESQUISA (Atualizado) --- */
-    .search-wrapper {
-    position: sticky; /* Faz a mágica de grudar */
-    top: 15px;       /* Distância do topo da tela quando gruda */
-    z-index: 1000;    /* Garante que fique acima de todos os produtos */
-    
-    /* Mantém seus estilos originais abaixo */
-    margin-top: 25px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-    background: white;
-    border-radius: 50px;
-    padding: 12px 25px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    border: 1px solid #eee;
-    transition: all 0.3s ease;
-}
-    /* Efeito ao passar o mouse ou clicar na busca */
-    .search-wrapper:hover, 
-    .search-wrapper:focus-within {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-        border-color: #ff4d4d; /* Borda vermelha sutil */
-    }
-
-    .search-icon {
-        /* Removemos o position absolute para usar o flex gap */
-        position: static; 
-        width: 20px;
-        height: 20px;
-        /* Cor do ícone (vermelho) */
-        stroke: #ff4d4d; 
-        stroke-width: 2.5;
-        transition: transform 0.3s ease;
-    }
-
-    /* Animaçãozinha no ícone quando foca */
-    .search-wrapper:focus-within .search-icon {
-        transform: scale(1.1);
-    }
-
-    #search {
-        border: none;
-        outline: none;
-        width: 100%;
-        font-size: 1rem;
-        color: #333;
-        background: transparent;
-        font-weight: 500;
-    }
-
-    #search::placeholder {
-        color: #999;
-        font-weight: 400;
-    }
-.banner-slider-container {
-        width: 100%;
-        margin: 20px 0 0 0; /* Removida margem lateral */
-        position: relative;
-        overflow: hidden;
-    }
-
-    .banner-track {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        /* Removemos o gap para que os banners fiquem colados um no outro */
-        gap: 0; 
-    }
-
-    /* Esconder barra de rolagem */
-    .banner-track::-webkit-scrollbar { display: none; }
-    .banner-track { -ms-overflow-style: none; scrollbar-width: none; }
-
-    .banner-slide {
-        flex: 0 0 100%;
-        width: 100%; /* Garante largura total */
-        min-height: 350px; /* Aumentei um pouco a altura para ficar mais imponente */
-        border-radius: 0; /* Remove as pontas arredondadas */
-        scroll-snap-align: start;
-        display: flex;
-        align-items: center;
-        justify-content: center; /* Centraliza o container interno */
-        position: relative;
-    }
-
-    /* Novo Container para segurar o conteúdo no centro */
-    .banner-inner-content {
-        max-width: 1200px;
-        width: 100%;
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        z-index: 2;
-    }
-
-    .banner-content { max-width: 50%; }
-    .banner-content span { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; opacity: 0.9; display: block; margin-bottom: 10px;}
-    .banner-content h2 { font-size: 2.5rem; margin: 5px 0 15px; line-height: 1.1; font-weight: 800; }
-    .banner-content p { margin-bottom: 25px; font-size: 1.2rem; }
-
-    .btn-banner {
-        background: white;
-        color: #333;
-        padding: 12px 30px;
-        border-radius: 4px; /* Botão mais quadrado estilo BannerJá */
-        text-decoration: none;
-        font-weight: 800;
-        font-size: 1rem;
-        transition: 0.3s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
-    .btn-banner:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.3); }
-
-    .banner-slide img {
-        max-height: 280px; /* Imagem maior */
-        max-width: 45%;
-        object-fit: contain;
-        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
-    }
-
-    .slider-dots {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        position: absolute;
-        bottom: 20px;
-        width: 100%;
-        z-index: 10;
-    }
-
-    .dot {
-        width: 10px; height: 10px; background: rgba(255,255,255,0.5); border-radius: 50%; transition: 0.3s; cursor: pointer;
-    }
-
-    .dot.active { width: 10px; background: #fff; transform: scale(1.2); }
-
-    /* Ajustes para Celular */
-    @media (max-width: 768px) {
-        .banner-slide { min-height: auto; padding: 40px 0; }
-        .banner-inner-content { flex-direction: column-reverse; text-align: center; gap: 20px; }
-        .banner-content { max-width: 100%; }
-        .banner-content h2 { font-size: 1.5rem; }
-        .banner-slide img { max-height: 150px; max-width: 80%; }
-    }
-@media (max-width: 768px) {
-    .search-wrapper {
-        top: 10px;
-        width: 90%; /* Ajuste para não colar nas bordas no celular */
-    }
-}
-
-.shop-container {
-    display: flex;
-    gap: 30px;
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 20px;
-    position: relative;
-    align-items: flex-start; /* Importante para o sticky funcionar */
-}
-
-/* --- SIDEBAR (Filtros) --- */
-.sidebar {
-    width: 260px; /* Largura fixa igual Kabum */
-    flex-shrink: 0;
-    background: white;
-    padding: 20px;
-    border-radius: 16px;
-    border: 1px solid #eee;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-    position: sticky; /* Faz o menu acompanhar a rolagem */
-    top: 100px; /* Distância do topo quando grudar */
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-}
-
-.product-feed {
-    flex-grow: 1; /* Ocupa o resto do espaço */
-    width: 100%;
-}
-
-/* Estilos dos Grupos de Filtro */
-.filter-group {
-    margin-bottom: 25px;
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 20px;
-}
-.filter-group:last-child { border-bottom: none; }
-
-.filter-group h3 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-    color: #333;
-    text-transform: uppercase;
-}
-
-/* Inputs de Preço */
-.price-inputs {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.input-wrapper {
-    background: #f5f5f5;
-    padding: 5px 10px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    border: 1px solid transparent;
-}
-.input-wrapper:focus-within { border-color: #ff4b4b; background: white; }
-
-.input-wrapper span { font-size: 0.8rem; color: #666; margin-right: 4px; }
-.input-wrapper input {
-    width: 100%; border: none; background: transparent; outline: none; font-weight: 600;
-    font-size: 0.9rem; width: 50px;
-}
-/* Remove setas do input number */
-input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-.btn-filter-action {
-    width: 100%;
-    background: white;
-    border: 1px solid #ff4b4b;
-    color: #ff4b4b;
-    padding: 8px;
-    border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.2s;
-    font-size: 0.85rem;
-}
-.btn-filter-action:hover { background: #ff4b4b; color: white; }
-
-/* Checkboxes Estilizados (Estilo Kabum) */
-.custom-checkbox {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: #555;
-    user-select: none;
-}
-.custom-checkbox input { display: none; } /* Esconde o original */
-
-.checkmark {
-    height: 18px; width: 18px;
-    background-color: #eee;
-    border-radius: 4px;
-    margin-right: 10px;
-    position: relative;
-    transition: 0.2s;
-}
-
-.custom-checkbox:hover .checkmark { background-color: #ddd; }
-.custom-checkbox input:checked ~ .checkmark { background-color: #ff4b4b; }
-.custom-checkbox input:checked ~ .checkmark:after {
-    content: ""; position: absolute; display: block;
-    left: 6px; top: 2px; width: 5px; height: 10px;
-    border: solid white; border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-}
-
-.filter-select {
-    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; outline: none;
-}
-
-/* --- RESPONSIVIDADE (Mobile) --- */
-.mobile-only { display: none; }
-
-@media (max-width: 900px) {
-    .shop-container { display: block; }
-    
-    .mobile-only { display: flex; }
-    
-    #mobile-filter-btn {
-        width: 100%; margin-bottom: 20px; justify-content: center;
-        background: #333; color: white; border: none;
-    }
-
-    .sidebar {
-        position: fixed; top: 0; left: -100%; width: 85%; height: 100vh;
-        z-index: 2000; transition: 0.3s ease; border-radius: 0;
-        box-shadow: 5px 0 20px rgba(0,0,0,0.2);
-    }
-    .sidebar.active { left: 0; }
-    
-    .sidebar-header {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee;
-    }
-    .close-sidebar { font-size: 2rem; cursor: pointer; }
-    
-    /* Grid adjustments for single column feed */
-    .cards-grid { grid-template-columns: repeat(2, 1fr); margin-top: 0; }
-}
-.shop-container {
-    display: flex;         /* Ativa o lado a lado */
-    align-items: flex-start; /* Impede que a sidebar estique até o chão */
-    gap: 30px;
-    max-width: 1200px;
-    margin: 40px auto;
-}
-
-.sidebar {
-    width: 260px;
-    flex-shrink: 0;        /* Impede que a sidebar "esprema" */
-    position: sticky;      /* Faz ela grudar ao rolar */
-    top: 100px;
-}
-
-.product-feed {
-    flex-grow: 1;          /* Faz os produtos ocuparem o resto do espaço */
-}
-
-/* Garante que no mobile ela mude o comportamento */
-@media (max-width: 900px) {
-    .shop-container {
-        display: block;    /* No celular, volta a ser um embaixo do outro */
-    }
-    .sidebar {
-        position: fixed;   /* No mobile, vira um menu lateral escondido */
-        left: -100%;
-        top: 0;
-        z-index: 2000;
-        height: 100vh;
-        transition: 0.3s;
-    }
-    .sidebar.active {
-        left: 0;
-    }
-}
-</style>
 
     <section class="hero-section" style="position: relative;">
       <div class="faq-wrapper">
@@ -501,7 +69,7 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
                 <svg class="icon" viewBox="0 0 24 24">
                     <svg viewBox="0 0 576 512"> <path d="M309.5-18.9c-4.1-8-12.4-13.1-21.4-13.1s-17.3 5.1-21.4 13.1L193.1 125.3 33.2 150.7c-8.9 1.4-16.3 7.7-19.1 16.3s-.5 18 5.8 24.4l114.4 114.5-25.2 159.9c-1.4 8.9 2.3 17.9 9.6 23.2s16.9 6.1 25 2L288.1 417.6 432.4 491c8 4.1 17.7 3.3 25-2s11-14.2 9.6-23.2L441.7 305.9 556.1 191.4c6.4-6.4 8.6-15.8 5.8-24.4s-10.1-14.9-19.1-16.3L383 125.3 309.5-18.9z"/></svg>
                 </svg>
-                Melhores
+                Recomendados
             </button>
 
             <a href="/produtos/categorias/eletronicos/" class="pill-link">
@@ -557,6 +125,15 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
                     Fitness
                 </button>
             </a>
+
+            <a href="/produtos/categorias/saude/" class="pill-link">
+                <button class="pill-btn" data-tab="Favoritos">
+                    <svg class="icon" viewBox="0 0 22 24">
+                        <svg viewBox="0 0 512 512"><path d="M248 24a56 56 0 1 0 -112 0 56 56 0 1 0 112 0zm24 212.7l46.3 62.4c10.5 14.2 30.6 17.2 44.8 6.6s17.2-30.6 6.6-44.8l-70.5-95C274 132 234.3 112 192 112s-82 20-107.2 53.9l-70.5 95c-10.5 14.2-7.6 34.2 6.6 44.8s34.2 7.6 44.8-6.6L112 236.7 112 512c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160c0-8.8 7.2-16 16-16s16 7.2 16 16l0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-275.3z"/></svg>
+                    </svg>
+                    Saúde
+                </button>
+            </a>
             
             <a href="/produtos/favoritos/" class="pill-link">
                 <button class="pill-btn" data-tab="Favoritos">
@@ -568,49 +145,66 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
             </a>
         </div>
 
-        <div class="search-wrapper">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input type="text" id="search" placeholder="O que você está procurando?">
-        </div>
+        <div class="search-wrapper" id="search-container-wrapper" style="position: relative;"> 
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input type="text" id="search" autocomplete="off" placeholder="O que você está procurando?">
+    
+    <div id="autocomplete-list" class="autocomplete-list"></div>
+</div>
       </div>
     </section>
     <main class="main-content">
 
-        <div class="banner-slider-container">
-        <div class="banner-track">
-            <div class="banner-slide" style="background: linear-gradient(90deg, #D4145A, #FBB03B);">
-                <div class="banner-inner-content">
-                    <div class="banner-content">
-                        <span>Oferta Relâmpago ⚡</span>
-                        <h2>MEGA PAINEL INTELIGENTE</h2>
-                        <p>Solução perfeita para seu evento. 4 Tamanhos, escolha o seu.</p>
-                        <a href="#product-grid" class="btn-banner">CONFIRA AGORA</a>
-                    </div>
-                    <img src="https://http2.mlstatic.com/D_NQ_NP_949046-MLA99507276886_112025-O.webp" alt="Redmi Watch 5">
+       <div class="banner-slider-container" id="banner-slider">
+    <div class="banner-track">
+        
+        <div class="banner-slide active" style="background: linear-gradient(135deg, #FF416C, #FF4B2B);">
+            <div class="banner-inner-content">
+                <div class="banner-content">
+                    <span>Oferta Relâmpago ⚡</span>
+                    <h2>MEGA PAINEL INTELIGENTE</h2>
+                    <p>Solução perfeita para seu evento. Tecnologia de ponta com o melhor preço do mercado.</p>
+                    <a href="smartwatch-xiaomi-redmi-watch-5-active-tela-lcd-2-00-preto/p/79588949" class="btn-banner">CONFIRA AGORA</a>
                 </div>
-            </div>
-
-            <div class="banner-slide" style="background: linear-gradient(90deg, #00b4db, #0083b0);">
-                 <div class="banner-inner-content">
-                    <div class="banner-content">
-                        <span>Tecnologia na Mão 📱</span>
-                        <h2>Novidades em Eletrônicos</h2>
-                        <p>As melhores marcas com frete grátis para todo o Brasil.</p>
-                        <a href="/produtos/categorias/eletronicos/" class="btn-banner">VER OFERTAS</a>
-                    </div>
-                    <img src="https://m.media-amazon.com/images/I/61NfTStSjSL._AC_SX679_.jpg" alt="Eletrônicos">
-                </div>
+                <img src="https://http2.mlstatic.com/D_NQ_NP_949046-MLA99507276886_112025-O.webp" alt="Redmi Watch 5">
             </div>
         </div>
 
-        <div class="slider-dots">
-            <div class="dot active"></div>
-            <div class="dot"></div>
+        <div class="banner-slide" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+             <div class="banner-inner-content">
+                <div class="banner-content">
+                    <span>Tecnologia na Mão 📱</span>
+                    <h2>NOVIDADES EM ELETRÔNICOS</h2>
+                    <p>As melhores marcas com frete grátis e parcelamento em até 12x.</p>
+                    <a href="/produtos/categorias/eletronicos/" class="btn-banner">VER OFERTAS</a>
+                </div>
+                <img src="https://m.media-amazon.com/images/I/41BPkY-njjL._AC_SX679_.jpg" alt="Eletrônicos">
+            </div>
         </div>
+
+        <div class="banner-slide" style="background: linear-gradient(135deg, #f1c410, #ef5d38);">
+             <div class="banner-inner-content">
+                <div class="banner-content">
+                    <span>Cozinha</span>
+                    <h2>Mais Comprado Da Cozinha</h2>
+                    <p>Melhores produtos da cozinha que buscamos nessa semana</p>
+                    <a href="/jogo-panelas-tramontina-turim-aluminio-revestimento-interno-externo-an/p/33951447" class="btn-banner">VER OFERTAS</a>
+                </div>
+                <img src="https://m.media-amazon.com/images/I/61AjgTFEaRL._AC_SX522_.jpg" alt="Cozinha">
+            </div>
+        </div>
+
     </div>
+
+    <div class="slider-dots">
+        <div class="dot active" onclick="goToSlide(0)"></div>
+        <div class="dot" onclick="goToSlide(1)"></div>
+        <div class="dot" onclick="goToSlide(2)"></div>
+    </div>
+</div>
     <main class="main-content">
   <div class="banner-slider-container">
     <div class="banner-track">
@@ -693,6 +287,72 @@ input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin
 
   </div>
 </main>
-    <Global></Global>
-    <Produtos></Produtos>
+    <Produtos client:load/>
+    <script is:inline>
+    // Configurações
+    const sliderContainer = document.querySelector('.banner-slider-container');
+    const track = document.querySelector('.banner-track');
+    const slides = document.querySelectorAll('.banner-slide');
+    const dots = document.querySelectorAll('.dot');
+    const autoPlayDelay = 3500; // 5 segundos
+
+    let currentSlide = 0;
+    let sliderInterval;
+
+    // Função para ir para um slide específico
+    function goToSlide(index) {
+        // Remove active class de todos
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+
+        // Atualiza index
+        currentSlide = index;
+
+        // Move o track (Lógica de Transform)
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        // Adiciona active class no atual (para disparar animações CSS)
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+
+    // Próximo Slide
+    function nextSlide() {
+        let nextIndex = currentSlide + 1;
+        if (nextIndex >= slides.length) {
+            nextIndex = 0; // Volta para o começo
+        }
+        goToSlide(nextIndex);
+    }
+
+    // Iniciar AutoPlay
+    function startAutoPlay() {
+        // Limpa intervalo anterior para evitar múltiplos timers
+        if (sliderInterval) clearInterval(sliderInterval);
+        sliderInterval = setInterval(nextSlide, autoPlayDelay);
+    }
+
+    // Pausar AutoPlay
+    function stopAutoPlay() {
+        clearInterval(sliderInterval);
+    }
+
+    // Event Listeners
+    // 1. Clique nas bolinhas
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goToSlide(index);
+            startAutoPlay(); // Reinicia o timer ao clicar
+        });
+    });
+
+    // 2. Pausar ao passar o mouse (UX melhor)
+    sliderContainer.addEventListener('mouseenter', stopAutoPlay);
+    sliderContainer.addEventListener('mouseleave', startAutoPlay);
+
+    // Inicialização
+    startAutoPlay();
+    // Garante que o primeiro slide tenha a classe active
+    slides[0].classList.add('active');
+</script>
 </Layout>

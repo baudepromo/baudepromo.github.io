@@ -4,9 +4,13 @@
     import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs'
 
     const supabaseUrl = 'https://xsdvzxggeuetqbmpvikw.supabase.co'
-    // Nota: É recomendável usar variáveis de ambiente, mas mantive sua chave para funcionar agora.
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60'
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // --- CONFIGURAÇÃO DA CATEGORIA ---
+    const pageConfig = document.getElementById('page-config');
+    // Se não tiver categoria definida, assume null (traz tudo ou trata conforme lógica)
+    const currentCategory = pageConfig ? pageConfig.dataset.category : null;
 
     // --- VARIÁVEIS GLOBAIS ---
     let fuseInstance = null;
@@ -34,7 +38,7 @@
             .toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
     }
 
-    // Função para evitar múltiplas chamadas rápidas (Debounce)
+    // Função Debounce (Evita lentidão ao digitar)
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
@@ -47,22 +51,20 @@
     // --- LOGS NO SUPABASE ---
     async function logSearchToSupabase(term, count = 0) {
         if (!term || term.length < 3) return;
-
         const shortTerm = term.trim().substring(0, 30).toLowerCase();
         
-        // Evita duplicatas na mesma sessão
+        // Evita duplicatas e spam
         if (lastLoggedTerm === shortTerm) return;
-        
-        // Evita spam de requests (minimo 5 seg entre logs)
         const now = Date.now();
         if (lastLogTime && (now - lastLogTime < 5000)) return;
 
         lastLoggedTerm = shortTerm;
         lastLogTime = now;
 
+        // Adiciona contexto da categoria no log se quiser (opcional, aqui mantive a estrutura original)
         const { error } = await supabase
             .from('search_logs')
-            .insert([{ term: shortTerm, results_count: count }]);
+            .insert([{ term: shortTerm, results_count: count, category_context: currentCategory || 'geral' }]);
 
         if (error) console.error('Erro ao salvar log:', error);
     }
@@ -71,7 +73,7 @@
         // --- SELETORES DO DOM ---
         const productGrid = document.getElementById("product-grid");
         const searchInput = document.getElementById("search");
-        const searchWrapper = document.getElementById("search-container-wrapper"); // Certifique-se que este ID existe no HTML
+        const searchWrapper = document.getElementById("search-container-wrapper"); 
         const loadMoreBtn = document.getElementById("load-more");
         const minPriceInput = document.getElementById("min-price");
         const maxPriceInput = document.getElementById("max-price");
@@ -82,7 +84,7 @@
         const sidebar = document.getElementById("filter-sidebar");
         const closeSidebar = document.querySelector(".close-sidebar");
         
-        // Elemento para Autocomplete (crie uma div com id="autocomplete-list" abaixo do input se não existir via JS)
+        // Criar elemento de Autocomplete se não existir
         let autocompleteList = document.getElementById("autocomplete-list");
         if (!autocompleteList && searchWrapper) {
             autocompleteList = document.createElement("div");
@@ -109,7 +111,7 @@
                     const results = fuseInstance.search(state.search);
                     tempProducts = results.map(result => result.item);
                 } else {
-                    // Fallback simples caso Fuse falhe
+                    // Fallback simples
                     tempProducts = tempProducts.filter(p => 
                         p.title.toLowerCase().includes(state.search.toLowerCase())
                     );
@@ -138,10 +140,10 @@
             } else if (state.sort === 'price_desc') {
                 tempProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
             }
-            // Se for 'relevance', mantém a ordem do Fuse.js
+            // Se for 'relevance' e tiver busca, o Fuse já entregou ordenado.
 
             filteredProducts = tempProducts;
-            state.itemsToShow = 12; // Reseta paginação ao filtrar
+            state.itemsToShow = 12; // Reseta paginação
             renderProducts();
         }
 
@@ -153,7 +155,7 @@
             const visibleItems = filteredProducts.slice(0, state.itemsToShow);
 
             if (visibleItems.length === 0) {
-                productGrid.innerHTML = `<div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>Nenhum produto encontrado.</div>`;
+                productGrid.innerHTML = `<div style='grid-column: 1/-1; text-align:center; padding: 40px; color: #666;'>Nenhum produto encontrado nesta categoria.</div>`;
                 if(loadMoreBtn) loadMoreBtn.style.display = "none";
                 return;
             }
@@ -185,10 +187,18 @@
             }
         }
 
-        // --- BUSCA DE DADOS (INIT) ---
+        // --- BUSCA DE DADOS COM FILTRO DE CATEGORIA ---
         async function initFetch() {
             try {
-                let { data, error } = await supabase.from('produtos').select('*'); 
+                // Prepara a query base
+                let query = supabase.from('produtos').select('*');
+                
+                // APLICA O FILTRO DE CATEGORIA AQUI
+                if (currentCategory) {
+                    query = query.ilike('category', currentCategory);
+                }
+
+                let { data, error } = await query;
                 if (error) throw error;
 
                 allProducts = data.map(item => {
@@ -204,7 +214,7 @@
                     };
                 });
 
-                // Configuração do Fuse.js
+                // Configuração do Fuse.js (Agora operando apenas nos produtos desta categoria)
                 const options = {
                     includeScore: true,
                     threshold: 0.4,
@@ -218,7 +228,7 @@
                 applyFilters(); 
             } catch (error) {
                 console.error("Erro Supabase:", error);
-                if(productGrid) productGrid.innerHTML = `<p style="text-align:center;">Erro ao carregar produtos.</p>`;
+                if(productGrid) productGrid.innerHTML = `<p style="text-align:center;">Erro ao carregar produtos: ${error.message}</p>`;
             }
         }
 
@@ -237,8 +247,8 @@
             if (!term || term.trim() === "") return;
             let searches = getRecentSearches();
             const cleanTerm = term.trim();
-            searches = searches.filter(s => s.toLowerCase() !== cleanTerm.toLowerCase()); // Remove duplicado
-            searches.unshift(cleanTerm); // Add no inicio
+            searches = searches.filter(s => s.toLowerCase() !== cleanTerm.toLowerCase());
+            searches.unshift(cleanTerm);
             if (searches.length > MAX_RECENT_SEARCHES) searches.pop();
             localStorage.setItem('bau_recent_searches', JSON.stringify(searches));
         }
@@ -262,7 +272,6 @@
                 
                 applyFilters();
                 
-                // Loga no Supabase quantos resultados retornou
                 const count = filteredProducts.length; 
                 logSearchToSupabase(text, count);
 
@@ -306,7 +315,7 @@
                     hasContent = true;
                 }
             } 
-            // CASO 2: Tem texto -> Mostrar Sugestões do Fuse/Lista
+            // CASO 2: Tem texto -> Sugestões do Fuse (Dentro da Categoria)
             else {
                 let matches = [];
                 if (fuseInstance) {
@@ -320,8 +329,6 @@
                     matches.forEach(p => {
                         const item = document.createElement('div');
                         item.className = 'autocomplete-item';
-                        
-                        // Highlight simples usando Regex
                         const regex = new RegExp(`(${term})`, 'gi');
                         const highlightTitle = p.title.replace(regex, '<b>$1</b>');
 
@@ -336,7 +343,7 @@
                 } else {
                     const item = document.createElement('div');
                     item.className = 'autocomplete-item';
-                    item.innerHTML = `<span style="color:#999; font-style:italic; padding: 10px;">Nenhum resultado para "${term}"</span>`;
+                    item.innerHTML = `<span style="color:#999; font-style:italic; padding: 10px;">Nenhum resultado na categoria "${currentCategory || 'Geral'}"</span>`;
                     autocompleteList.appendChild(item);
                     hasContent = true;
                 }
@@ -360,7 +367,7 @@
             removeActive(items);
             if (currentFocus >= items.length) currentFocus = 0;
             if (currentFocus < 0) currentFocus = (items.length - 1);
-            items[currentFocus].classList.add("selected"); // Defina classe .selected no CSS
+            items[currentFocus].classList.add("selected");
             items[currentFocus].scrollIntoView({ block: 'nearest' });
         }
 
@@ -374,16 +381,13 @@
 
         // 1. Input de Busca
         if (searchInput) {
-            // Desabilita autocomplete nativo do navegador para não atrapalhar o customizado
             searchInput.setAttribute("autocomplete", "off");
 
             searchInput.addEventListener("input", (e) => {
                 const value = e.target.value;
-                // Opcional: Atualizar grid ao digitar (Live Search)
                 state.search = value;
-                // Usamos debounce para filtrar o grid, mas renderizamos o autocomplete instantaneamente
+                // Debounce para o grid, instantâneo para autocomplete
                 debounce(() => applyFilters(), 300)(); 
-                
                 renderAutocomplete(value);
             });
 
@@ -403,7 +407,6 @@
                     if (currentFocus > -1 && items && items[currentFocus]) {
                         items[currentFocus].click();
                     } else {
-                        // Se der enter sem selecionar, busca o que está escrito e fecha
                         selectSearch(searchInput.value);
                     }
                 } else if (e.key === "Escape") {
@@ -412,7 +415,7 @@
             });
         }
 
-        // 2. Fechar Autocomplete ao clicar fora
+        // 2. Fechar ao clicar fora
         document.addEventListener("click", (e) => {
             if (searchWrapper && !searchWrapper.contains(e.target)) {
                 closeAutocomplete();

@@ -1,30 +1,47 @@
-<script is:inline>
-    let allProducts = [];
-    let currentPage = 1;
-    let totalPages = 1;
-    const PER_PAGE = 12;
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.min.js"></script>
 
-    // --- NOVA FUNÇÃO: Gera o slug a partir do título ---
+<script is:inline>
+    // --- ESTADO GLOBAL ---
+    let fullDataset = [];      // Todos os produtos carregados da API
+    let currentResults = [];   // Produtos filtrados pela busca (ou todos se não houver busca)
+    let currentPage = 1;
+    const PER_PAGE = 12;
+    let fuseInstance = null;   // Instância do Fuse.js
+
+    // --- CONFIGURAÇÃO DO FUSE.JS ---
+    const fuseOptions = {
+        isCaseSensitive: false,
+        includeScore: true,
+        shouldSort: true,
+        threshold: 0.4, // 0.0 = correspondência exata, 1.0 = corresponde a tudo (0.4 é bom padrão)
+        keys: [
+            { name: 'title', weight: 0.7 }, // Título tem mais peso
+            { name: 'description', weight: 0.3 } // Se tiver descrição no JSON
+        ]
+    };
+
+    // --- FUNÇÕES UTILITÁRIAS (Mantidas do original) ---
     function generateSlug(title) {
-        return title
-            .toString()
-            .toLowerCase()
-            .trim()
-            .normalize('NFD') // Decompõe caracteres acentuados
-            .replace(/[\u0300-\u036f]/g, '') // Remove os acentos
-            .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
-            .replace(/[\s_-]+/g, '-') // Substitui espaços e underscores por hífens
-            .replace(/^-+|-+$/g, ''); // Remove hífens extras no início ou fim
+        return title.toString().toLowerCase().trim().normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
     }
 
-    // 1. Limpa o preço para formato numérico (Schema)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
     function parsePriceToNumber(priceStr) {
         if (!priceStr) return 0;
         let clean = priceStr.toString().replace(/[^\d,]/g, '').replace(',', '.');
         return parseFloat(clean) || 0;
     }
 
-    // 2. Atualiza o JSON-LD
+    // --- ATUALIZAÇÃO DO SCHEMA (Mantida e Ajustada) ---
     function updateSchema(products) {
         const oldSchema = document.getElementById('dynamic-schema');
         if (oldSchema) oldSchema.remove();
@@ -34,10 +51,7 @@
             "@type": "ItemList",
             "itemListElement": products.map((p, index) => {
                 const priceNumber = parsePriceToNumber(p.currentPrice || p.price);
-                // USA O GERADOR DE SLUG AQUI
                 const slug = generateSlug(p.title);
-                const productUrl = window.location.origin + `/achadinhos/info?slug=${slug}`;
-
                 return {
                     "@type": "ListItem",
                     "position": index + 1,
@@ -45,13 +59,11 @@
                         "@type": "Product",
                         "name": p.title,
                         "image": p.img,
-                        "description": `Oferta de: ${p.title}`,
                         "offers": {
                             "@type": "Offer",
                             "priceCurrency": "BRL",
                             "price": priceNumber,
-                            "availability": "https://schema.org/InStock",
-                            "url": productUrl
+                            "url": window.location.origin + `/achadinhos/info?slug=${slug}`
                         }
                     }
                 };
@@ -65,53 +77,48 @@
         document.head.appendChild(script);
     }
 
-    // --- LÓGICA DE PESQUISA ---
-    let debounceTimer;
-    document.getElementById('search').addEventListener('input', (e) => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            currentPage = 1;
-            fetchProducts();
-        }, 400);
-    });
-
-    // 3. FUNÇÃO RENDER PRINCIPAL
-    function render(products) {
+    // --- LÓGICA DE RENDERIZAÇÃO (Com Paginação Local) ---
+    function renderGrid() {
         const grid = document.getElementById('grid');
         grid.innerHTML = '';
+
+        // 1. Calcular Paginação Local
+        const totalItems = currentResults.length;
+        const totalPages = Math.ceil(totalItems / PER_PAGE);
         
-        if (!products || products.length === 0) {
+        // Ajusta página se exceder o limite após uma busca
+        if (currentPage > totalPages) currentPage = 1;
+        if (currentPage < 1) currentPage = 1;
+
+        const start = (currentPage - 1) * PER_PAGE;
+        const end = start + PER_PAGE;
+        const productsToShow = currentResults.slice(start, end);
+
+        // 2. Verificar Vazio
+        if (totalItems === 0) {
             grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding: 50px; color: #666;">Nenhum produto encontrado. 🔍</p>';
-            document.getElementById('page').innerText = "0";
+            updateControls(0);
             return;
         }
 
-        updateSchema(products);
+        updateSchema(productsToShow);
 
-        products.forEach((p, index) => {
+        // 3. Renderizar Cards
+        productsToShow.forEach((p, index) => {
             let displayPrice = p.currentPrice || p.price || "0,00";
             let oldPriceHtml = p.oldPrice ? `<span class="old-price">R$ ${p.oldPrice}</span>` : '';
-            
             const loadingAttr = index < 8 ? 'eager' : 'lazy';
-            const fetchPriority = index < 2 ? 'fetchpriority="high"' : '';
             
-            // USA O GERADOR DE SLUG AQUI TAMBÉM
-            const detailUrl = `/${p.slug}/a/${p.id}`;
+            // Nota: Adicionei p.id e p.slug se existirem no JSON, senão gera slug
+            const slug = p.slug || generateSlug(p.title);
+            const detailUrl = `/${slug}/a/${p.id}`;
 
             grid.insertAdjacentHTML('beforeend', `
                 <a href="${detailUrl}" class="card" target="_blank">
                     <span class="badge">${p.badge || '🔥 OFERTA'}</span>
                     <div class="card-img-wrapper">
-                        <img 
-                            src="${p.img}" 
-                            alt="${p.title}" 
-                            loading="${loadingAttr}"
-                            ${fetchPriority}
-                            onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'"
-                            decoding="async"
-                            width="300"
-                            height="300"
-                        >
+                        <img src="${p.img}" alt="${p.title}" loading="${loadingAttr}" width="300" height="300"
+                            onerror="this.src='https://via.placeholder.com/300x200?text=Imagem+Indisponível'">
                     </div>
                     <div class="card-info">
                         <h3 class="card-title">${p.title}</h3>
@@ -124,49 +131,95 @@
             `);
         });
 
-        document.getElementById('page').innerText = currentPage;
-        document.getElementById('prev').disabled = currentPage === 1;
-        document.getElementById('next').disabled = currentPage >= totalPages;
+        updateControls(totalPages);
     }
 
-    // --- CARREGAMENTO DO SERVIDOR ---
-    async function fetchProducts() {
-        const query = document.getElementById('search').value;
-        const grid = document.getElementById('grid');
+    function updateControls(totalPages) {
+        document.getElementById('page').innerText = totalPages === 0 ? 0 : currentPage;
+        // Opcional: Mostrar "1 de 5"
+        // document.getElementById('page').innerText = `${currentPage} / ${totalPages}`; 
+        
+        document.getElementById('prev').disabled = currentPage === 1 || totalPages === 0;
+        document.getElementById('next').disabled = currentPage >= totalPages || totalPages === 0;
+    }
 
+    // --- LÓGICA DO FUSE.JS (Busca) ---
+    function handleSearch() {
+        const query = document.getElementById('search').value;
+
+        if (!query || query.trim() === '') {
+            // Se busca vazia, mostra tudo (talvez embaralhado)
+            currentResults = [...fullDataset]; 
+            // shuffleArray(currentResults); // Descomente se quiser re-embaralhar ao limpar
+        } else {
+            // Executa Fuse.js
+            const results = fuseInstance.search(query);
+            // Fuse retorna [{item: {...}, refIndex: 0}, ...], precisamos extrair o 'item'
+            currentResults = results.map(r => r.item);
+        }
+
+        currentPage = 1; // Reseta para primeira página da nova busca
+        renderGrid();
+    }
+
+    // Debounce para não travar a digitação
+    let debounceTimer;
+    document.getElementById('search').addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(handleSearch, 300);
+    });
+
+    // --- CARREGAMENTO INICIAL (API) ---
+    async function loadAllProducts() {
+        const grid = document.getElementById('grid');
         try {
-            const url = `/api/busca.json?q=${encodeURIComponent(query)}&page=${currentPage}`;
+            // IMPORTANTE: Sua API precisa retornar TODOS os produtos, ou uma grande quantidade
+            // Remova a paginação da URL se possível, ou aumente o limite drasticamente.
+            const url = `/api/busca.json?limit=1000`; 
+            
             const res = await fetch(url);
-            if (!res.ok) throw new Error("Erro ao buscar dados");
+            if (!res.ok) throw new Error("Erro na API");
             
             const result = await res.json();
             
-            allProducts = result.data;
-            totalPages = result.meta.totalPages;
+            // Normaliza dados (assume que data é o array)
+            fullDataset = result.data || []; 
             
-            render(allProducts);
+            // Embaralha inicial
+            shuffleArray(fullDataset);
+            
+            // Define resultados iniciais
+            currentResults = [...fullDataset];
+
+            // Inicializa Fuse
+            fuseInstance = new Fuse(fullDataset, fuseOptions);
+
+            renderGrid();
+
         } catch (err) {
             console.error(err);
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Erro ao conectar com o banco de dados.</p>';
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Erro ao carregar produtos.</p>';
         }
     }
 
-    // Eventos de clique
-    document.getElementById('prev').onclick = () => { 
-        if(currentPage > 1) { 
-            currentPage--; 
-            fetchProducts(); 
-            window.scrollTo(0,0); 
-        } 
-    };
-    
-    document.getElementById('next').onclick = () => { 
-        if(currentPage < totalPages) { 
-            currentPage++; 
-            fetchProducts(); 
-            window.scrollTo(0,0); 
-        } 
+    // --- EVENTOS DE PAGINAÇÃO ---
+    document.getElementById('prev').onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
-    fetchProducts();
+    document.getElementById('next').onclick = () => {
+        const totalPages = Math.ceil(currentResults.length / PER_PAGE);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderGrid();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+
+    // Iniciar
+    loadAllProducts();
 </script>

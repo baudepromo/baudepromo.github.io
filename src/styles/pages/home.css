@@ -1,0 +1,139 @@
+.btn-icon {
+        width: 1.2em;  /* Segue o tamanho do texto */
+        height: 1.2em;
+        display: block;
+    }
+
+    .faq-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 25px;
+        color: #e67e22; /* Cor laranja do seu tema */
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+    }
+
+    .faq-cta:hover {
+        gap: 15px; /* Aumenta o espaço para simular a flecha andando */
+        color: #d35400;
+    }
+
+    .icon-arrow-right {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 3;
+    }
+    .float-support-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #ff4b4b; /* Cor de destaque */
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(255, 75, 75, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .float-support-btn:hover {
+        transform: translateY(-5px);
+        background: #e63946;
+        box-shadow: 0 6px 20px rgba(255, 75, 75, 0.6);
+    }
+
+    .btn-icon-float {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Estilos do Modal Overlay */
+    .support-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(5px);
+        display: none; /* Escondido por padrão */
+        justify-content: center;
+        align-items: center;
+        z-index: 1001;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .support-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    /* Conteúdo do Modal */
+    .support-modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        position: relative;
+        width: 90%;
+        max-width: 350px;
+        transform: scale(0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .support-modal-overlay.active .support-modal-content {
+        transform: scale(1);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        cursor: pointer;
+        color: #999;
+    }
+
+    .qr-container {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 12px;
+        margin: 20px 0;
+        display: inline-block;
+    }
+
+    .qr-container img {
+        display: block;
+        max-width: 100%;
+    }
+
+    .pix-key-text {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    /* Mobile: Oculta o texto no botão para ficar mais discreto se preferir */
+    @media (max-width: 600px) {
+        .float-support-btn span {
+            display: none;
+        }
+        .float-support-btn {
+            padding: 15px;
+            bottom: 20px;
+            right: 20px;
+        }
+    }

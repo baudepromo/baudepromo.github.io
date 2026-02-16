@@ -1,0 +1,33 @@
+:root {
+    /* --- CORES PRINCIPAIS --- */
+    --primary-gradient: linear-gradient(135deg, #ff4b2b 0%, #df5474 100%);
+    --primary-red: #ff4b2b; /* Adicionei para suportar o btn-primary */
+    
+    /* --- CORES DE FUNDO E TEXTO --- */
+    --bg-body: #f5f5f5;
+    --text-dark: #1a1a1a;
+    --text-light: #ffffff;
+    --text-muted: #888888;
+    --white: #ffffff;
+    
+    /* --- ACENTOS --- */
+    --accent-yellow: #fdd835;
+    --accent-black: #111111;
+    --accent-orange: #ff5e3a;
+
+    /* --- FOOTER ESPECÍFICO --- */
+    --footer-bg: #000000;
+    --footer-border: rgba(255, 255, 255, 0.1);
+    
+    /* --- UTILITÁRIOS --- */
+    --transition: all 0.3s ease;
+    --radius-pill: 50px;
+    --radius-card: 20px;
+    --shadow-soft: 0 4px 15px rgba(0,0,0,0.05);
+
+    /* --- CORES DAS LOJAS --- */
+    --shopee: #ff0000;
+    --amazon: #ff9900;
+    --aliexpress: #000000;
+    --mercado-livre: #ffe600;
+}
