@@ -23,12 +23,7 @@ const { title = "Produtos", tableName = "produtos", type } = Astro.props;
 </div>
 
 <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
-    const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    import { supabase } from "../../lib/supabase";
 
     const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
