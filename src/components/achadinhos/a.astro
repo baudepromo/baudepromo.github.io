@@ -1,27 +1,15 @@
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { 
+        auth, db, googleProvider, 
+        onAuthStateChanged, signInWithPopup, 
+        doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove 
+    } from "/src/lib/firebase/client"; // Ajuste o caminho conforme sua estrutura
 
     // 1. RECUPERAR DADOS DO HTML
     const metaEl = document.getElementById('product-metadata');
     if (!metaEl) throw new Error("Metadata não encontrada");
 
     const { id: productId, heartId, alertId, title: productTitle } = metaEl.dataset;
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-        authDomain: "baudepromocao-oficial.firebaseapp.com",
-        projectId: "baudepromocao-oficial",
-        storageBucket: "baudepromocao-oficial.firebasestorage.app",
-        messagingSenderId: "743146859125",
-        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const provider = new GoogleAuthProvider();
 
     // Funções de UI
     function showToast(msg) {
@@ -40,7 +28,7 @@
 
     async function toggleCollection(collectionName, pId, elementId, activeClass, successMsg, removedMsg) {
         if (!auth.currentUser) {
-            toggleModal(true); // Abre o modal bonito se não estiver logado
+            toggleModal(true);
             return;
         }
         
@@ -54,7 +42,11 @@
             const snap = await getDoc(userRef);
             if (!wasActive) {
                 if (!snap.exists()) {
-                    await setDoc(userRef, { email: auth.currentUser.email, items: [String(pId)], updatedAt: new Date() });
+                    await setDoc(userRef, { 
+                        email: auth.currentUser.email, 
+                        items: [String(pId)], 
+                        updatedAt: new Date() 
+                    });
                 } else {
                     await updateDoc(userRef, { items: arrayUnion(String(pId)) });
                 }
@@ -76,30 +68,25 @@
     });
 
     document.querySelector('.js-alert-btn')?.addEventListener('click', () => {
-        toggleCollection('alerts', productId, alertId, 'active', 'Alerta ativado!', 'Alerta removido.');
+        toggleCollection('alerts2', productId, alertId, 'active', 'Alerta ativado!', 'Alerta removido.');
     });
 
     document.querySelector('.js-share-btn')?.addEventListener('click', () => {
-    // Em vez de window.location.href, construímos a URL curta
-    const shortUrl = `${window.location.origin}/a/${productId}`;
-    
-    if (navigator.share) {
-        navigator.share({ 
-            title: productTitle, 
-            url: shortUrl 
-        }).catch(() => {});
-    } else {
-        navigator.clipboard.writeText(shortUrl);
-        showToast('Link curto copiado!');
-    }
-});
+        const shortUrl = `${window.location.origin}/a/${productId}`;
+        if (navigator.share) {
+            navigator.share({ title: productTitle, url: shortUrl }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(shortUrl);
+            showToast('Link curto copiado!');
+        }
+    });
 
     // Listeners do Modal
     document.querySelector('.js-close-modal')?.addEventListener('click', () => toggleModal(false));
     
     document.getElementById('btn-google-login')?.addEventListener('click', async () => {
         try {
-            await signInWithPopup(auth, provider);
+            await signInWithPopup(auth, googleProvider);
             toggleModal(false);
             showToast("Bem-vindo! Tente salvar agora.");
         } catch (error) {
@@ -111,16 +98,14 @@
     // Estado da Autenticação
     onAuthStateChanged(auth, async (user) => { 
         if(user) {
-            // Check wishlist
-            const wSnap = await getDoc(doc(db, "wishlists2", user.uid));
-            if (wSnap.exists() && wSnap.data().items?.includes(String(productId))) {
-                document.getElementById(heartId)?.classList.add('active');
-            }
-            // Check alerts
-            const aSnap = await getDoc(doc(db, "alerts", user.uid));
-            if (aSnap.exists() && aSnap.data().items?.includes(String(productId))) {
-                document.getElementById(alertId)?.classList.add('active');
-            }
+            const checkStatus = async (col, elId) => {
+                const snap = await getDoc(doc(db, col, user.uid));
+                if (snap.exists() && snap.data().items?.includes(String(productId))) {
+                    document.getElementById(elId)?.classList.add('active');
+                }
+            };
+            checkStatus("wishlists2", heartId);
+            checkStatus("alerts2", alertId);
         }
     });
 </script>

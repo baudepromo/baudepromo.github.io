@@ -1,49 +1,29 @@
 import type { APIRoute } from "astro";
-import { supabase } from "../../../lib/supabase";
-import type { Provider } from "@supabase/supabase-js";
+import { serverAuth } from "../../../lib/firebase/server";
 
-export const POST: APIRoute = async ({ request, cookies, redirect }) => {
-  const formData = await request.formData();
-  const email = formData.get("email")?.toString();
-  const password = formData.get("password")?.toString();
-  const provider = formData.get("provider")?.toString();
+// No seu arquivo signin.ts
+export const POST: APIRoute = async ({ request, cookies }) => {
+  const idToken = request.headers.get("Authorization")?.split("Bearer ")[1];
 
-  const validProviders = ["google", "github", "discord"];
+  if (!idToken) {
+    return new Response("Token não fornecido", { status: 401 });
+  }
 
-  if (provider && validProviders.includes(provider)) {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: provider as Provider,
-      options: {
-        redirectTo: "http://localhost:4321/api/auth/callback"
-      },
+  try {
+    const expiresIn = 60 * 60 * 24 * 5 * 1000;
+    const sessionCookie = await serverAuth.createSessionCookie(idToken, { expiresIn });
+
+    cookies.set("session", sessionCookie, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      maxAge: expiresIn / 1000, // Adicione o maxAge aqui também
     });
 
-    if (error) {
-      return new Response(error.message, { status: 500 });
-    }
-
-    return redirect(data.url);
+    // Em vez de redirect, retorne OK para o fetch do front-end
+    return new Response(JSON.stringify({ message: "Sucesso" }), { status: 200 });
+  } catch (error: any) {
+    return new Response("Erro ao criar sessão: " + error.message, { status: 401 });
   }
-
-  if (!email || !password) {
-    return new Response("Email and password are required", { status: 400 });
-  }
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return new Response(error.message, { status: 500 });
-  }
-
-  const { access_token, refresh_token } = data.session;
-  cookies.set("sb-access-token", access_token, {
-    path: "/",
-  });
-  cookies.set("sb-refresh-token", refresh_token, {
-    path: "/",
-  });
-  return redirect("/dashboard");
 };

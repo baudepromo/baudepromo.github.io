@@ -1,0 +1,742 @@
+---
+import Layout from "../../layouts/MainLayout.astro";
+import Seo from "../../lib/seo/metadada.astro";
+import { serverAuth } from "../../lib/firebase/server"; // Importante: usar o serverAuth
+
+const { cookies, redirect } = Astro;
+
+// 1. Pegamos o cookie de sessão do Firebase que definimos no /api/auth/signin
+const sessionCookie = cookies.get("session")?.value;
+
+// 2. Se não existir o cookie, redireciona para o login
+if (!sessionCookie) {
+  return redirect("/signin");
+}
+
+let user;
+let token;
+
+try {
+  // 3. Validamos se o cookie é legítimo usando o Admin SDK (Servidor)
+  token = await serverAuth.verifySessionCookie(sessionCookie, true);
+  
+  // 4. Vamos buscar o perfil COMPLETO do utilizador usando o UID do token
+  user = await serverAuth.getUser(token.uid);
+} catch (error) {
+  // Se o cookie for inválido ou expirado, limpamos e redirecionamos
+  cookies.delete("session", { path: "/" });
+  return redirect("/signin");
+}
+
+// 5. Procurar informações nos provedores de autenticação (GitHub, Google, etc.)
+const providerData = user.providerData && user.providerData.length > 0 ? user.providerData[0] : null;
+
+// Tenta obter o e-mail do perfil principal ou do provedor
+const email = user.email || (providerData && providerData.email) || "";
+
+// Tenta extrair o nome
+const rawName = user.displayName || 
+                (providerData && providerData.displayName) || 
+                token.name || 
+                (email ? email.split('@')[0] : 'Utilizador');
+
+// Formata para Capitalize (Ex: "joao" -> "Joao")
+const userName = rawName.split(' ')[0].charAt(0).toUpperCase() + rawName.split(' ')[0].slice(1).toLowerCase();
+
+// Tenta obter a foto do perfil
+const userPhoto = user.photoURL || 
+                  (providerData && providerData.photoURL) || 
+                  token.picture || 
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f97316&color=fff&bold=true`;
+
+---
+
+<Seo noindex title="Perfil | Baú de Promoções" />
+
+<Layout>
+  <div class="dashboard-wrapper">
+    <div class="nav-actions">
+      <a href="/" class="btn-back">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Voltar
+      </a>
+    </div>
+
+    <header class="dash-header">
+      <div class="header-profile-group">
+        <div class="avatar-container">
+            <img src={userPhoto} alt={`Foto de ${userName}`} class="profile-pic" />
+        </div>
+        
+        <div class="welcome-text">
+          <h1>Olá, <span class="highlight">{userName}</span>! 🏷️</h1>
+          <p>Bem-vindo ao seu painel de economia.</p>
+        </div>
+      </div>
+
+      <form action="/api/auth/signout">
+        <button type="submit" class="btn-logout">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            Sair da Conta
+        </button>
+      </form>
+    </header>
+
+    <main class="dash-grid">
+      <section class="main-card">
+        <div class="card-header">
+            <h2>Minhas Promoções Salvas</h2>
+            <span class="badge-count" id="fav-count">0</span>
+        </div>
+        
+        <div id="fav-grid" class="fav-grid-container">
+          <div class="loading-state">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spinner"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
+            <p>Buscando suas promoções no baú...</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel">
+        <div class="info-card">
+          <h3>Detalhes da Conta</h3>
+
+          <div class="info-item">
+            <small>E-mail cadastrado</small>
+            <p>{email}</p>
+          </div>
+          <div class="info-item">
+            <small>Status da conta</small>
+            <p><span class="badge-active">● Ativa</span></p>
+          </div>
+          <button class="btn-outline">Editar Perfil</button>
+        </div>
+
+        <div class="promo-banner">
+          <div class="banner-content">
+              <h4>Dica do Baú ⚡</h4>
+              <p>Mantenha seu e-mail atualizado para não perder cupons relâmpago exclusivos!</p>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  :root {
+    --primary: #f97316; 
+    --primary-dark: #ea580c;
+    --primary-light: #fff7ed;
+    --bg-page: #f8fafc;
+    --surface: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    
+    /* Sombras mais suaves e modernas */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.02);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+    
+    --radius-lg: 16px;
+    --radius-md: 12px;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+      background-color: var(--bg-page);
+  }
+
+  .dashboard-wrapper {
+    width: 100%;
+    max-width: 1140px;
+    margin: 2.5rem auto 4rem auto;
+    padding: 0 1.5rem;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text-main);
+  }
+
+  .nav-actions {
+    margin-bottom: 1.5rem;
+    display: flex;
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    background: var(--surface);
+    padding: 0.5rem 1.25rem 0.5rem 1rem;
+    border-radius: 99px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+
+  .btn-back:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .btn-back:active {
+    transform: translateY(0);
+  }
+
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    background: var(--surface);
+    padding: 1.5rem 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+  }
+
+  .header-profile-group {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .profile-pic {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 2px var(--primary-light);
+    background-color: var(--primary-light);
+  }
+
+  .welcome-text h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    margin: 0;
+  }
+
+  .highlight {
+    color: var(--primary);
+    text-transform: capitalize;
+  }
+
+  .welcome-text p {
+    color: var(--text-muted);
+    margin: 0.25rem 0 0;
+    font-size: 0.95rem;
+  }
+
+  .btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--surface);
+    color: #ef4444;
+    border: 1px solid #fee2e2;
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-logout:hover {
+    background: #fee2e2;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-logout:active {
+    transform: scale(0.98);
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .main-card, .info-card {
+    background: var(--surface);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+  }
+
+  .side-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+  }
+
+  .main-card h2, .info-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .badge-count {
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 0.2rem 0.75rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+  }
+
+  .fav-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .promo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: #cbd5e1;
+  }
+
+  .btn-remove-fav {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border);
+    color: #ef4444;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-remove-fav:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    transform: scale(1.1);
+  }
+
+  .btn-remove-fav:active {
+    transform: scale(0.95);
+  }
+
+  .promo-img-container {
+    width: 100%;
+    aspect-ratio: 4/3; /* Deixa responsivo em vez de height fixo */
+    overflow: hidden;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .promo-img-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+  }
+  
+  .promo-card:hover .promo-img-container img {
+    transform: scale(1.08);
+  }
+
+  .promo-card-content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between; /* Mantém o botão no fundo */
+    background: var(--bg-page);
+  }
+
+  .promo-card-content h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Trunca em 2 linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+
+  .promo-price {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+
+  .loading-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 3rem;
+    color: var(--text-muted);
+  }
+
+  .spinner {
+    animation: spin 2s linear infinite;
+    color: var(--primary);
+  }
+
+  @keyframes spin {
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Empty State */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--border);
+  }
+
+  .icon-wrapper {
+      background: var(--bg-page);
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+  }
+
+  .empty-state h3 {
+      font-size: 1.15rem;
+      margin: 0 0 0.5rem 0;
+      color: var(--text-main);
+  }
+
+  .empty-state p {
+    color: var(--text-muted);
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+
+  /* Sidebar */
+  .info-item { margin-bottom: 1.5rem; }
+  .info-item small {
+    display: block;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+  .info-item p { margin: 0; font-weight: 500; font-size: 0.95rem; word-break: break-all; }
+  
+  .badge-active {
+    display: inline-flex;
+    align-items: center;
+    background: #dcfce7;
+    color: #15803d;
+    padding: 0.3rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  /* Botões de Ação */
+  .btn-primary {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-align: center;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover { 
+      background: var(--primary-dark); 
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+  }
+
+  .btn-primary:active {
+      transform: translateY(0);
+  }
+
+  .btn-details {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-outline {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+  
+  .btn-outline:hover { 
+    background: var(--bg-page); 
+    border-color: #cbd5e1; 
+  }
+
+  .btn-outline:active {
+    transform: scale(0.98);
+  }
+
+  /* Banner Promocional */
+  .promo-banner {
+    background: linear-gradient(135deg, var(--primary), #ef4444);
+    color: white;
+    padding: 1.75rem 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .promo-banner::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+  }
+
+  .banner-content { position: relative; z-index: 1; }
+  .promo-banner h4 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; }
+  .promo-banner p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.95; }
+    
+  /* Responsividade */
+  @media (max-width: 992px) {
+    .dash-grid { grid-template-columns: 1fr; }
+    .side-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-wrapper { padding: 0 1rem; margin-top: 1.5rem; }
+    .dash-header { flex-direction: column; align-items: flex-start; padding: 1.5rem; }
+    .header-profile-group { width: 100%; }
+    .btn-logout { width: 100%; justify-content: center; }
+    .side-panel { grid-template-columns: 1fr; }
+    .fav-grid-container { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    .main-card { padding: 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .fav-grid-container { grid-template-columns: 1fr; }
+    .welcome-text h1 { font-size: 1.4rem; }
+  }
+</style>
+
+<script type="module">
+    import { auth, db, onAuthStateChanged, doc, getDoc, updateDoc, arrayRemove } from '/src/lib/firebase/client';
+    import { supabase } from '/src/lib/supabase';
+
+    let currentUser = null;
+
+    onAuthStateChanged(auth, async (user) => {
+        const grid = document.getElementById("fav-grid");
+        
+        if (!grid) return;
+
+        currentUser = user;
+
+        if (user) {
+            await loadUserFavorites(user.uid);
+        } else {
+            renderLoginState(grid);
+        }
+    });
+
+    async function loadUserFavorites(uid) {
+        const grid = document.getElementById("fav-grid");
+        try {
+            const userDocRef = doc(db, "wishlists", uid); 
+            const userSnap = await getDoc(userDocRef);
+
+            if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
+                renderEmptyState(grid);
+                return;
+            }
+
+            const favoriteIds = userSnap.data().items;
+
+            const { data: myFavorites, error } = await supabase
+                .from('produtos')
+                .select('*')
+                .in('id', favoriteIds);
+
+            if (error) throw error;
+            renderGrid(grid, myFavorites);
+
+        } catch (error) {
+            console.error("Erro detalhado ao carregar favoritos:", error);
+            grid.innerHTML = `<div class="empty-state"><h3>Erro ao carregar</h3><p>Tente atualizar a página.</p></div>`;
+        }
+    }
+
+    window.removeFavorite = async (productId) => {
+        if (!currentUser) return;
+        if (!confirm("Remover dos favoritos?")) return;
+
+        const card = document.getElementById(`card-${productId}`);
+        
+        try {
+            if(card) card.style.opacity = '0.5';
+            const userDocRef = doc(db, "wishlists", currentUser.uid);
+
+            await updateDoc(userDocRef, {
+                items: arrayRemove(productId)
+            });
+
+            if(card) card.remove();
+            
+            const grid = document.getElementById("fav-grid");
+            const countEl = document.getElementById("fav-count");
+            
+            // Atualiza o contador após remover
+            let currentCount = parseInt(countEl.innerText) || 0;
+            if(currentCount > 0) {
+               countEl.innerText = currentCount - 1;
+            }
+
+            // CORREÇÃO: Conta quantos .promo-card restaram no grid
+            const remainingCards = grid.querySelectorAll('.promo-card').length;
+            if (remainingCards === 0) {
+                renderEmptyState(grid);
+            }
+
+        } catch (error) {
+            console.error("Erro ao remover:", error);
+            if(card) card.style.opacity = '1';
+            alert("Não foi possível remover o item.");
+        }
+    };
+
+    function renderGrid(grid, products) {
+        grid.innerHTML = "";
+        
+        const countEl = document.getElementById("fav-count");
+        if(countEl) countEl.innerText = products.length;
+
+        products.forEach(p => {
+            grid.innerHTML += `
+                <div class="promo-card" id="card-${p.id}">
+                    <button class="btn-remove-fav" onclick="window.removeFavorite('${p.id}')" title="Remover">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                    <div class="promo-img-container">
+                        <img src="${p.img}" alt="${p.title}">
+                    </div>
+                    <div class="promo-card-content">
+                        <div>
+                            <h3>${p.title}</h3>
+                            <span class="promo-price">R$ ${p.price}</span>
+                        </div>
+                        <a href="/${p.slug}/p/${p.id}" class="btn-primary btn-details">Ver Oferta</a>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function renderEmptyState(grid) {
+        const countEl = document.getElementById("fav-count");
+        if(countEl) countEl.innerText = "0";
+
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="icon-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+            </div>
+            <h3>Nenhuma oferta favoritada</h3>
+            <p>Você ainda não salvou nenhuma promoção. Explore o baú e guarde suas favoritas aqui!</p>
+            <a href="/" class="btn-primary">Explorar Ofertas</a>
+          </div>
+        `;
+    }
+
+    function renderLoginState(grid) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <h3>Acesso Restrito</h3>
+            <p>Faça login para ver suas promoções favoritas.</p>
+            <a href="/signin" class="btn-primary">Fazer Login</a>
+          </div>
+        `;
+    }
+</script>

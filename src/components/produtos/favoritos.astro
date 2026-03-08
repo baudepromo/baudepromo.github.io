@@ -1,34 +1,28 @@
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAltYkTpdrIShVv7wJXsszQqvOZXTC45Wg",
-        authDomain: "baudepromocao-oficial.firebaseapp.com",
-        projectId: "baudepromocao-oficial",
-        storageBucket: "baudepromocao-oficial.firebasestorage.app",
-        messagingSenderId: "743146859125",
-        appId: "1:743146859125:web:6d1f5331e22b8ce981263c"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const SUPABASE_URL = "https://xsdvzxggeuetqbmpvikw.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60";
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    // 1. Importações unificadas (removi a importação duplicada)
+    import { 
+        auth, 
+        db, 
+        onAuthStateChanged, 
+        doc, 
+        getDoc, 
+        updateDoc, 
+        arrayRemove 
+    } from '/src/lib/firebase/client';
+    
+    import { supabase } from '/src/lib/supabase';
 
     let currentUser = null;
 
     onAuthStateChanged(auth, async (user) => {
         const grid = document.getElementById("fav-grid");
+        
+        // Proteção extra: se não achar o grid na DOM, não faz nada
+        if (!grid) return;
+
         currentUser = user;
 
         if (user) {
-            grid.innerHTML = `<div class="loading-container"><i class="fas fa-spinner fa-spin"></i><p>Carregando...</p></div>`;
             await loadUserFavorites(user.uid);
         } else {
             renderLoginState(grid);
@@ -37,56 +31,76 @@
 
     async function loadUserFavorites(uid) {
         const grid = document.getElementById("fav-grid");
-
         try {
-            const userDocRef = doc(db, "wishlists", uid);
+            const userDocRef = doc(db, "wishlists", uid); 
             const userSnap = await getDoc(userDocRef);
 
-            if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
+            // Verifica se o documento existe e se a propriedade items está lá
+            if (!userSnap.exists() || !userSnap.data().items) {
                 renderEmptyState(grid);
                 return;
             }
 
-            // --- CORREÇÃO AQUI: FILTRAR APENAS IDs NUMÉRICOS ---
-            // Isso remove textos como "Electrolux Kit..." que poluem o seu Firebase
-            const rawItems = userSnap.data().items;
-            const favoriteIds = rawItems
-                .map(id => String(id))
-                .filter(id => /^\d+$/.test(id)); // Só aceita se for apenas números
+            const favoriteIds = userSnap.data().items;
 
+            // 2. Correção Crítica: Verifica se o array está vazio antes de chamar o Supabase
             if (favoriteIds.length === 0) {
                 renderEmptyState(grid);
                 return;
             }
 
-            const { data: products, error } = await supabase
+            const { data: myFavorites, error } = await supabase
                 .from('produtos')
                 .select('*')
                 .in('id', favoriteIds);
 
             if (error) throw error;
-            renderGrid(grid, products);
+            renderGrid(grid, myFavorites);
 
         } catch (error) {
-            console.error("Erro detalhado:", error);
-            grid.innerHTML = `<div class="empty-state"><p>Erro ao carregar. Tente atualizar a página.</p></div>`;
+            console.error("Erro detalhado ao carregar favoritos:", error);
+            grid.innerHTML = `<p style="color: red; text-align: center;">Erro ao carregar favoritos. Tente novamente mais tarde.</p>`;
         }
     }
 
-    function renderGrid(grid, products) {
-        if (!products || products.length === 0) {
-            renderEmptyState(grid);
-            return;
+    window.removeFavorite = async (productId) => {
+        if (!currentUser) return;
+        if (!confirm("Remover dos favoritos?")) return;
+
+        const card = document.getElementById(`card-${productId}`);
+        
+        try {
+            if(card) card.style.opacity = '0.5';
+            const userDocRef = doc(db, "wishlists", currentUser.uid);
+
+            await updateDoc(userDocRef, {
+                items: arrayRemove(productId)
+            });
+
+            if(card) card.remove();
+            
+            const grid = document.getElementById("fav-grid");
+            if (grid.children.length === 0) renderEmptyState(grid);
+
+        } catch (error) {
+            console.error("Erro ao remover:", error);
+            if(card) card.style.opacity = '1';
+            alert("Não foi possível remover o item.");
         }
+    };
+
+    function renderGrid(grid, products) {
         grid.innerHTML = "";
         products.forEach(p => {
-            const title = p.title || p.nome_do_produto;
-            const img = p.img || (Array.isArray(p.image) ? p.image[0] : p.image);
+            
             grid.innerHTML += `
                 <div class="card" id="card-${p.id}">
-                    <img src="${img}" alt="${title}">
+                    <button class="btn-remove-fav" onclick="window.removeFavorite('${p.id}')">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <img src="${p.img}" alt="${p.title}">
                     <div class="card-content">
-                        <h3>${title}</h3>
+                        <h3>${p.title}</h3>
                         <span class="price">R$ ${p.price}</span>
                         <a href="/${p.slug}/p/${p.id}" class="pill-btn btn-details">Ver Oferta</a>
                     </div>
@@ -94,36 +108,11 @@
         });
     }
 
-    window.removeFavorite = async (productId) => {
-        if (!currentUser) return;
-        const card = document.getElementById(`card-${productId}`);
-        if(confirm("Remover dos favoritos?")) {
-            try {
-                card.style.opacity = '0.3';
-                const userDocRef = doc(db, "wishlists", currentUser.uid);
-                
-                // Remove tanto o ID string quanto o ID número para limpar o banco
-                await updateDoc(userDocRef, {
-                    items: arrayRemove(String(productId))
-                });
-                await updateDoc(userDocRef, {
-                    items: arrayRemove(Number(productId))
-                });
-
-                card.remove();
-                if (document.getElementById("fav-grid").children.length === 0) renderEmptyState(document.getElementById("fav-grid"));
-            } catch (e) {
-                card.style.opacity = '1';
-                alert("Erro ao remover.");
-            }
-        }
-    };
-
     function renderEmptyState(grid) {
-        grid.innerHTML = `<div class="empty-state"><h2>Sua lista está vazia</h2><a href="/produtos" class="pill-btn btn-details">Ver Ofertas</a></div>`;
+        grid.innerHTML = `<div class="empty-state"><h2>Sua lista está vazia</h2><a href="/produtos" class="pill-btn btn-cta">Ver Ofertas</a></div>`;
     }
 
     function renderLoginState(grid) {
-        grid.innerHTML = `<div class="empty-state"><h2>Faça login para ver seus favoritos</h2></div>`;
+        grid.innerHTML = `<div class="empty-state"><h2>Acesso Restrito</h2><p>Faça login para ver favoritos.</p></div>`;
     }
 </script>

@@ -1,12 +1,8 @@
 <script type="module">
-    // 1. IMPORTAR E INICIALIZAR SUPABASE & FUSE
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-    import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs'
-
-    const supabaseUrl = 'https://xsdvzxggeuetqbmpvikw.supabase.co'
-    // Nota: É recomendável usar variáveis de ambiente, mas mantive sua chave para funcionar agora.
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60'
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    // 1. IMPORTAR INSTÂNCIA CENTRALIZADA E FUSE
+    // Ajuste o caminho '../lib/supabase' para o local real do seu arquivo supabase.ts
+    import { supabase } from '/src/lib/supabase'; 
+    import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs';
 
     // --- VARIÁVEIS GLOBAIS ---
     let fuseInstance = null;
@@ -27,14 +23,12 @@
     let lastLogTime = 0;
 
     // --- FUNÇÕES UTILITÁRIAS ---
-
     function gerarSlug(texto) {
         if (!texto) return 'produto';
         return texto.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
     }
 
-    // Função para evitar múltiplas chamadas rápidas (Debounce)
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
@@ -49,11 +43,8 @@
         if (!term || term.length < 3) return;
 
         const shortTerm = term.trim().substring(0, 30).toLowerCase();
-        
-        // Evita duplicatas na mesma sessão
         if (lastLoggedTerm === shortTerm) return;
         
-        // Evita spam de requests (minimo 5 seg entre logs)
         const now = Date.now();
         if (lastLogTime && (now - lastLogTime < 5000)) return;
 
@@ -71,7 +62,7 @@
         // --- SELETORES DO DOM ---
         const productGrid = document.getElementById("product-grid");
         const searchInput = document.getElementById("search");
-        const searchWrapper = document.getElementById("search-container-wrapper"); // Certifique-se que este ID existe no HTML
+        const searchWrapper = document.getElementById("search-container-wrapper");
         const loadMoreBtn = document.getElementById("load-more");
         const minPriceInput = document.getElementById("min-price");
         const maxPriceInput = document.getElementById("max-price");
@@ -82,7 +73,6 @@
         const sidebar = document.getElementById("filter-sidebar");
         const closeSidebar = document.querySelector(".close-sidebar");
         
-        // Elemento para Autocomplete (crie uma div com id="autocomplete-list" abaixo do input se não existir via JS)
         let autocompleteList = document.getElementById("autocomplete-list");
         if (!autocompleteList && searchWrapper) {
             autocompleteList = document.createElement("div");
@@ -91,7 +81,6 @@
             searchWrapper.appendChild(autocompleteList);
         }
 
-        // Recuperar busca da URL ao carregar
         const urlParams = new URLSearchParams(window.location.search);
         const searchFromUrl = urlParams.get('search');
         if (searchFromUrl) {
@@ -99,24 +88,21 @@
             if (searchInput) searchInput.value = searchFromUrl;
         }
 
-        // --- LÓGICA PRINCIPAL DE FILTRO ---
+        // --- LÓGICA DE FILTRO E RENDERIZAÇÃO ---
         function applyFilters() {
             let tempProducts = [...allProducts];
 
-            // 1. Busca (Fuse.js)
             if (state.search && state.search.trim().length > 0) {
                 if (fuseInstance) {
                     const results = fuseInstance.search(state.search);
                     tempProducts = results.map(result => result.item);
                 } else {
-                    // Fallback simples caso Fuse falhe
                     tempProducts = tempProducts.filter(p => 
                         p.title.toLowerCase().includes(state.search.toLowerCase())
                     );
                 }
             }
 
-            // 2. Preço
             if (state.minPrice) {
                 tempProducts = tempProducts.filter(p => parseFloat(p.price) >= parseFloat(state.minPrice));
             }
@@ -124,7 +110,6 @@
                 tempProducts = tempProducts.filter(p => parseFloat(p.price) <= parseFloat(state.maxPrice));
             }
 
-            // 3. Lojas
             if (state.stores.length > 0) {
                 tempProducts = tempProducts.filter(p => {
                     const pStore = p.store ? p.store.toLowerCase().replace(/\s/g, '') : '';
@@ -132,24 +117,20 @@
                 });
             }
 
-            // 4. Ordenação
             if (state.sort === 'price_asc') {
                 tempProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
             } else if (state.sort === 'price_desc') {
                 tempProducts.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
             }
-            // Se for 'relevance', mantém a ordem do Fuse.js
 
             filteredProducts = tempProducts;
-            state.itemsToShow = 12; // Reseta paginação ao filtrar
+            state.itemsToShow = 12;
             renderProducts();
         }
 
-        // --- RENDERIZAÇÃO DO GRID ---
         function renderProducts() {
             if (!productGrid) return;
             productGrid.innerHTML = "";
-            
             const visibleItems = filteredProducts.slice(0, state.itemsToShow);
 
             if (visibleItems.length === 0) {
@@ -161,7 +142,6 @@
             visibleItems.forEach(p => {
                 const storeClass = p.store ? `badge-${p.store.toLowerCase().replace(/\s/g, '')}` : 'badge-default';
                 const imgUrl = p.img || 'https://via.placeholder.com/300?text=Sem+Imagem';
-
                 const card = document.createElement("article");
                 card.className = "card";
                 card.innerHTML = `
@@ -188,6 +168,7 @@
         // --- BUSCA DE DADOS (INIT) ---
         async function initFetch() {
             try {
+                // Aqui agora usamos o 'supabase' importado do seu arquivo central
                 let { data, error } = await supabase.from('produtos').select('*'); 
                 if (error) throw error;
 
@@ -204,7 +185,6 @@
                     };
                 });
 
-                // Configuração do Fuse.js
                 const options = {
                     includeScore: true,
                     threshold: 0.4,
@@ -214,7 +194,6 @@
                     ]
                 };
                 fuseInstance = new Fuse(allProducts, options);
-
                 applyFilters(); 
             } catch (error) {
                 console.error("Erro Supabase:", error);

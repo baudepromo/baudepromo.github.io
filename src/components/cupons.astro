@@ -1,22 +1,33 @@
-<script is:inline>
+<script type="module">
+// 1. Importar o cliente que você já configurou
+import { supabase } from "/src/lib/supabase"; // Ajuste o caminho do arquivo
+
 let allCoupons = [];
 
-// 1. Carregar os cupons ao abrir a página
+// 2. Carregar os cupons do Banco de Dados
 async function loadCoupons() {
     const grid = document.querySelector('.coupons-grid');
+    
     try {
-        const response = await fetch('/data/cupons.json'); // Ajuste o caminho se necessário
-        allCoupons = await response.json();
+        // Busca todos os dados da tabela 'cupons' (ajuste o nome se for outro)
+        const { data, error } = await supabase
+            .from('cupons')
+            .select('*');
+
+        if (error) throw error;
+
+        allCoupons = data;
         renderCoupons(allCoupons);
     } catch (error) {
-        console.error("Erro ao carregar cupons:", error);
-        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center;">Erro ao carregar os cupons. Tente novamente mais tarde.</p>`;
+        console.error("Erro ao carregar cupons do Supabase:", error.message);
+        grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center;">Erro ao conectar ao banco de dados.</p>`;
     }
 }
 
-// 2. Função para renderizar os cards no HTML
+// 3. Função para renderizar (Mantida, mas verifique se os nomes das colunas no banco são iguais aos do JSON)
 function renderCoupons(couponsList) {
     const grid = document.querySelector('.coupons-grid');
+    if (!grid) return;
     grid.innerHTML = ""; 
 
     couponsList.forEach(coupon => {
@@ -24,7 +35,7 @@ function renderCoupons(couponsList) {
             <div class="coupon-card" data-store="${coupon.store}">
                 <div class="coupon-header">
                     <div class="store-logo">
-                        <img src="${coupon.image}" alt="Logo ${coupon.store}" style="width: 50px; height: 50px; object-fit: contain;">
+                        <img src="/icons/${coupon.store}.svg" alt="Logo ${coupon.store}" style="width: 50px; height: 50px; object-fit: contain;">
                     </div>
                     <div>
                         <div class="offer-value">${coupon.value}</div>
@@ -36,23 +47,30 @@ function renderCoupons(couponsList) {
                     <div class="expiry"><i class="fa-regular fa-clock"></i> ${coupon.expiry}</div>
                     <div class="copy-container">
                         <span class="coupon-code">${coupon.code}</span>
-                        <button class="btn-copy" onclick="copyCode(this, '${coupon.code}')">PEGAR</button>
+                        <button class="btn-copy">PEGAR</button>
                     </div>
                 </div>
             </div>
         `;
-        grid.insertAdjacentHTML('beforeend', html);
+        
+        // Adicionando via DOM para garantir que o evento de clique funcione com módulos
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html.trim();
+        const cardElement = tempDiv.firstChild;
+        
+        // Configura o evento do botão de cópia
+        cardElement.querySelector('.btn-copy').onclick = (e) => copyCode(e.currentTarget, coupon.code);
+        
+        grid.appendChild(cardElement);
     });
 }
 
-// 3. Função de Filtro (Atualizada para usar a lista do JSON)
-function filterCoupons(event, category) {
-    // Estilo dos botões
+// 4. Funções de Filtro e Cópia (Ajustadas para escopo de módulo)
+window.filterCoupons = function(event, category) {
     const btns = document.querySelectorAll('.filter-btn');
     btns.forEach(btn => btn.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    // Filtragem lógica
     if (category === 'all') {
         renderCoupons(allCoupons);
     } else {
@@ -61,21 +79,23 @@ function filterCoupons(event, category) {
     }
 }
 
-// 4. Função de Copiar (Mantida a sua lógica original)
 function copyCode(btn, code) {
     const card = btn.closest('.coupon-card');
     card.classList.add('revealed');
 
     navigator.clipboard.writeText(code).then(() => {
+        const originalText = btn.innerText;
         btn.innerText = "COPIADO";
         btn.classList.add('copied');
 
         const toast = document.getElementById('toast');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
+        if (toast) {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
 
         setTimeout(() => {
-            btn.innerText = "PEGAR";
+            btn.innerText = originalText;
             btn.classList.remove('copied');
         }, 3000);
     });

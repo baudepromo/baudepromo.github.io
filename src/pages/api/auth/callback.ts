@@ -1,27 +1,33 @@
 import type { APIRoute } from "astro";
-import { supabase } from "../../../lib/supabase";
+import { serverAuth } from "../../../lib/firebase/server"; // Ajuste o caminho conforme necessário
 
 export const GET: APIRoute = async ({ url, cookies, redirect }) => {
-  const authCode = url.searchParams.get("code");
+  // No Firebase, você geralmente recebe um 'idToken' enviado pelo cliente
+  const idToken = url.searchParams.get("idToken");
 
-  if (!authCode) {
-    return new Response("No code provided", { status: 400 });
+  if (!idToken) {
+    return new Response("No token provided", { status: 400 });
   }
 
-  const { data, error } = await supabase.auth.exchangeCodeForSession(authCode);
+  try {
+    // Define o tempo de expiração (ex: 5 dias)
+    const expiresIn = 60 * 60 * 24 * 5 * 1000; 
 
-  if (error) {
-    return new Response(error.message, { status: 500 });
+    // Cria o Session Cookie usando o Firebase Admin
+    const sessionCookie = await serverAuth.createSessionCookie(idToken, { expiresIn });
+
+    // Define o cookie de sessão
+    cookies.set("session", sessionCookie, {
+      path: "/",
+      httpOnly: true, // Segurança: impede acesso via JS no cliente
+      secure: true,
+      sameSite: "strict",
+      maxAge: expiresIn / 1000,
+    });
+
+    return redirect("/dashboard");
+  } catch (error: any) {
+    console.error("Firebase Auth Error:", error);
+    return new Response("Internal Server Error", { status: 500 });
   }
-
-  const { access_token, refresh_token } = data.session;
-
-  cookies.set("sb-access-token", access_token, {
-    path: "/",
-  });
-  cookies.set("sb-refresh-token", refresh_token, {
-    path: "/",
-  });
-
-  return redirect("/dashboard");
 };

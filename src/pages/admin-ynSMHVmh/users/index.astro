@@ -1,0 +1,159 @@
+---
+// src/pages/admin-ynSMHVmh/users/index.astro
+import UsuariosAdminLayout from '../../../layouts/UsersAdminLayout.astro';
+import { serverAuth } from '../../../lib/firebase/server';
+import type { UserRecord } from 'firebase-admin/auth';
+
+// Tipo para os dados exibidos (campos que usamos)
+type UserView = {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  disabled: boolean;
+  emailVerified: boolean;
+  creationTime: string;
+  lastSignInTime: string;
+};
+
+// Função recursiva para listar todos os usuários com paginação
+async function listAllUsers(nextPageToken?: string): Promise<UserView[]> {
+  const listUsersResult = await serverAuth.listUsers(1000, nextPageToken);
+  const users: UserView[] = listUsersResult.users.map((user: UserRecord) => ({
+    uid: user.uid,
+    email: user.email || '',
+    displayName: user.displayName || '',
+    photoURL: user.photoURL || '',
+    disabled: user.disabled,
+    emailVerified: user.emailVerified,
+    creationTime: user.metadata.creationTime || '',
+    lastSignInTime: user.metadata.lastSignInTime || '',
+  }));
+
+  if (listUsersResult.pageToken) {
+    const nextUsers = await listAllUsers(listUsersResult.pageToken);
+    users.push(...nextUsers);
+  }
+  return users;
+}
+
+let users: UserView[] = [];
+let error: string | null = null;
+
+try {
+  users = await listAllUsers();
+} catch (err: any) {
+  console.error('Erro ao buscar usuários:', err);
+  error = 'Não foi possível carregar os usuários. Verifique as credenciais do Firebase.';
+}
+
+// Colunas que serão exibidas na tabela e usadas no formulário de criação/edição
+const columns: (keyof UserView)[] = [
+  'uid',
+  'email',
+  'displayName',
+  'photoURL',
+  'disabled',
+  'emailVerified',
+  'creationTime',
+  'lastSignInTime',
+];
+---
+
+<UsuariosAdminLayout title="Gerenciar Usuários">
+  {
+    error ? (
+      <div style="color: red; padding: 20px; text-align: center;">{error}</div>
+    ) : (
+      <>
+        <!-- Botão para novo usuário -->
+        <button
+          class="btn-novo"
+          data-tabela="users"
+          data-cols={JSON.stringify(columns)}
+        >
+          + Novo Usuário
+        </button>
+
+        <!-- Grid container para a tabela (necessário para o filtro funcionar) -->
+        <div class="grid-container">
+          <!-- Cabeçalho da tabela -->
+          <div class="grid-row grid-header">
+            {columns.map(col => (
+              <div class="grid-item"><strong>{col}</strong></div>
+            ))}
+            <div class="grid-item"><strong>Ações</strong></div>
+          </div>
+
+          <!-- Linhas de usuários -->
+          {users.map(user => (
+            <div class="grid-row">
+              {columns.map(col => (
+                <div class="grid-item" title={String(user[col] ?? '')}>
+                  {col === 'photoURL' && user.photoURL ? (
+                    <img src={user.photoURL} alt="avatar" style="width: 30px; height: 30px; border-radius: 50%;" />
+                  ) : col === 'disabled' || col === 'emailVerified' ? (
+                    user[col] ? 'Sim' : 'Não'
+                  ) : (
+                    user[col] ?? '-'
+                  )}
+                </div>
+              ))}
+              <div class="grid-item">
+                <button
+                  class="btn-editar"
+                  data-tabela="users"
+                  data-item={encodeURIComponent(JSON.stringify(user))}
+                >
+                  Editar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    )
+  }
+</UsuariosAdminLayout>
+
+<style>
+  /* Estilo adicional para o grid (substitui a tabela tradicional) */
+  .grid-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .grid-row {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .grid-row:last-child {
+    border-bottom: none;
+  }
+  .grid-header {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: #475569;
+  }
+  .grid-item {
+    flex: 1;
+    padding: 12px;
+    min-width: 100px;
+    word-break: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Para a coluna de ações ficar menor */
+  .grid-item:last-child {
+    flex: 0 0 100px;
+    text-align: center;
+  }
+  img {
+    max-width: 30px;
+    max-height: 30px;
+    object-fit: cover;
+  }
+</style>

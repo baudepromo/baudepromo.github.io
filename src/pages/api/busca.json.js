@@ -1,10 +1,6 @@
 // src/pages/api/busca.json.ts
-import { createClient } from '@supabase/supabase-js';
-
-// 1. Inicializa o cliente do Supabase com as chaves do seu .env
-const supabaseUrl = "https://xsdvzxggeuetqbmpvikw.supabase.co"
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60"
-const supabase = createClient(supabaseUrl, supabaseKey);
+// 1. Importamos a instância já configurada do Supabase
+import { supabase } from "../../lib/supabase"; // Ajuste o caminho conforme sua estrutura de pastas
 
 export const GET = async ({ url }) => {
     // 2. Pega os parâmetros da URL
@@ -13,12 +9,12 @@ export const GET = async ({ url }) => {
     const limit = 12; // PER_PAGE
 
     // 3. Calcula o intervalo (range) para o Supabase
-    // Diferente do slice(start, end), o Supabase usa inclusive (de 0 a 11 para pegar 12 itens)
     const from = (page - 1) * limit;
     const to = from + limit - 1;
+
     try {
         // 4. Monta a Query no banco de dados
-        // 'count: exact' serve para o Supabase nos dizer quantos produtos existem no total com esse filtro
+        // 'count: exact' serve para o Supabase nos dizer quantos produtos existem no total
         let query = supabase
             .from('achadinhos')
             .select('*', { count: 'exact' });
@@ -38,10 +34,8 @@ export const GET = async ({ url }) => {
 
         const totalItems = count || 0;
         const totalPages = Math.ceil(totalItems / limit);
-        
 
-
-        // 7. Retorna o JSON no mesmo formato que o seu frontend já espera
+        // 7. Retorna o JSON no formato esperado pelo frontend
         return new Response(JSON.stringify({
             data: data,
             meta: {
@@ -58,15 +52,14 @@ export const GET = async ({ url }) => {
         });
 
     } catch (error) {
-        // Isso vai imprimir o erro real no seu TERMINAL do VS Code
         console.error("ERRO NO SERVIDOR:", error); 
 
         return new Response(JSON.stringify({ 
             error: "Erro interno no servidor",
-            details: error.message // Isso vai aparecer no navegador para te ajudar
+            details: error.message 
         }), {
             status: 500,
             headers: { "Content-Type": "application/json" }
         });
     }
-} 
+}

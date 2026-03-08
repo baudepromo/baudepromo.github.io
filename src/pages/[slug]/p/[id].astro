@@ -1,21 +1,17 @@
 ---
 export const prerender = false;
 
-import { createClient } from '@supabase/supabase-js';
-import Layout from "../../../layouts/MainLayout.astro"; // Ajuste os imports (subiu 3 níveis)
-import Global from '../../../components/global.astro';
+// Importe o cliente centralizado que você já criou
+import { supabase } from "../../../lib/supabase"; 
+
+import Layout from "../../../layouts/MainLayout.astro";
 import Seo from "../../../lib/seo/metadada.astro";
 import '../../../styles/pages/info.css';
 import P from "../../../components/produtos/p.astro"
-// AQUI ESTÁ A MUDANÇA PRINCIPAL
-// O Astro captura o [id] da pasta e o [slug] da pasta anterior
+
 const { id, slug } = Astro.params;
 
-const SUPABASE_URL = "https://xsdvzxggeuetqbmpvikw.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Consulta direta pelo ID (não precisa mais tratar string)
+// Agora usamos o 'supabase' importado
 const { data: product, error } = await supabase
   .from('produtos')
   .select('*')
@@ -23,10 +19,14 @@ const { data: product, error } = await supabase
   .single();
 
 if (error || !product) {
-    console.error("Produto não encontrado ou erro:", error);
-    // Opcional: Redirecionar para 404 se não achar
-    // return Astro.redirect('/404');
+    console.error("Produto não encontrado:", error);
 }
+
+// Pegar sessão no servidor (Lembrando que em Astro SSR puro, isso pode vir nulo se não usar Cookies)
+const { data: { session } } = await supabase.auth.getSession();
+const serverUser = session?.user || null;
+// 1. Pegar a sessão no SERVIDOR
+
 
 // Opcional: Verificar se o slug da URL bate com o do produto para SEO
 // Se o usuário acessar /slug-errado/p/123, ele carrega o produto 123, 
@@ -64,7 +64,6 @@ const SVGS = {
 <Seo title={p.title} image={p.img}></Seo>
 
 <Layout title={p.title}>
-    <link rel="stylesheet" href="/styles/pages/produtos.css">
 
     <div id="product-metadata" style="display: none;" 
         data-id={p.id} 
@@ -148,6 +147,5 @@ const SVGS = {
         </div>
     </div>
 
-    <Global />
     <P client:load />
 </Layout>

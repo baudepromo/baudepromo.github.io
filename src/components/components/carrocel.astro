@@ -23,7 +23,7 @@ const { title = "Produtos", tableName = "produtos", type } = Astro.props;
 </div>
 
 <script type="module">
-    import { supabase } from "../../lib/supabase";
+    import { supabase } from "/src/lib/supabase";
 
     const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 

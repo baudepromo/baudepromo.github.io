@@ -6,3 +6,14 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+interface User {
+  uid: string;
+  email?: string;
+}
+
+declare namespace App {
+  interface Locals {
+    user: import("firebase-admin/auth").UserRecord | null;
+  }
+}

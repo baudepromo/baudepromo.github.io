@@ -1,15 +1,12 @@
 <script type="module">
-    // 1. IMPORTAR E INICIALIZAR SUPABASE & FUSE
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-    import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs'
-
-    const supabaseUrl = 'https://xsdvzxggeuetqbmpvikw.supabase.co'
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60'
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    import { supabase } from '/src/lib/supabase';
+    
+    // 1. IMPORTAR CLIENTE CONFIGURADO E FUSE
+    // Ajuste o caminho do import para onde seu arquivo supabase.ts reside 
+    import Fuse from 'https://cdn.jsdelivr.net/npm/fuse.js@7.0.0/dist/fuse.mjs';
 
     // --- CONFIGURAÇÃO DA CATEGORIA ---
     const pageConfig = document.getElementById('page-config');
-    // Se não tiver categoria definida, assume null (traz tudo ou trata conforme lógica)
     const currentCategory = pageConfig ? pageConfig.dataset.category : null;
 
     // --- VARIÁVEIS GLOBAIS ---
@@ -26,19 +23,16 @@
         sort: "relevance"
     };
 
-    // Variáveis de controle de Log
     let lastLoggedTerm = "";
     let lastLogTime = 0;
 
     // --- FUNÇÕES UTILITÁRIAS ---
-
     function gerarSlug(texto) {
         if (!texto) return 'produto';
         return texto.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .toLowerCase().trim().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
     }
 
-    // Função Debounce (Evita lentidão ao digitar)
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
@@ -48,12 +42,11 @@
         };
     }
 
-    // --- LOGS NO SUPABASE ---
+    // --- LOGS NO SUPABASE (Usando a instância importada) ---
     async function logSearchToSupabase(term, count = 0) {
         if (!term || term.length < 3) return;
         const shortTerm = term.trim().substring(0, 30).toLowerCase();
         
-        // Evita duplicatas e spam
         if (lastLoggedTerm === shortTerm) return;
         const now = Date.now();
         if (lastLogTime && (now - lastLogTime < 5000)) return;
@@ -61,12 +54,56 @@
         lastLoggedTerm = shortTerm;
         lastLogTime = now;
 
-        // Adiciona contexto da categoria no log se quiser (opcional, aqui mantive a estrutura original)
         const { error } = await supabase
             .from('search_logs')
             .insert([{ term: shortTerm, results_count: count, category_context: currentCategory || 'geral' }]);
 
         if (error) console.error('Erro ao salvar log:', error);
+    }
+
+    // O restante da sua lógica de DOM (renderProducts, applyFilters, initFetch) 
+    // permanece a mesma, agora utilizando o `supabase` importado.
+
+    async function initFetch() {
+        try {
+            let query = supabase.from('produtos').select('*');
+            
+            if (currentCategory) {
+                query = query.ilike('category', currentCategory);
+            }
+
+            let { data, error } = await query;
+            if (error) throw error;
+
+            allProducts = data.map(item => {
+                const titleField = item.title || item.nome_do_produto || "produto";
+                const slug = item.slug || gerarSlug(titleField);
+                return {
+                    title: titleField, 
+                    price: item.price,
+                    img: item.img,
+                    store: item.store,
+                    link: item.link, 
+                    internalPath: `/${slug}/p/${item.id}` 
+                };
+            });
+
+            const options = {
+                includeScore: true,
+                threshold: 0.4,
+                keys: [
+                    { name: 'title', weight: 0.7 },
+                    { name: 'store', weight: 0.3 }
+                ]
+            };
+            fuseInstance = new Fuse(allProducts, options);
+
+            applyFilters(); 
+        } catch (error) {
+            console.error("Erro Supabase:", error);
+            const productGrid = document.getElementById("product-grid");
+            if(productGrid) productGrid.innerHTML = `<p style="text-align:center;">Erro ao carregar produtos.</p>`;
+        }
     }
 
     document.addEventListener('DOMContentLoaded', () => {

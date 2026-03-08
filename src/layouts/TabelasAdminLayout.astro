@@ -1,0 +1,647 @@
+---
+// src/layouts/TabelasAdminLayout.astro
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title} | Painel Admin</title>
+  <style>
+    :root {
+      --bg-color: #f4f7f6;
+      --sidebar-bg: #1e293b;
+      --sidebar-hover: #334155;
+      --text-main: #333;
+      --text-light: #f8fafc;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --success-hover: #059669;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    body {
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+    }
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: var(--text-light);
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar h2 {
+      padding: 20px;
+      font-size: 1.5rem;
+      border-bottom: 1px solid var(--sidebar-hover);
+      text-align: center;
+    }
+    .nav-links {
+      list-style: none;
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .nav-links a {
+      display: block;
+      padding: 15px 20px;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: background 0.3s;
+      border-left: 4px solid transparent;
+    }
+    .nav-links a:hover,
+    .nav-links a.active {
+      background-color: var(--sidebar-hover);
+      border-left-color: var(--primary);
+    }
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    /* 🔍 Estilo da barra de busca */
+    .search-box input {
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      width: 300px;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+    }
+    .main-content {
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #64748b;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      white-space: nowrap;
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+      text-transform: capitalize;
+    }
+    .btn-editar {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-editar:hover {
+      background: var(--primary-hover);
+    }
+    .btn-novo {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn-novo:hover {
+      background: var(--success-hover);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 20px;
+      width: 50%;
+      border-radius: 8px;
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .close-modal {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      font-size: 28px;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+    .btn-save {
+      background: var(--success);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .btn-save:hover {
+      background: var(--success-hover);
+    }
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-top: 10px;
+      transition: background 0.3s;
+    }
+    .btn-delete:hover {
+      background: #dc2626;
+    }
+    .hidden {
+      display: none;
+    }
+
+    .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #333;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 2000;
+    font-size: 0.95rem;
+    max-width: 300px;
+    transition: opacity 0.3s;
+  }
+  .toast.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .toast.success {
+    background: #10b981;
+  }
+  .toast.error {
+    background: #ef4444;
+  }
+
+  /* Modal de confirmação (estilo toast/centralizado) */
+  .confirm-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.3);
+    z-index: 2100;
+    transition: opacity 0.2s;
+  }
+  .confirm-dialog.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .confirm-content {
+    background: white;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+  }
+  .confirm-content p {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #1e293b;
+  }
+  .confirm-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+  }
+  .btn-confirm-yes, .btn-confirm-no {
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-confirm-yes {
+    background: #10b981;
+    color: white;
+  }
+  .btn-confirm-yes:hover {
+    background: #059669;
+  }
+  .btn-confirm-no {
+    background: #e2e8f0;
+    color: #334155;
+  }
+  .btn-confirm-no:hover {
+    background: #cbd5e1;
+  }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>Admin Pro</h2>
+    <ul class="nav-links">
+      <li><a href="/admin-ynSMHVmh" class={currentPath === '/admin-ynSMHVmh' ? 'active' : ''}>Dashboard</a></li>
+      <li><a href="/admin-ynSMHVmh/tabelas/produtos" class={currentPath.includes('/tabelas/produtos') ? 'active' : ''}>Tabelas</a></li>
+      <li><a href="/admin-ynSMHVmh/analytics" class={currentPath.includes('/analytics') ? 'active' : ''}>Analytics</a></li>
+      <li><a href="/admin-ynSMHVmh/users" class={currentPath.includes('/users') ? 'active' : ''}>Usuarios</a></li>
+    </ul>
+  </aside>
+
+  <div class="content-area">
+    <header class="header">
+      <h1>{title}</h1>
+      <!-- 🔍 Barra de busca inteligente -->
+      <div class="search-box">
+        <input type="text" id="table-search" placeholder="Buscar em todas as colunas..." />
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="card">
+        <div class="tabs">
+          <a href="/admin-ynSMHVmh/tabelas/produtos" class={currentPath === '/admin-ynSMHVmh/tabelas/produtos' ? 'tab-btn active' : 'tab-btn'}>Produtos</a>
+          <a href="/admin-ynSMHVmh/tabelas/achadinhos" class={currentPath === '/admin-ynSMHVmh/tabelas/achadinhos' ? 'tab-btn active' : 'tab-btn'}>Achadinhos</a>
+          <a href="/admin-ynSMHVmh/tabelas/cupons" class={currentPath === '/admin-ynSMHVmh/tabelas/cupons' ? 'tab-btn active' : 'tab-btn'}>Cupons</a>
+          <a href="/admin-ynSMHVmh/tabelas/search_logs" class={currentPath === '/admin-ynSMHVmh/tabelas/search_logs' ? 'tab-btn active' : 'tab-btn'}>Search Logs</a>
+        </div>
+        <slot />  <!-- conteúdo específico da página -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de edição/criação (compartilhado) -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 id="modal-title">Editar Registro</h2>
+      <form id="editForm">
+        <input type="hidden" name="original_id" id="original-id">
+        <input type="hidden" name="tabela" id="edit-tabela">
+        <div id="form-fields"></div>
+        <button type="submit" class="btn-save" id="btn-submit">Salvar Alterações</button>
+        <button type="button" class="btn-delete" id="btn-delete">Excluir Registro</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="custom-toast" class="toast hidden"></div>
+
+<div id="confirm-dialog" class="confirm-dialog hidden">
+  <div class="confirm-content">
+    <p id="confirm-message"></p>
+    <div class="confirm-buttons">
+      <button id="confirm-yes" class="btn-confirm-yes">Sim</button>
+      <button id="confirm-no" class="btn-confirm-no">Não</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // --- Funções de UI customizadas ---
+  function showToast(message, type = 'info', duration = 3000) {
+    const toast = document.getElementById('custom-toast');
+    toast.textContent = message;
+    toast.className = `toast ${type}`; // type pode ser 'success', 'error', ou vazio
+    toast.classList.remove('hidden');
+
+    setTimeout(() => {
+      toast.classList.add('hidden');
+    }, duration);
+  }
+
+  function showConfirm(message) {
+    return new Promise((resolve) => {
+      const dialog = document.getElementById('confirm-dialog');
+      const msgEl = document.getElementById('confirm-message');
+      const yesBtn = document.getElementById('confirm-yes');
+      const noBtn = document.getElementById('confirm-no');
+
+      msgEl.textContent = message;
+      dialog.classList.remove('hidden');
+
+      const handleYes = () => {
+        cleanup();
+        resolve(true);
+      };
+      const handleNo = () => {
+        cleanup();
+        resolve(false);
+      };
+      const cleanup = () => {
+        dialog.classList.add('hidden');
+        yesBtn.removeEventListener('click', handleYes);
+        noBtn.removeEventListener('click', handleNo);
+      };
+
+      yesBtn.addEventListener('click', handleYes);
+      noBtn.addEventListener('click', handleNo);
+    });
+  }
+
+  // --- Função generateSlug (mantida igual) ---
+  function generateSlug(text) {
+    if (!text) return '';
+    const stopWords = [
+      "a","à","às","ao","aos","aquela","aquelas","aquele","aqueles","aquilo","as",
+      "até","com","como","da","das","de","dela","delas","dele","deles","depois",
+      "do","dos","e","é","ela","elas","ele","eles","em","entre","era","eram","éramos",
+      "essa","essas","esse","esses","esta","está","estamos","estão","estar","estas",
+      "estava","estavam","este","esteja","estejam","estejamos","estes","esteve",
+      "estive","estivemos","estiver","estivera","estiveram","estiverem","estivermos",
+      "estivesse","estivessem","estivéramos","estivéssemos","estou","eu","foi","fomos",
+      "for","fora","foram","forem","formos","fosse","fossem","fui","fôramos","fôssemos",
+      "há","haja","hajam","hajamos","hão","havemos","haver","hei","houve","houvemos",
+      "houver","houvera","houveram","houverei","houverem","houveremos","houveria",
+      "houveriam","houvermos","houvesse","houvessem","isso","isto","já","lhe","lhes",
+      "mais","mas","me","mesmo","meu","meus","minha","minhas","muito","na","não","nas",
+      "nem","no","nos","nós","nossa","nossas","nosso","nossos","num","numa","o","os",
+      "ou","para","pela","pelas","pelo","pelos","por","qual","quando","que","quem",
+      "se","seja","sejam","sejamos","sem","ser","será","serão","seremos","seria",
+      "seriam","seu","seus","só","somos","sou","sua","suas","também","te","tem","tém",
+      "temos","tenha","tenham","tenhamos","tenho","ter","terá","terão","teremos",
+      "teria","teriam","teu","teus","teve","tinha","tinham","tive","tivemos","tiver",
+      "tivera","tiveram","tiverem","tivermos","tivesse","tivessem","tivéramos",
+      "tivéssemos","tu","tua","tuas","um","uma","você","vocês","vos"
+    ];
+    return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w\s-]/g, '').split(' ').filter(word => word && !stopWords.includes(word)).join('-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  // --- Lógica do modal de edição ---
+  const modal = document.getElementById('editModal');
+  const fieldsContainer = document.getElementById('form-fields');
+  const modalTitle = document.getElementById('modal-title');
+  const btnSubmit = document.getElementById('btn-submit');
+  const btnDelete = document.getElementById('btn-delete');
+  const originalIdInput = document.getElementById('original-id'); 
+  const editTabelaInput = document.getElementById('edit-tabela');
+
+  function renderInputs(cols, item = {}) {
+    fieldsContainer.innerHTML = '';
+    cols.forEach(key => {
+      if (['created_at', 'updated_at'].includes(key)) return;
+      
+      const div = document.createElement('div');
+      div.className = 'form-group';
+      div.innerHTML = `
+        <label style="font-weight:600; margin-bottom:5px;">${key}</label>
+        <input type="text" name="${key}" value="${item[key] || ''}" 
+               style="padding:10px; border:1px solid #cbd5e1; border-radius:4px; width:100%;">
+      `;
+      fieldsContainer.appendChild(div);
+    });
+  }
+
+  // Abrir modal para EDIÇÃO
+  document.querySelectorAll('.btn-editar').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = JSON.parse(decodeURIComponent(btn.getAttribute('data-item')));
+      const tabela = btn.getAttribute('data-tabela');
+
+      modalTitle.textContent = `Editar em ${tabela}`;
+      btnSubmit.textContent = 'Salvar Alterações';
+      originalIdInput.value = item.id; 
+      editTabelaInput.value = tabela;
+
+      renderInputs(Object.keys(item), item);
+      btnDelete.classList.remove('hidden');
+      modal.style.display = 'block';
+    });
+  });
+
+  // Abrir modal para NOVO REGISTRO
+  document.querySelectorAll('.btn-novo').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabela = btn.getAttribute('data-tabela');
+      const cols = JSON.parse(btn.getAttribute('data-cols') || '[]');
+
+      modalTitle.textContent = `Novo registro em ${tabela}`;
+      btnSubmit.textContent = 'Criar Registro';
+      originalIdInput.value = ''; 
+      editTabelaInput.value = tabela;
+
+      renderInputs(cols, {});
+      btnDelete.classList.add('hidden');
+      modal.style.display = 'block';
+    });
+  });
+
+  // Excluir registro (agora com showConfirm)
+  btnDelete.addEventListener('click', async () => {
+    const id = originalIdInput.value;
+    const tabela = editTabelaInput.value;
+
+    if (!id || !tabela) {
+      showToast('Erro: ID ou Tabela não encontrados.', 'error');
+      return;
+    }
+
+    const confirmed = await showConfirm(`Tem certeza que deseja excluir este registro de "${tabela}"?`);
+    if (!confirmed) return;
+
+    btnDelete.textContent = 'Excluindo...';
+    btnDelete.disabled = true;
+
+    try {
+      const response = await fetch('/api/admin/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, tabela })
+      });
+      const result = await response.json();
+      if (result.error) throw new Error(result.error);
+      showToast('Excluído com sucesso!', 'success');
+      setTimeout(() => location.reload(), 1500);
+    } catch (err) {
+      showToast('Erro ao excluir: ' + err.message, 'error');
+    } finally {
+      btnDelete.textContent = 'Excluir Registro';
+      btnDelete.disabled = false;
+    }
+  });
+
+  // Fechar modal apenas pelo botão "×"
+  document.querySelector('.close-modal').onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  // Salvar (criar ou atualizar)
+  document.getElementById('editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const submitBtn = document.getElementById('btn-submit');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Processando...';
+    submitBtn.disabled = true;
+
+    const formData = new FormData(e.target);
+    const original_id = formData.get('original_id');
+    const tabela = formData.get('tabela');
+    
+    const isNewRecord = !original_id; 
+    const payload = {};
+
+    formData.forEach((value, key) => {
+      if (key !== 'original_id' && key !== 'tabela') {
+        if (value === 'true') payload[key] = true;
+        else if (value === 'false') payload[key] = false;
+        else if (!isNaN(value) && value.trim() !== '') payload[key] = Number(value);
+        else payload[key] = value;
+      }
+    });
+
+    if ('slug' in payload || Object.keys(payload).some(k => ['nome', 'titulo', 'title', 'nome_produto', 'produto'].includes(k))) {
+      const baseText = payload.nome || payload.titulo || payload.title || payload.nome_produto || payload.produto || '';
+      if (baseText) payload.slug = generateSlug(baseText);
+    }
+
+    try {
+      const endpoint = isNewRecord ? '/api/admin/create' : '/api/admin/update';
+      const bodyData = isNewRecord 
+          ? { tabela, data: payload } 
+          : { id: original_id, tabela, updates: payload };
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      });
+      
+      const result = await response.json();
+      if (result.error) {
+        showToast('Erro ao salvar: ' + result.error, 'error');
+      } else {
+        showToast(isNewRecord ? 'Registro criado com sucesso!' : 'Registro atualizado com sucesso!', 'success');
+        setTimeout(() => location.reload(), 1500);
+      }
+    } catch (err) {
+      showToast('Erro na requisição. Verifique se as rotas API existem.', 'error');
+    } finally {
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
+    }
+  });
+
+  // 🔍 FILTRO INTELIGENTE – busca em todas as colunas
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('table-search');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', function() {
+      const query = this.value.toLowerCase().trim();
+      const gridContainer = document.querySelector('.grid-container');
+      if (!gridContainer) return;
+
+      const rows = gridContainer.querySelectorAll('.grid-row:not(.grid-header)');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('.grid-item');
+        let match = false;
+        cells.forEach(cell => {
+          if (cell.textContent.toLowerCase().includes(query)) {
+            match = true;
+          }
+        });
+        row.style.display = match ? '' : 'none';
+      });
+    });
+  });
+</script>
+</body>
+</html>

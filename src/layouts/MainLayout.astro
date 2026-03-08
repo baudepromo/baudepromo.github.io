@@ -1,22 +1,44 @@
 ---
 import '../styles/global.css'
-import Login from '../components/components/login.astro'
 import Footer from '../components/components/footer.astro'
 import Topbar from '../components/components/topbar/topbar.astro'
 import Menu from '../components/components/topbar/menu.astro'
+
+const { title } = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head slot="seo"></head>
-  <header>
-    <Topbar />
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <script type="text/partytown" is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-TPKCVZF3');
+    </script>
+
+    <slot name="seo" />
+  </head>
+  
   <body>
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TPKCVZF3"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
+    <header>
+      <Topbar />
+    </header>
+
     <Menu />
+
     <main id="main-content">
         <slot />
     </main>
+
     <Footer />
-    <Login />
   </body>
 </html>

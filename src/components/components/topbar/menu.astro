@@ -1,3 +1,27 @@
+---
+// 1. Lógica do Servidor (Firebase Admin)
+import { serverAuth } from "@/lib/firebase/server"; // Ajuste o caminho conforme seu projeto
+
+const sessionCookie = Astro.cookies.get("session"); // Nome padrão do cookie de sessão do Firebase
+let user = null;
+
+if (sessionCookie) {
+  try {
+    // Verifica o cookie de sessão no servidor
+    user = await serverAuth.verifySessionCookie(sessionCookie.value, true);
+  } catch (error) {
+    // Se o cookie for inválido ou expirado, o usuário permanece como null
+  }
+}
+
+// 2. Prepara os dados de exibição (No Firebase as claims são diretas no token)
+const userName = user?.name || user?.email?.split('@')[0] || "Visitante";
+
+// Foto: Firebase usa 'picture' no token decodificado
+const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=f97316&color=fff`;
+const userPhoto = user?.picture || fallbackAvatar;
+---
+
 <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
 
 <nav id="sideMenu" class="mobile-menu" aria-label="Menu Principal">
@@ -5,73 +29,47 @@
 
     <div class="menu-links">
         <a href="/"><span>⬅️</span> Início</a>
-        <a href="/achadinhos"><span>🛒</span> Achadinhos</a>
-        <a href="/produtos"><span>📦</span> Produtos</a>
-        <a href="/cupons"><span>🎫</span> Cupons</a>
+        <a href="/achadinhos/"><span>🛒</span> Achadinhos</a>
+        <a href="/produtos/"><span>📦</span> Produtos</a>
+        <a href="/cupons/"><span>🎫</span> Cupons</a>
     </div>
 
     <hr class="menu-divider">
 
     <div class="menu-links-secondary">
-        <a href="/sobre"><span>ℹ️</span> Sobre</a>
-        <a href="/faq"><span>💬</span> FAQ</a>
-        <a href="/contatos"><span>✉️</span> Contato</a>
-        <a href="/afiliados"><span>🤝</span> Afiliados</a>
-        <a href="/politica-de-privacidade"><span>👤</span> Política de Privacidade</a>
-        <a href="/termos-de-uso"><span>⚖️</span> Termos de Uso</a>
+        <a href="/sobre/"><span>ℹ️</span> Sobre</a>
+        <a href="/faq/"><span>💬</span> FAQ</a>
+        <a href="/contatos/"><span>✉️</span> Contato</a>
+        <a href="/afiliados/"><span>🤝</span> Afiliados</a>
+        <a href="/politica-de-privacidade/"><span>👤</span> Política de Privacidade</a>
+        <a href="/termos-de-uso/"><span>⚖️</span> Termos de Uso</a>
     </div>
 
     <div class="auth-container">
-        <button id="loginBtn" class="btn-login" onclick="openAuthModal()">
-            Entrar
-        </button>
-
-        <div id="userInfo" class="user-profile" style="display: none;">
-            <img id="userPhoto" src="" alt="Foto do Usuário">
-            <div class="user-details">
-                <span id="userName">Usuário</span>
-                <small onclick="logout()" class="logout-link" style="cursor: pointer; color: #ff4d4d;">Sair</small>
-            </div>
-        </div>
+        {
+            !user ? (
+                <a href="/signin/" id="loginBtn" class="btn-login">
+                    Entrar
+                </a>
+            ) : (
+                <div id="userInfo" class="user-profile">
+                    <img id="userPhoto" src={userPhoto} alt={`Foto de ${userName}`} />
+                    <div class="user-details">
+                        <span id="userName">{userName}</span>
+                        <a href="/dashboard/" onclick="logout()" class="logout-link">Dashboard</a>
+                    </div>
+                </div>
+            )
+        }
     </div>
 </nav>
 
 <script type="module">
+    import { auth } from "../../../lib/firebase/client"; // Ajuste o caminho para o seu client.ts
+    import { signOut } from "firebase/auth";
 
-    // --- 1. Funções de Interface (UI) ---
+    // --- Funções Globais ---
 
-    /**
-     * Atualiza o menu lateral com base no estado do usuário
-     */
-    function updateMenuUI(user) {
-        const loginBtn = document.getElementById('loginBtn');
-        const userInfo = document.getElementById('userInfo');
-        const userName = document.getElementById('userName');
-        const userPhoto = document.getElementById('userPhoto');
-
-        if (user) {
-            // Usuário Logado
-            if (loginBtn) loginBtn.style.display = 'none';
-            if (userInfo) userInfo.style.display = 'flex';
-
-            // Extrai metadados (Google ou Cadastro Manual)
-            const metadata = user.user_metadata || {};
-            const nameToDisplay = metadata.full_name || metadata.name || user.email.split('@')[0];
-            const photoUrl = metadata.avatar_url || metadata.picture || `https://ui-avatars.com/api/?name=${nameToDisplay}&background=007bff&color=fff`;
-
-            if (userName) userName.innerText = nameToDisplay;
-            if (userPhoto) userPhoto.src = photoUrl;
-
-        } else {
-            // Usuário Deslogado
-            if (loginBtn) loginBtn.style.display = 'block';
-            if (userInfo) userInfo.style.display = 'none';
-        }
-    }
-
-    // --- 2. Funções Globais (Expostas para o Window) ---
-
-    // Abre/Fecha o menu lateral
     window.toggleMenu = () => {
         const menu = document.getElementById('sideMenu');
         const overlay = document.getElementById('menuOverlay');
@@ -81,51 +79,168 @@
         }
     };
 
-    // Função de Logout integrada ao Supabase
     window.logout = async () => {
         try {
-            const { error } = await supabase.auth.signOut();
-            if (error) throw error;
+            // 1. Logout no Firebase Client
+            await signOut(auth);
             
-            // Fecha o menu após deslogar
-            window.toggleMenu();
-            // Recarrega para limpar estados residuais (opcional)
-            window.location.reload(); 
+            // 2. Redireciona para a API que limpa o Cookie de Sessão
+            // No Firebase, você geralmente precisa de uma rota para deletar o cookie 'session'
+            window.location.href = "/api/auth/signout"; 
         } catch (error) {
-            console.error("Erro ao sair:", error.message);
+            console.error("Erro ao sair:", error);
+            alert("Erro ao tentar sair.");
         }
     };
-
-    window.openAuthModal = () => {
-        const modal = document.getElementById('authModal');
-        if (modal) {
-            modal.style.display = 'flex';
-        } else {
-            console.error("Modal 'authModal' não encontrado no DOM");
-        }
-        
-        // Fecha o menu lateral se estiver aberto
-        const menu = document.getElementById('sideMenu');
-        if (menu) menu.classList.remove('active');
-        const overlay = document.getElementById('menuOverlay');
-        if (overlay) overlay.classList.remove('active');
-    };
-
-    window.closeAuthModal = () => {
-        const modal = document.getElementById('authModal');
-        if (modal) modal.style.display = 'none';
-    };
-    // --- 3. Listeners de Autenticação ---
-
-    // Ouve mudanças de estado em tempo real (Login/Logout)
-    supabase.auth.onAuthStateChange((event, session) => {
-        console.log("Evento Auth Menu:", event);
-        updateMenuUI(session?.user ?? null);
-    });
-
-    // Verificação inicial de sessão ao carregar a página
-    document.addEventListener('DOMContentLoaded', async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        updateMenuUI(session?.user ?? null);
-    });
 </script>
+
+<style>
+  /* O CSS permanece exatamente o mesmo que você já tem */
+  :root {
+    --menu-bg: #ffffff;
+    --menu-text: #1f2937;
+    --menu-text-light: #6b7280;
+    --menu-hover: #f3f4f6;
+    --menu-border: #e5e7eb;
+    --menu-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+    --primary-btn-bg: #000000;
+    --primary-btn-text: #ffffff;
+  }
+
+  .menu-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    height: 100vh;
+    background-color: var(--menu-bg);
+    box-shadow: var(--menu-shadow);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    overflow-y: auto;
+  }
+
+  .mobile-menu.active {
+    transform: translateX(-320px);
+  }
+
+  .close-menu {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--menu-text);
+    align-self: flex-end;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .menu-links, .menu-links-secondary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-menu a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: var(--menu-text);
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 16px;
+    border-radius: 12px;
+    transition: background-color 0.2s ease, transform 0.1s;
+  }
+
+  .mobile-menu a:hover {
+    transform: translateY(-3px);
+  }
+
+  .menu-divider {
+    border: none;
+    height: 1px;
+    background-color: var(--menu-border);
+    margin: 20px 0;
+  }
+
+  .auth-container {
+    margin-top: auto;
+    padding-top: 20px;
+  }
+
+  .btn-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 14px;
+    background-color: var(--primary-btn-bg);
+    color: var(--primary-btn-text) !important;
+    font-weight: 600;
+    border-radius: 12px;
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: var(--menu-hover);
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  #userPhoto {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .user-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #userName {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .logout-link {
+    font-size: 13px;
+    color: #0000ff !important; /* Vermelho para o Sair */
+    padding: 0 !important;
+  }
+
+  @media (max-width: 480px) {
+    .mobile-menu {
+      width: 85%;
+    }
+  }
+</style>

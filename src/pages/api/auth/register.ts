@@ -1,23 +1,24 @@
-// With `output: 'static'` configured:
-// export const prerender = false;
 import type { APIRoute } from "astro";
-import { supabase } from "../../../lib/supabase";
+import { serverAuth } from "../../../lib/firebase/server";
 
 export const POST: APIRoute = async ({ request, redirect }) => {
   const formData = await request.formData();
+  const name = formData.get("name")?.toString(); // <-- 1. Pegue o nome
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
 
   if (!email || !password) {
-    return new Response("Email and password are required", { status: 400 });
+    return new Response("Email e senha são obrigatórios", { status: 400 });
   }
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
-
-  if (error) {
+  try {
+    // 2. Envie o displayName para o Firebase
+    await serverAuth.createUser({
+      email,
+      password,
+      displayName: name || "Usuário", // Salva o nome ou um fallback
+    });
+  } catch (error: any) {
     return new Response(error.message, { status: 500 });
   }
 
