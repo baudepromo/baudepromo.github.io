@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
       maxAge: expiresIn / 1000,
     });
 
-    return redirect("/dashboard");
+    return redirect("/dashboard/");
   } catch (error: any) {
     console.error("Firebase Auth Error:", error);
     return new Response("Internal Server Error", { status: 500 });

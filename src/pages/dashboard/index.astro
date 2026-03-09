@@ -10,7 +10,7 @@ const sessionCookie = cookies.get("session")?.value;
 
 // 2. Se não existir o cookie, redireciona para o login
 if (!sessionCookie) {
-  return redirect("/signin");
+  return redirect("/signin/");
 }
 
 let user;
@@ -123,7 +123,7 @@ const userPhoto = user.photoURL ||
   </div>
 </Layout>
 
-<style>
+<style is:global>
   :root {
     --primary: #f97316; 
     --primary-dark: #ea580c;
@@ -227,11 +227,6 @@ const userPhoto = user.photoURL ||
     font-weight: 800;
     letter-spacing: -0.025em;
     margin: 0;
-  }
-
-  .highlight {
-    color: var(--primary);
-    text-transform: capitalize;
   }
 
   .welcome-text p {
@@ -580,6 +575,41 @@ const userPhoto = user.photoURL ||
   .banner-content { position: relative; z-index: 1; }
   .promo-banner h4 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; }
   .promo-banner p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.95; }
+
+  /* Toast */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  background: #1e293b;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
+  max-width: 90%;
+  text-align: center;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.toast-success {
+  background: #15803d;
+}
+
+.toast-error {
+  background: #b91c1c;
+}
     
   /* Responsividade */
   @media (max-width: 992px) {
@@ -601,6 +631,7 @@ const userPhoto = user.photoURL ||
     .fav-grid-container { grid-template-columns: 1fr; }
     .welcome-text h1 { font-size: 1.4rem; }
   }
+
 </style>
 
 <script type="module">
@@ -624,31 +655,55 @@ const userPhoto = user.photoURL ||
     });
 
     async function loadUserFavorites(uid) {
-        const grid = document.getElementById("fav-grid");
-        try {
-            const userDocRef = doc(db, "wishlists", uid); 
-            const userSnap = await getDoc(userDocRef);
+  const grid = document.getElementById("fav-grid");
+  try {
+    const userDocRef = doc(db, "wishlists", uid);
+    const userSnap = await getDoc(userDocRef);
 
-            if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
-                renderEmptyState(grid);
-                return;
-            }
-
-            const favoriteIds = userSnap.data().items;
-
-            const { data: myFavorites, error } = await supabase
-                .from('produtos')
-                .select('*')
-                .in('id', favoriteIds);
-
-            if (error) throw error;
-            renderGrid(grid, myFavorites);
-
-        } catch (error) {
-            console.error("Erro detalhado ao carregar favoritos:", error);
-            grid.innerHTML = `<div class="empty-state"><h3>Erro ao carregar</h3><p>Tente atualizar a página.</p></div>`;
-        }
+    if (!userSnap.exists() || !userSnap.data().items || userSnap.data().items.length === 0) {
+      renderEmptyState(grid);
+      return;
     }
+
+    const favoriteIds = userSnap.data().items;
+
+    // Buscar produtos e achadinhos em paralelo
+    const [produtosResult, achadinhosResult] = await Promise.all([
+      supabase.from('produtos').select('*').in('id', favoriteIds),
+      supabase.from('achadinhos').select('*').in('id', favoriteIds)
+    ]);
+
+    if (produtosResult.error) throw produtosResult.error;
+    if (achadinhosResult.error) throw achadinhosResult.error;
+
+    // Combinar resultados em um Map para evitar duplicatas (caso raro de mesmo ID em ambas tabelas)
+    const favoritesMap = new Map();
+
+    produtosResult.data?.forEach(item => {
+      favoritesMap.set(item.id, { ...item, type: 'produto' });
+    });
+
+    achadinhosResult.data?.forEach(item => {
+      // Se já existe, você pode decidir sobrescrever ou ignorar
+      if (!favoritesMap.has(item.id)) {
+        favoritesMap.set(item.id, { ...item, type: 'achadinho' });
+      }
+    });
+
+    const allFavorites = Array.from(favoritesMap.values());
+
+    if (allFavorites.length === 0) {
+      renderEmptyState(grid);
+      return;
+    }
+
+    renderGrid(grid, allFavorites);
+    document.getElementById("fav-count").innerText = allFavorites.length;
+  } catch (error) {
+    console.error("Erro detalhado ao carregar favoritos:", error);
+    grid.innerHTML = `<div class="empty-state"><h3>Erro ao carregar</h3><p>Tente atualizar a página.</p></div>`;
+  }
+}
 
     window.removeFavorite = async (productId) => {
         if (!currentUser) return;
@@ -688,31 +743,95 @@ const userPhoto = user.photoURL ||
         }
     };
 
-    function renderGrid(grid, products) {
-        grid.innerHTML = "";
-        
-        const countEl = document.getElementById("fav-count");
-        if(countEl) countEl.innerText = products.length;
+    function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  toast.setAttribute('role', 'alert');
+  document.body.appendChild(toast);
 
-        products.forEach(p => {
-            grid.innerHTML += `
-                <div class="promo-card" id="card-${p.id}">
-                    <button class="btn-remove-fav" onclick="window.removeFavorite('${p.id}')" title="Remover">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                    <div class="promo-img-container">
-                        <img src="${p.img}" alt="${p.title}">
-                    </div>
-                    <div class="promo-card-content">
-                        <div>
-                            <h3>${p.title}</h3>
-                            <span class="promo-price">R$ ${p.price}</span>
-                        </div>
-                        <a href="/${p.slug}/p/${p.id}" class="btn-primary btn-details">Ver Oferta</a>
-                    </div>
-                </div>`;
-        });
+  // Força reflow para ativar a animação
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  // Remove após 3 segundos
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// Função de remoção ajustada
+window.removeFavorite = async (productId) => {
+  if (!currentUser) return;
+
+  const card = document.getElementById(`card-${productId}`);
+
+  try {
+    if (card) card.style.opacity = '0.5';
+    const userDocRef = doc(db, "wishlists", currentUser.uid);
+
+    await updateDoc(userDocRef, {
+      items: arrayRemove(productId)
+    });
+
+    if (card) card.remove();
+
+    const grid = document.getElementById("fav-grid");
+    const countEl = document.getElementById("fav-count");
+
+    let currentCount = parseInt(countEl.innerText) || 0;
+    if (currentCount > 0) {
+      countEl.innerText = currentCount - 1;
     }
+
+    const remainingCards = grid.querySelectorAll('.promo-card').length;
+    if (remainingCards === 0) {
+      renderEmptyState(grid);
+    }
+
+    // ✅ Toast de sucesso
+    showToast('Produto removido dos favoritos', 'success');
+  } catch (error) {
+    console.error("Erro ao remover:", error);
+    if (card) card.style.opacity = '1';
+    // ❌ Toast de erro
+    showToast('Erro ao remover produto. Tente novamente.', 'error');
+  }
+};
+
+    function renderGrid(grid, products) {
+  grid.innerHTML = "";
+
+  products.forEach(p => {
+    // Formata o preço para sempre ter 2 casas decimais
+
+    // Define um slug padrão caso não exista
+    const slug = p.slug || (p.type === 'produto' ? 'produto' : 'achadinho');
+
+    // Cria o card com template string
+    const card = document.createElement('div');
+    card.className = 'promo-card';
+    card.id = `card-${p.id}`;
+
+    card.innerHTML = `
+      <button class="btn-remove-fav" onclick="window.removeFavorite('${p.id}')" aria-label="Remover dos favoritos" title="Remover">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+      <div class="promo-img-container">
+        <img src="${p.img || ''}" alt="${p.title || 'Produto'}" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Sem+Imagem';">
+      </div>
+      <div class="promo-card-content">
+        <div>
+          <h3>${p.title || 'Título indisponível'}</h3>
+          <span class="promo-price">R$ ${p.price}</span>
+        </div>
+        <a href="/${slug}/p/${p.id}" class="btn-primary btn-details">Ver Oferta</a>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
 
     function renderEmptyState(grid) {
         const countEl = document.getElementById("fav-count");
@@ -735,7 +854,7 @@ const userPhoto = user.photoURL ||
           <div class="empty-state">
             <h3>Acesso Restrito</h3>
             <p>Faça login para ver suas promoções favoritas.</p>
-            <a href="/signin" class="btn-primary">Fazer Login</a>
+            <a href="/signin/" class="btn-primary">Fazer Login</a>
           </div>
         `;
     }

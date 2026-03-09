@@ -1,7 +1,6 @@
 ---
 export const prerender = false;
 
-import { createClient } from '@supabase/supabase-js';
 import Layout from "../../../layouts/MainLayout.astro"; // Ajuste os imports (subiu 3 níveis)
 import Seo from "../../../lib/seo/metadada.astro";
 import '../../../styles/pages/info.css';
@@ -10,9 +9,7 @@ import A from "../../../components/achadinhos/a.astro"
 // O Astro captura o [id] da pasta e o [slug] da pasta anterior
 const { id, slug } = Astro.params;
 
-const SUPABASE_URL = "https://xsdvzxggeuetqbmpvikw.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZHZ6eGdnZXVldHFibXB2aWt3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0Nzg1MTgsImV4cCI6MjA4NjA1NDUxOH0.PnP3_oo67NwR1_tLeHyDI3a9bBUi8-ZQuIFWMpOQs60";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { supabase } from "../../../lib/supabase"; 
 
 // Consulta direta pelo ID (não precisa mais tratar string)
 const { data: product, error } = await supabase
@@ -75,7 +72,7 @@ const SVGS = {
         <div class="faq-wrapper">
             <h1>Melhores Ofertas</h1>
             <p>Seleção especial do Baú</p>
-            <a href="/achadinhos" class="btn-back">
+            <a href="/achadinhos/" class="btn-back">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>

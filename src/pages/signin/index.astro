@@ -80,7 +80,7 @@ if (session) {
 
     // Se a resposta for OK (200), mandamos o usuário para o dashboard
     if (res.ok) {
-      window.location.assign("/dashboard");
+      window.location.assign("/dashboard/");
     } else {
       const errorText = await res.text();
       console.error("Erro na API:", errorText);
